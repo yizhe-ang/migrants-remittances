@@ -1,12 +1,13 @@
 import { useRoomStore } from "@/store";
 import { useSql } from "@sqlrooms/duckdb";
+import Sankey from "./Sankey";
 
 const Notebook = () => {
   const tableReady = useRoomStore((state) =>
     state.db.findTableByName("mig_and_rem_avg_year"),
   );
 
-  const { data } = useSql({
+  const { data: migAndRemByIncome } = useSql({
     query: /* sql */ `
       -- Group by income level
       SELECT
@@ -25,9 +26,11 @@ const Notebook = () => {
     enabled: Boolean(tableReady),
   });
 
-  console.log(data);
-
-  return <div></div>;
+  return (
+    <div className="w-full h-full overflow-y-scroll">
+      {migAndRemByIncome && <Sankey data={migAndRemByIncome} />}
+    </div>
+  );
 };
 
 export default Notebook;
