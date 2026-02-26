@@ -1,18 +1,16 @@
 @import "tailwindcss";
+
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/inter";
 
-/* sqlrooms */
+@custom-variant dark (&:is(.dark *));
+
 @import '@sqlrooms/ui/tailwind-preset.css';
 
 @source '../index.html';
-@source 'src/**/*.{ts,tsx}';
-@source '../../../packages/*/src/**/*.{ts,tsx}';
-@source '{./,../../../}node_modules/@sqlrooms/*/dist/**/*.js';
-@source '{./,../../../}node_modules/.pnpm/node_modules/@sqlrooms/*/dist/**/*.js';
-
-@custom-variant dark (&:is(.dark *));
+@source '.*.{ts,tsx}';
+@source '../node_modules/@sqlroom*ist/';
 
 :root {
   --background: oklch(1 0 0);

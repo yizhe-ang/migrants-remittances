@@ -21,7 +21,7 @@ export function App() {
             <ThemeSwitch />
           </RoomShell.Sidebar>
           <RoomShell.LayoutComposer />
-          <RoomShell.LoadingProgress />
+          {/* <RoomShell.LoadingProgress /> */}
           <SqlEditorModal
             isOpen={sqlEditorDisclosure.isOpen}
             onClose={sqlEditorDisclosure.onClose}
