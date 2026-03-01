@@ -2,10 +2,17 @@ import { useRoomStore } from "@/store";
 import { useSql } from "@sqlrooms/duckdb";
 import SankeyCharts from "./SankeyCharts";
 import GeoCharts from "./GeoCharts";
+import DisastersCharts from "./DisastersCharts";
 
 const Notebook = () => {
-  const tableReady = useRoomStore((state) =>
+  const migAndRemAvgYearReady = useRoomStore((state) =>
     state.db.findTableByName("mig_and_rem_avg_year"),
+  );
+  const disastersReady = useRoomStore((state) =>
+    state.db.findTableByName("disasters"),
+  );
+  const disastersImpactsReady = useRoomStore((state) =>
+    state.db.findTableByName("disasters_impacts"),
   );
 
   const { data: migAndRemAvgYear } = useSql({
@@ -13,7 +20,30 @@ const Notebook = () => {
       SELECT *
       FROM mig_and_rem_avg_year
     `,
-    enabled: Boolean(tableReady),
+    enabled: Boolean(migAndRemAvgYearReady),
+  });
+
+  const { data: disasters } = useSql({
+    query: /* sql */ `
+      SELECT *
+      FROM disasters
+    `,
+    enabled: Boolean(disastersReady),
+  });
+
+  const { data: disastersImpactsByMonth } = useSql({
+    query: /* sql */ `
+      SELECT
+        sum(floods) AS floods,
+        sum(storms) AS storms,
+        sum(droughts) AS droughts,
+        sum(earthquakes) AS earthquakes,
+
+      FROM disasters_impacts
+
+      GROUP BY "date"
+    `,
+    enabled: Boolean(disastersImpactsReady),
   });
 
   const { data: migAndRemByIncome } = useSql({
@@ -32,17 +62,17 @@ const Notebook = () => {
 
       GROUP BY (origin_group, destination_group)
     `,
-    enabled: Boolean(tableReady),
+    enabled: Boolean(migAndRemAvgYearReady),
   });
 
   const { data: migAndRemByDestination } = useSql({
     query: migAndRemByCountryQuery("destination"),
-    enabled: Boolean(tableReady),
+    enabled: Boolean(migAndRemAvgYearReady),
   });
 
   const { data: migAndRemByOrigin } = useSql({
     query: migAndRemByCountryQuery("origin"),
-    enabled: Boolean(tableReady),
+    enabled: Boolean(migAndRemAvgYearReady),
   });
 
   return (
@@ -69,10 +99,20 @@ const Notebook = () => {
       )}
 
       {migAndRemByOrigin && <GeoCharts data={migAndRemByOrigin.toArray()} />}
+
+      {disasters && disastersImpacts && (
+        <DisastersCharts
+          disasters={disasters}
+          disastersImpacts={disastersImpacts}
+        />
+      )}
+
+      <div className="h-screen" />
     </div>
   );
 };
 
+// FIXME: Have to fix per capita computation
 function migAndRemByCountryQuery(group) {
   return /* sql */ `
     WITH step1 AS (

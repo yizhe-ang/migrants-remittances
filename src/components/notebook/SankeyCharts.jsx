@@ -57,7 +57,7 @@ function computeSankeyData(data, source, target, value, sourceRename) {
   const links = [];
 
   for (const l of data) {
-    const s = `${source(l)} ${sourceRename}`;
+    const s = sourceRename ? `${source(l)} ${sourceRename}` : source(l);
     const t = target(l);
 
     nodesSet.add(s);
@@ -87,7 +87,7 @@ function computeIncomeData(data) {
 }
 
 const SankeyCharts = ({ ...props }) => {
-  const { migAndRemByIncome } = props
+  const { migAndRemByIncome, migAndRemAvgYear } = props;
 
   return (
     <div className="flex flex-col items-center gap-4 w-full pt-10">
@@ -105,7 +105,10 @@ const SankeyCharts = ({ ...props }) => {
         </div>
 
         <div className="h-[500px] w-full mt-3">
-          <ResponsiveSankey data={computeIncomeData(migAndRemByIncome)} {...sankeyProps} />
+          <ResponsiveSankey
+            data={computeIncomeData(migAndRemByIncome)}
+            {...sankeyProps}
+          />
         </div>
 
         <div className="text-sm mt-4">
@@ -123,7 +126,9 @@ const SankeyCharts = ({ ...props }) => {
         <div className="w-[400px] h-full">
           <ResponsiveSankey
             data={computeIncomeData(
-              migAndRemByIncome.filter((d) => source(d) === "Upper middle income"),
+              migAndRemByIncome.filter(
+                (d) => source(d) === "Upper middle income",
+              ),
             )}
             {...sankeyProps}
           />
@@ -132,7 +137,9 @@ const SankeyCharts = ({ ...props }) => {
         <div className="w-[400px] h-full">
           <ResponsiveSankey
             data={computeIncomeData(
-              migAndRemByIncome.filter((d) => source(d) === "Lower middle income"),
+              migAndRemByIncome.filter(
+                (d) => source(d) === "Lower middle income",
+              ),
             )}
             {...sankeyProps}
           />
@@ -146,7 +153,23 @@ const SankeyCharts = ({ ...props }) => {
             {...sankeyProps}
           />
         </div>
+      </div>
 
+      <div className="text-sm bg-gray-300">
+        [Perform grouping by geographical grouping, continent etc.?]
+      </div>
+
+      <div className="w-xl text-sm">
+        Latin America, Eastern Europe, North Africa, and Central Asia received
+        the highest remittance per capita. According to our estimate, El
+        Salvador, Guyana, and Suriname are the three countries that receive the
+        highest amount of remittances per year, with more than a thousand
+        dollars per inhabitant on average. Almost all countries in Eastern
+        Europe also receive large remittance flows per capita due to high labour
+        migration to richer European countries. Countries in central and
+        Sub-Saharan Africa receive relatively small remittance inflows because
+        most migration from the region occurs within short distances, towards
+        countries with low income levels.
       </div>
     </div>
   );

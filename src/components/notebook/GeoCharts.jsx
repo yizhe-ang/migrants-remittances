@@ -2,9 +2,6 @@ import { useEffect, useRef } from "react";
 import countriesGeo from "./data/countries_geo.json";
 import * as Plot from "@observablehq/plot";
 import colors from "tailwindcss/colors";
-import { LucideAlignVerticalDistributeEnd } from "lucide-react";
-
-console.log(colors);
 
 const GeoCharts = ({ data }) => {
   const containerRef1 = useRef();
@@ -16,7 +13,7 @@ const GeoCharts = ({ data }) => {
       width: 1000,
       height: 500,
       color: {
-        scheme: "PuBuGn",
+        scheme: "viridis",
       },
       marks: [
         Plot.sphere({ fill: "white", stroke: colors.gray[200] }),
@@ -40,7 +37,9 @@ const GeoCharts = ({ data }) => {
     containerRef1.current.append(plot);
 
     return () => plot.remove();
-  }, []);
+    // DEBUG:
+  });
+  // }, []);
 
   // useEffect(() => {
   //   const plot = Plot.plot({
@@ -78,8 +77,12 @@ const GeoCharts = ({ data }) => {
   // }, []);
 
   return (
-    <div className="mt-5">
-      <div ref={containerRef1} />
+    <div className="mt-5 flex flex-col">
+      <div>
+        Remittances received
+      </div>
+
+      <div ref={containerRef1} className="mx-auto" />
       {/* <div ref={containerRef2} /> */}
     </div>
   );

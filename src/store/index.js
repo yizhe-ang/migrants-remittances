@@ -69,6 +69,11 @@ export const { roomStore, useRoomStore } = createRoomStore(
             type: "url",
             url: "/data/rem_panel.parquet",
           },
+          {
+            tableName: "disasters",
+            type: "url",
+            url: "/data/disasters.parquet",
+          },
         ],
       },
       layout: {
