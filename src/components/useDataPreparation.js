@@ -14,7 +14,6 @@ export default function useDataPreparation() {
     state.db.findTableByName("countries_stats"),
   );
 
-  // FIXME: Does this rerun all other useSql?
   // Computing derived columns
   const { data: migAndRemDerivedReady } = useSql({
     query: /* sql */ `
@@ -32,6 +31,24 @@ export default function useDataPreparation() {
     enabled: Boolean(migAndRemReady),
   });
 
+  const { data: countriesAggStatsReady } = useSql({
+    query: /* sql */ `
+      CREATE OR REPLACE VIEW countries_agg_stats AS
+
+      SELECT
+        country,
+        last("group" ORDER BY year) AS group,
+        -- Should I just take the latest GDP?
+        avg(gdp) AS gdp,
+
+      FROM countries_stats
+
+      GROUP BY country
+    `,
+
+    enabled: Boolean(countriesStatsReady),
+  });
+
   // Flows for an average year (aggregation)
   const { data: migAndRemAvgYearReady } = useSql({
     query: /* sql */ `
@@ -43,10 +60,13 @@ export default function useDataPreparation() {
           EXTRACT('year' FROM date) AS year,
           origin,
           destination,
+          -- It doesn't make sense to sum up n_migrants? More like take avg
           sum(n_migrants) AS n_migrants,
           sum(sim_remittances_with) AS sim_remittances_with,
           sum(sim_remittances_without) AS sim_remittances_without,
           sum(disaster_remittances) AS disaster_remittances,
+
+          -- In a single year, a single person remits $ from A to B.
           sum(sim_remittances_with_per_capita) AS sim_remittances_with_per_capita,
           sum(sim_remittances_without_per_capita) AS sim_remittances_without_per_capita,
           sum(disaster_remittances_per_capita) AS disaster_remittances_per_capita,
@@ -82,14 +102,14 @@ export default function useDataPreparation() {
 
       FROM step2 a
 
-      LEFT JOIN countries_stats b
+      JOIN countries_agg_stats b
       ON a.origin = b.country
 
-      LEFT JOIN countries_stats c
+      LEFT JOIN countries_agg_stats c
       ON a.destination = c.country
     `,
 
-    enabled: Boolean(migAndRemDerivedReady) && Boolean(countriesStatsReady),
+    enabled: Boolean(migAndRemDerivedReady) && Boolean(countriesAggStatsReady),
   });
 
   useEffect(() => {
