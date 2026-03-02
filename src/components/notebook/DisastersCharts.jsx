@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef } from "react";
 import * as Plot from "@observablehq/plot";
 import { useSql } from "@sqlrooms/duckdb";
-import { rollup, sum } from "d3-array";
+import { mean, rollup, sum } from "d3-array";
 
 const disasterTypeMap = new Map([
   ["Flood", "floods"],
@@ -50,10 +50,17 @@ const DisastersCharts = ({ ...props }) => {
       (d) => d["Disaster Type"],
     );
 
+    const affectedPerOccurrence = rollup(
+      disastersProcessed,
+      (v) => mean(v, (d) => d.Affected),
+      (d) => d["Disaster Type"],
+    );
+
     [...disasterTypeMap.keys()].forEach((k) => {
       o[k].remittances = remittancesByDisaster.get(disasterTypeMap.get(k));
 
       o[k].affected = affectedByDisaster.get(k);
+      o[k].affected_per_occurrence = affectedPerOccurrence.get(k);
 
       o[k].remittance_per_affected = o[k].remittances / o[k].affected;
     });
@@ -355,9 +362,35 @@ const DisastersCharts = ({ ...props }) => {
       ],
     });
 
-    containerRef6.current.append(plot);
+    const plot2 = Plot.plot({
+      height: 300,
+      width: 700,
+      marginLeft: 80,
+      color: {
+        // legend: true,
+        domain: ["Flood", "Earthquake", "Drought", "Storm"],
+      },
+      marks: [
+        Plot.rectY(
+          aggData,
+          Plot.stackX({
+            x: "affected_per_occurrence",
+            y2: "remittance_per_affected",
+            fill: "disaster_type",
+            order: "remittance_per_affected",
+            reverse: true,
+          }),
+        ),
+      ],
+    });
 
-    return () => plot.remove();
+    containerRef6.current.append(plot);
+    containerRef6.current.append(plot2);
+
+    return () => {
+      plot.remove();
+      plot2.remove();
+    }
     // DEBUG:
   });
   // }, []);
