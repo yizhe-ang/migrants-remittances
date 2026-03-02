@@ -11,15 +11,22 @@ const nodesOrder = [
   "Low income",
 ];
 
+const regionsOrder = [
+  "East Asia & Pacific",
+  "South Asia",
+  "Middle East & North Africa",
+  "Sub-Saharan Africa",
+  "Europe & Central Asia",
+  "North America",
+  "Latin America & Caribbean",
+];
+
 const sankeyProps = {
   valueFormat: ".2s",
   margin: {
     top: 10,
     bottom: 10,
   },
-  // colors: {
-  //   scheme: "accent",
-  // },
   colors: (node) => {
     if (node.id.includes("High income")) {
       return colorScheme[0];
@@ -36,6 +43,48 @@ const sankeyProps = {
   },
   sort: (a, b) => {
     return nodesOrder.indexOf(a.id) - nodesOrder.indexOf(b.id);
+  },
+  enableLinkGradient: true,
+  theme: {
+    tooltip: {
+      container: {
+        fontSize: 10,
+      },
+    },
+  },
+};
+
+const sankeyRegionProps = {
+  valueFormat: ".2s",
+  margin: {
+    top: 10,
+    bottom: 10,
+  },
+  colors: (node) => {
+    if (node.id.includes("East Asia & Pacific")) {
+      return colorScheme[0];
+    }
+    if (node.id.includes("South Asia")) {
+      return colorScheme[1];
+    }
+    if (node.id.includes("Middle East & North Africa")) {
+      return colorScheme[2];
+    }
+    if (node.id.includes("Sub-Saharan Africa")) {
+      return colorScheme[3];
+    }
+    if (node.id.includes("Europe & Central Asia")) {
+      return colorScheme[4];
+    }
+    if (node.id.includes("North America")) {
+      return colorScheme[5];
+    }
+    if (node.id.includes("Latin America & Caribbean")) {
+      return colorScheme[6];
+    }
+  },
+  sort: (a, b) => {
+    return regionsOrder.indexOf(a.id) - regionsOrder.indexOf(b.id);
   },
   enableLinkGradient: true,
   theme: {
@@ -86,8 +135,18 @@ function computeIncomeData(data) {
   );
 }
 
+function computeRegionData(data) {
+  return computeSankeyData(
+    data,
+    (d) => d.destination_region,
+    (d) => d.origin_region,
+    (d) => d.sim_remittances_with,
+    "->",
+  );
+}
+
 const SankeyCharts = ({ ...props }) => {
-  const { migAndRemByIncome, migAndRemAvgYear } = props;
+  const { migAndRemByIncome, migAndRemByRegion, migAndRemAvgYear } = props;
 
   return (
     <div className="flex flex-col items-center gap-4 w-full pt-10">
@@ -157,6 +216,13 @@ const SankeyCharts = ({ ...props }) => {
 
       <div className="text-sm bg-gray-300">
         [Perform grouping by geographical grouping, continent etc.?]
+      </div>
+
+      <div className="w-xl h-[800px]">
+        <ResponsiveSankey
+          data={computeRegionData(migAndRemByRegion)}
+          {...sankeyRegionProps}
+        />
       </div>
 
       <div className="w-xl text-sm">

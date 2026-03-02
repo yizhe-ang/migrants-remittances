@@ -57,21 +57,12 @@ const Notebook = () => {
   });
 
   const { data: migAndRemByIncome } = useSql({
-    query: /* sql */ `
-      -- Group by income level
-      SELECT
-        origin_group,
-        destination_group,
+    query: migAndRemByGroupQuery("group"),
+    enabled: Boolean(migAndRemAvgYearReady),
+  });
 
-        sum(n_migrants) AS n_migrants,
-        sum(sim_remittances_with) AS sim_remittances_with,
-        sum(sim_remittances_without) AS sim_remittances_without,
-        sum(disaster_remittances) AS disaster_remittances,
-
-      FROM mig_and_rem_avg_year
-
-      GROUP BY (origin_group, destination_group)
-    `,
+  const { data: migAndRemByRegion } = useSql({
+    query: migAndRemByGroupQuery("region"),
     enabled: Boolean(migAndRemAvgYearReady),
   });
 
@@ -105,6 +96,7 @@ const Notebook = () => {
       {migAndRemByIncome && migAndRemAvgYear && (
         <SankeyCharts
           migAndRemByIncome={migAndRemByIncome.toArray()}
+          migAndRemByRegion={migAndRemByRegion.toArray()}
           migAndRemAvgYear={migAndRemAvgYear.toArray()}
         />
       )}
@@ -163,6 +155,23 @@ function migAndRemByCountryQuery(group) {
 
     LEFT JOIN countries_geo
     ON step1.${group} = countries_geo.country
+  `;
+}
+
+function migAndRemByGroupQuery(group) {
+  return /* sql */ `
+    SELECT
+      origin_${group},
+      destination_${group},
+
+      sum(n_migrants) AS n_migrants,
+      sum(sim_remittances_with) AS sim_remittances_with,
+      sum(sim_remittances_without) AS sim_remittances_without,
+      sum(disaster_remittances) AS disaster_remittances,
+
+    FROM mig_and_rem_avg_year
+
+    GROUP BY (origin_${group}, destination_${group})
   `;
 }
 

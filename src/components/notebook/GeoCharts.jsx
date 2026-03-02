@@ -13,8 +13,6 @@ const incomeGroupColor = {
 const GeoCharts = ({ ...props }) => {
   const { migAndRemByOrigin, migAndRemByDestination } = props;
 
-  console.log(migAndRemByOrigin);
-
   const containerRef1 = useRef();
   const containerRef2 = useRef();
   const containerRef3 = useRef();
