@@ -4,6 +4,7 @@ import SankeyCharts from "./SankeyCharts";
 import GeoCharts from "./GeoCharts";
 import DisastersCharts from "./DisastersCharts";
 import EurostatmapCharts from "./EurostatmapCharts";
+import FlowMap from "./FlowMap";
 
 const Notebook = () => {
   const migAndRemAvgYearReady = useRoomStore((state) =>
@@ -92,6 +93,8 @@ const Notebook = () => {
       <div className="mt-2">
         <img src="/notebook/flow-map-1.png" />
       </div>
+
+      <FlowMap />
 
       {migAndRemByIncome && migAndRemAvgYear && (
         <SankeyCharts
