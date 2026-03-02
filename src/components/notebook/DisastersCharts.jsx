@@ -73,8 +73,6 @@ const DisastersCharts = ({ ...props }) => {
     });
   }, [disastersImpactsByMonth, disastersProcessed]);
 
-  console.log(aggData);
-
   const containerRef1 = useRef();
   const containerRef2 = useRef();
   const containerRef3 = useRef();

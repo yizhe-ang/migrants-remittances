@@ -27,6 +27,7 @@
     "d3-array": "^3.2.4",
     "d3-scale-chromatic": "^3.1.0",
     "deck.gl": "^9.2.9",
+    "eurostat-map": "^4.3.46",
     "lucide-react": "^0.574.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",

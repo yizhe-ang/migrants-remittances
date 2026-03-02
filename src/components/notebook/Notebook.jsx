@@ -3,6 +3,7 @@ import { useSql } from "@sqlrooms/duckdb";
 import SankeyCharts from "./SankeyCharts";
 import GeoCharts from "./GeoCharts";
 import DisastersCharts from "./DisastersCharts";
+import EurostatmapCharts from "./EurostatmapCharts";
 
 const Notebook = () => {
   const migAndRemAvgYearReady = useRoomStore((state) =>
@@ -74,6 +75,7 @@ const Notebook = () => {
     enabled: Boolean(migAndRemAvgYearReady),
   });
 
+  // FIXME: Is the computation correct?
   const { data: migAndRemByDestination } = useSql({
     query: migAndRemByCountryQuery("destination"),
     enabled: Boolean(migAndRemAvgYearReady),
@@ -107,7 +109,16 @@ const Notebook = () => {
         />
       )}
 
-      {migAndRemByOrigin && <GeoCharts data={migAndRemByOrigin.toArray()} />}
+      {migAndRemByOrigin && (
+        <GeoCharts
+          migAndRemByOrigin={migAndRemByOrigin.toArray()}
+          migAndRemByDestination={migAndRemByDestination.toArray()}
+        />
+      )}
+
+      {/* {migAndRemByDestination && (
+        <EurostatmapCharts data={migAndRemByDestination.toArray()} />
+      )} */}
 
       {disasters && disastersImpactsByMonth && (
         <DisastersCharts
@@ -121,7 +132,6 @@ const Notebook = () => {
   );
 };
 
-// FIXME: Have to fix per capita computation
 function migAndRemByCountryQuery(group) {
   return /* sql */ `
     WITH step1 AS (
@@ -137,15 +147,17 @@ function migAndRemByCountryQuery(group) {
       avg(sim_remittances_without_per_capita) AS sim_remittances_without_per_capita,
       avg(disaster_remittances_per_capita) AS disaster_remittances_per_capita,
 
+      first(${group}_group) AS group,
+
       FROM mig_and_rem_avg_year
 
       GROUP BY (${group})
     )
 
     SELECT
-      *,
-      countries_geo.latitude,
-      countries_geo.longitude,
+      step1.*,
+      latitude,
+      longitude,
 
     FROM step1
 

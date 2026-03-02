@@ -40,6 +40,7 @@ export default function useDataPreparation() {
         last("group" ORDER BY year) AS group,
         -- Should I just take the latest GDP?
         avg(gdp) AS gdp,
+        first(region) AS region,
 
       FROM countries_stats
 
@@ -49,6 +50,7 @@ export default function useDataPreparation() {
     enabled: Boolean(countriesStatsReady),
   });
 
+  // FIXME: Have to fix per capita computation
   // Flows for an average year (aggregation)
   const { data: migAndRemAvgYearReady } = useSql({
     query: /* sql */ `
@@ -97,12 +99,19 @@ export default function useDataPreparation() {
       -- Grab income group information
       SELECT
         a.*,
+
         b.group AS origin_group,
-        c.group AS destination_group
+        c.group AS destination_group,
+
+        b.region AS origin_region,
+        c.region AS destination_region,
+
+        b.gdp AS origin_gdp,
+        c.gdp AS destination_gdp
 
       FROM step2 a
 
-      JOIN countries_agg_stats b
+      LEFT JOIN countries_agg_stats b
       ON a.origin = b.country
 
       LEFT JOIN countries_agg_stats c
