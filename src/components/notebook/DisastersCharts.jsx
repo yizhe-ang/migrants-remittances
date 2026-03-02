@@ -20,6 +20,7 @@ const DisastersCharts = ({ ...props }) => {
   const containerRef3 = useRef();
   const containerRef4 = useRef();
 
+  // Bee swarm
   useEffect(() => {
     const plot = Plot.plot({
       height: 500,
@@ -39,17 +40,48 @@ const DisastersCharts = ({ ...props }) => {
             x: "Date",
             r: "Affected",
             fill: "Disaster Type",
+            // fy: "Disaster Type",
+          }),
+        ),
+      ],
+    });
+
+    const plot2 = Plot.plot({
+      height: 700,
+      width: 700,
+      marginLeft: 20,
+      marginTop: 50,
+      color: {
+        // legend: true,
+        domain: ["Flood", "Earthquake", "Drought", "Storm"],
+      },
+      r: {
+        range: [0, 70],
+        // legend: true
+      },
+      marks: [
+        Plot.dot(
+          disastersProcessed,
+          Plot.dodgeY("middle", {
+            x: "Date",
+            r: "Affected",
+            fill: "Disaster Type",
+            fy: "Disaster Type",
           }),
         ),
       ],
     });
 
     containerRef1.current.append(plot);
+    containerRef1.current.append(plot2);
 
-    return () => plot.remove();
+    return () => {
+      plot.remove();
+      plot2.remove();
+    };
     // DEBUG:
-    // });
-  }, []);
+  });
+  // }, []);
 
   useEffect(() => {
     const plot = Plot.plot({
@@ -142,24 +174,24 @@ const DisastersCharts = ({ ...props }) => {
       plot3.remove();
     };
     // DEBUG:
-  });
-  // }, []);
+    // });
+  }, []);
 
   // useEffect(() => {
   //   const plot = Plot.plot({
   //     height: 500,
   //     width: 700,
+  //     marginLeft: 80,
   //     color: {
-  //       legend: true,
+  //       // legend: true,
   //       domain: ["Flood", "Earthquake", "Drought", "Storm"],
   //     },
   //     marks: [
-  //       // Plot.areaY(
   //       Plot.rectY(disastersProcessed, {
   //         x: "Date",
   //         y: "Affected",
   //         fill: "Disaster Type",
-  //         interval: "month",
+  //         interval: "year",
   //       }),
   //     ],
   //   });
@@ -168,33 +200,44 @@ const DisastersCharts = ({ ...props }) => {
 
   //   return () => plot.remove();
   //   // DEBUG:
-  // // });
+  //   });
   // }, []);
 
-  // useEffect(() => {
-  //   const plot = Plot.plot({
-  //     height: 500,
-  //     width: 700,
-  //     color: {
-  //       legend: true,
-  //       domain: ["Flood", "Earthquake", "Drought", "Storm"],
-  //     },
-  //     marks: [
-  //       // Plot.areaY(
-  //       Plot.rectY(disastersProcessed, {
-  //         x: "Date",
-  //         y: "Affected",
-  //         fill: "Disaster Type",
-  //         interval: "month",
-  //       }),
-  //     ],
-  //   });
+  useEffect(() => {
+    const plot = Plot.plot({
+      height: 300,
+      width: 700,
+      marginLeft: 80,
+      color: {
+        // legend: true,
+        domain: ["Flood", "Earthquake", "Drought", "Storm"],
+      },
+      marks: [
+        Plot.areaY(
+          disastersProcessed,
+          Plot.binX(
+            {
+              y: "sum",
+              filter: null,
+            },
+            {
+              x: "Date",
+              y: "Affected",
+              fill: "Disaster Type",
+              interval: "year",
+              // offset: "normalize",
+              order: "sum",
+            },
+          ),
+        ),
+      ],
+    });
 
-  //   containerRef3.current.append(plot);
+    containerRef3.current.append(plot);
 
-  //   return () => plot.remove();
-  //   // DEBUG:
-  // });
+    return () => plot.remove();
+    // DEBUG:
+  });
   // }, []);
 
   return (
@@ -214,6 +257,8 @@ const DisastersCharts = ({ ...props }) => {
       <div className="mx-auto mt-5" ref={containerRef2} />
 
       <div className="mx-auto mt-5" ref={containerRef3} />
+
+      {/* <div className="mx-auto mt-5" ref={containerRef3} /> */}
 
       <div className="w-xl mx-auto mt-5 text-sm">
         We estimate that the occurrence of a disaster, on average, increases

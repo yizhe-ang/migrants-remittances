@@ -33,15 +33,24 @@ const Notebook = () => {
 
   const { data: disastersImpactsByMonth } = useSql({
     query: /* sql */ `
-      SELECT
-        sum(floods) AS floods,
-        sum(storms) AS storms,
-        sum(droughts) AS droughts,
-        sum(earthquakes) AS earthquakes,
+      WITH step1 AS (
+        SELECT
+          date,
+          sum(floods) AS floods,
+          sum(storms) AS storms,
+          sum(droughts) AS droughts,
+          sum(earthquakes) AS earthquakes
 
-      FROM disasters_impacts
+        FROM disasters_impacts
 
-      GROUP BY "date"
+        GROUP BY "date"
+      )
+
+      UNPIVOT step1
+      ON floods, storms, droughts, earthquakes
+      INTO
+        NAME disaster_type
+        VALUE remittance
     `,
     enabled: Boolean(disastersImpactsReady),
   });
@@ -100,10 +109,10 @@ const Notebook = () => {
 
       {migAndRemByOrigin && <GeoCharts data={migAndRemByOrigin.toArray()} />}
 
-      {disasters && disastersImpacts && (
+      {disasters && disastersImpactsByMonth && (
         <DisastersCharts
           disasters={disasters}
-          disastersImpacts={disastersImpacts}
+          disastersImpactsByMonth={disastersImpactsByMonth}
         />
       )}
 
