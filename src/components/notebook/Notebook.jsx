@@ -88,7 +88,7 @@ const Notebook = () => {
 
       <div className="w-xl mx-auto mt-5">
         <span className="font-bold">Remittance flows</span> across the globe,
-        between <span className="underline">2010 to 2019</span>
+        between <span className="underline">2010 and 2019</span>
       </div>
       <div className="mt-2">
         <img src="/notebook/flow-map-1.png" />

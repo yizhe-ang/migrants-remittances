@@ -13,6 +13,8 @@ const disasterTypeMap = new Map([
 const DisastersCharts = ({ ...props }) => {
   const { disasters, disastersImpactsByMonth } = props;
 
+  // TODO: Connect disasters to their geographical location
+
   const disastersProcessed = useMemo(() => {
     return disasters.toArray().map((d) => {
       return {
@@ -83,7 +85,7 @@ const DisastersCharts = ({ ...props }) => {
   // Bee swarm
   useEffect(() => {
     const plot = Plot.plot({
-      title: "People affected by each disaster, over time",
+      // title: "People affected by each disaster, over time",
       height: 500,
       width: 700,
       color: {
@@ -241,7 +243,7 @@ const DisastersCharts = ({ ...props }) => {
   useEffect(() => {
     const plot = Plot.plot({
       title: "Remittances induced by each disaster type, over time",
-      height: 300,
+      height: 400,
       width: 700,
       marginLeft: 80,
       color: {
@@ -252,8 +254,9 @@ const DisastersCharts = ({ ...props }) => {
           x: "date",
           y: "remittance",
           fill: "disaster_type",
+          fy: "disaster_type",
           // order: "sum",
-          offset: "wiggle",
+          // offset: "wiggle",
         }),
       ],
     });
@@ -262,8 +265,8 @@ const DisastersCharts = ({ ...props }) => {
 
     return () => plot.remove();
     // DEBUG:
-    // });
-  }, []);
+  });
+  // }, []);
 
   useEffect(() => {
     const plot = Plot.plot({
@@ -301,41 +304,84 @@ const DisastersCharts = ({ ...props }) => {
   // }, []);
 
   useEffect(() => {
-    const plot = Plot.plot({
-      height: 500,
-      width: 700,
-      marginLeft: 80,
-      color: {
-        // legend: true,
-        domain: ["Flood", "Earthquake", "Drought", "Storm"],
-      },
-      marks: [
-        Plot.areaY(
-          disastersProcessed,
-          Plot.binX(
-            {
-              y: "sum",
-              filter: null,
-            },
-            {
-              x: "Date",
-              y: "Affected",
-              fill: "Disaster Type",
-              interval: "year",
-              // offset: "normalize",
-              order: "sum",
-            },
-          ),
-        ),
-      ],
-    });
-
-    containerRef4.current.append(plot);
-
-    return () => plot.remove();
-    // DEBUG:
+    // const plot = Plot.plot({
+    //   height: 400,
+    //   width: 700,
+    //   marginLeft: 80,
+    //   color: {
+    //     // legend: true,
+    //     domain: ["Flood", "Earthquake", "Drought", "Storm"],
+    //   },
+    //   marks: [
+    //     Plot.areaY(
+    //       disastersProcessed,
+    //       Plot.binX(
+    //         {
+    //           y: "sum",
+    //         },
+    //         {
+    //           x: "Date",
+    //           y: "Affected",
+    //           fy: "Disaster Type",
+    //           fill: "Disaster Type",
+    //           interval: "year",
+    //           interval: "month",
+    //           // offset: "normalize",
+    //           order: "sum",
+    //           filter: (d) => d['Disaster Type'] === "Flood",
+    //         },
+    //       ),
+    //     ),
+    //   ],
     // });
-  }, []);
+
+    // containerRef4.current.append(plot);
+
+    const plots = ["Flood", "Earthquake", "Drought", "Storm"].map(
+      (disasterType) => {
+        const plot = Plot.plot({
+          height: 100,
+          width: 700,
+          marginLeft: 80,
+          color: {
+            // legend: true,
+            domain: ["Flood", "Earthquake", "Drought", "Storm"],
+          },
+          y: {
+            // type: "log",
+          },
+          marks: [
+            Plot.areaY(
+              disastersProcessed,
+              Plot.binX(
+                {
+                  y: "sum",
+                },
+                {
+                  x: "Date",
+                  y: "Affected",
+                  fill: "Disaster Type",
+                  // interval: "year",
+                  interval: "month",
+                  filter: (d) => d["Disaster Type"] === disasterType,
+                },
+              ),
+            ),
+          ],
+        });
+
+        containerRef4.current.append(plot);
+
+        return plot;
+      },
+    );
+
+    return () => {
+      plots.forEach((plot) => plot.remove());
+    };
+    // DEBUG:
+  });
+  // }, []);
 
   useEffect(() => {
     const plot = Plot.plot({
@@ -383,27 +429,42 @@ const DisastersCharts = ({ ...props }) => {
     });
 
     containerRef6.current.append(plot);
-    containerRef6.current.append(plot2);
+    // containerRef6.current.append(plot2);
 
     return () => {
       plot.remove();
       plot2.remove();
-    }
+    };
     // DEBUG:
   });
   // }, []);
 
   return (
     <div className="mt-20 flex flex-col">
-      <div className="w-xl mx-auto mt-5 text-sm">
-        According to EMDAT, between 2010 and 2019, there were around 3,000
-        disaster events connected to the occurrence of floods, storms,
-        earthquakes, and droughts. These events affected a total of 1.74 billion
-        people, the vast majority of whom lived in lower-middle-income and
-        upper-middle-income countries
+      <div className="w-xl mx-auto mt-5">
+        <div className="">
+          <b>Disasters</b>, and <b>number of people affected</b> from{" "}
+          <u>2010 to 2019</u>
+        </div>
+
+        <div className="text-xs mt-2">
+          According to EMDAT, between 2010 and 2019, there were around 3,000
+          disaster events connected to the occurrence of floods, storms,
+          earthquakes, and droughts. These events affected a total of 1.74
+          billion people, the vast majority of whom lived in lower-middle-income
+          and upper-middle-income countries
+        </div>
       </div>
 
       <div className="mx-auto mt-5" ref={containerRef1} />
+
+      {/* TODO: Where are these disasters occurring? And who do they affect? */}
+      {/* <div className="w-xl mx-auto mt-5 bg-gray-300">
+        Disasters by geographical location
+      </div>
+      <div className="w-xl mx-auto mt-5">
+        Color by income group?
+      </div> */}
 
       <div className="mx-auto mt-5" ref={containerRef3} />
 
@@ -411,11 +472,7 @@ const DisastersCharts = ({ ...props }) => {
 
       <div className="mx-auto mt-5" ref={containerRef5} />
 
-      <div className="mx-auto mt-5" ref={containerRef2} />
-
-      <div className="mx-auto mt-5" ref={containerRef6} />
-
-      <div className="w-xl mx-auto mt-5 text-sm">
+      {/* <div className="w-xl mx-auto mt-5 text-xs">
         We estimate that the occurrence of a disaster, on average, increases
         remittance sending for up to nine months after the event, with a peak
         around the fourth month after the event, and a small negative effect
@@ -424,7 +481,7 @@ const DisastersCharts = ({ ...props }) => {
         equivalent to 5.46% of total remittance flows.
       </div>
 
-      <div className="w-xl mx-auto mt-5 text-sm">
+      <div className="w-xl mx-auto mt-5 text-xs">
         The five countries that received the largest absolute amounts of
         disaster-induced remittances are, in order, China, India, the
         Philippines, Mexico, and Bangladesh. These countries combined received
@@ -435,6 +492,70 @@ const DisastersCharts = ({ ...props }) => {
         country, while the total amounts also depend on the characteristics of
         the diasporas abroad. All of these countries are estimated to have more
         than 6 million migrants living abroad.
+      </div> */}
+
+      <div className="w-xl mx-auto mt-5 text-xs">
+        Earthquake-induced remittances were also unstable: a large spike at the
+        beginning of 2018 was driven by the earthquakes that affected Mexico in
+        2017 and Indonesia in 2018.
+      </div>
+
+      <div className="mx-auto mt-5" ref={containerRef2} />
+
+      <div className="w-xl mx-auto mt-10">
+        <div className="leading-tight">
+          Number of <b>people affected</b>, and <br />{" "}
+          <b>remittance induced per affected</b> by <b>disaster type</b>
+        </div>
+      </div>
+
+      <div className="mx-auto mt-5" ref={containerRef6} />
+
+      <div className="w-xl mx-auto mt-5 text-xs">
+        Floods moved the largest amount of remittances, with a total of 138
+        billion USD. The large mobilization is due to the combination of size
+        and frequency of flooding events with their occurrence in countries with
+        large international diasporas, such as China, Pakistan and Bangladesh.
+      </div>
+
+      <div className="w-xl mx-auto mt-5 text-xs">
+        Not all disasters generate the same remittances mobilisation. Comparing
+        total disasterinduced remittances with the number of people affected for
+        each disaster category shows that earthquakes accounted for the largest
+        relative amount, with 542 USD per affected person. Earthquakes are
+        sudden and cause large impacts, and have occurred in countries with
+        diasporas that could be activated. On the contrary, droughts caused the
+        smallest relative impact, with 142 USD per affected person. Droughts are
+        a creeping phenomenon: their effects accumulate slowly, and they last
+        for prolonged periods of time [67]. For this reason, migrant diasporas
+        cannot sustain sending higher amounts of remittances for events that
+        last long periods. The differences in remittances induced by disasters
+        are also explained by the countries affected and the location of their
+        migrant diasporas, as diasporas in richer countries can send larger
+        sums.
+      </div>
+
+      <div className="w-xl mx-auto mt-5 text-xs">
+        Remittances are not a uniform coping mechanism but vary depending on
+        hazard characteristics, exposure, and diaspora location and condition.
+      </div>
+
+      <div className="w-xl mx-auto mt-10">
+        <div className="font-bold">Notable disaster events</div>
+      </div>
+
+      <div className="w-xl mx-auto mt-10">
+        <div className="font-bold">
+          Where do these disasters occur, who do they affect, and how do they
+          respond?
+        </div>
+      </div>
+
+      <div className="w-xl mx-auto mt-10">
+        <div className="font-bold">
+          Disaster-induced remittances is affected by both magnitude of disaster
+          and characteristics of migrant diasporas
+        </div>
       </div>
     </div>
   );

@@ -157,10 +157,11 @@ const SankeyCharts = ({ ...props }) => {
           <span className="font-bold">income group</span>
         </div>
 
-        <div className="text-sm mt-2">
-          Around 96.5% of the total flows are sent by international migrants
-          living in high-income countries. To put it in context, only 72% of
-          international migrants live in high-income countries.
+        <div className="text-xs mt-2">
+          Around <b>96.5% of the total flows</b> are sent by international
+          migrants living in <b>high-income countries</b>. To put it in context,
+          only <b>72% of international migrants</b> live in{" "}
+          <b>high-income countries</b>.
         </div>
 
         <div className="h-[500px] w-full mt-3">
@@ -170,14 +171,27 @@ const SankeyCharts = ({ ...props }) => {
           />
         </div>
 
-        <div className="text-sm mt-4">
+        <div className="text-xs mt-4">
           These numbers, however, hide the contribution that remittances have
-          relative to the wealth of countries. In total, 1.1% of the GDP of all
-          high-income countries was transferred through international
-          remittances between 2010 and 2019. The same sum of money contributed
-          0.2% of high-income countries’ GDP, 1.1% of upper-middle income
-          countries’ GDP, 5.1% of lower-middle income countries’ GDP, and 9.8%
-          of low-income countries’ GDP combined
+          relative to the <b>wealth of countries</b>. In total,{" "}
+          <b>1.1% of the GDP </b> of all <b>high-income countries</b> was
+          transferred through international remittances between 2010 and 2019.
+          The same sum of money contributed 0.2% of high-income countries’ GDP,
+          1.1% of upper-middle income countries’ GDP, 5.1% of lower-middle
+          income countries’ GDP, and <b>9.8% of low-income countries’ GDP</b>{" "}
+          combined
+        </div>
+      </div>
+
+      <div className="w-xl mt-5">
+        <div>
+          <b>Remittance flows</b> from each income group
+        </div>
+
+        <div className="text-xs mt-2">
+          Flows tend to be clustered among the same-income-group countries,
+          especially for remittance senders living in lower-middle- and
+          low-income countries.
         </div>
       </div>
 
@@ -214,8 +228,10 @@ const SankeyCharts = ({ ...props }) => {
         </div>
       </div>
 
-      <div className="text-sm bg-gray-300">
-        [Perform grouping by geographical grouping, continent etc.?]
+      <div className="w-xl mt-7">
+        <div>
+          <b>Remittance flows</b> grouped by <b>region</b>
+        </div>
       </div>
 
       <div className="w-xl h-[800px]">
@@ -225,7 +241,7 @@ const SankeyCharts = ({ ...props }) => {
         />
       </div>
 
-      <div className="w-xl text-sm">
+      <div className="w-xl text-xs">
         Latin America, Eastern Europe, North Africa, and Central Asia received
         the highest remittance per capita. According to our estimate, El
         Salvador, Guyana, and Suriname are the three countries that receive the

@@ -32,7 +32,7 @@ const GeoCharts = ({ ...props }) => {
     r: "sim_remittances_with",
     fill: "sim_remittances_with",
     rMax: 30,
-    title: "Remittances received in an average year",
+    // title: "Remittances received in an average year",
   });
 
   useGeoChart({
@@ -42,7 +42,7 @@ const GeoCharts = ({ ...props }) => {
     fill: "group",
     rMax: 30,
     color: incomeGroupColor,
-    title: "Remittances received in an average year",
+    // title: "Remittances received in an average year",
   });
 
   useGeoChart({
@@ -51,7 +51,7 @@ const GeoCharts = ({ ...props }) => {
     r: "sim_remittances_with",
     fill: "sim_remittances_with",
     rMax: 40,
-    title: "Remittances sent in an average year",
+    // title: "Remittances sent in an average year",
   });
 
   useGeoChart({
@@ -61,7 +61,7 @@ const GeoCharts = ({ ...props }) => {
     fill: "group",
     rMax: 40,
     color: incomeGroupColor,
-    title: "Remittances sent in an average year",
+    // title: "Remittances sent in an average year",
   });
 
   useGeoChart({
@@ -70,7 +70,7 @@ const GeoCharts = ({ ...props }) => {
     r: "disaster_remittances",
     fill: "disaster_remittances",
     rMax: 30,
-    title: "Disaster-induced remittances received in an average year",
+    // title: "Disaster-induced remittances received in an average year",
   });
 
   useGeoChart({
@@ -80,7 +80,7 @@ const GeoCharts = ({ ...props }) => {
     fill: "group",
     rMax: 30,
     color: incomeGroupColor,
-    title: "Disaster-induced remittances received in an average year",
+    // title: "Disaster-induced remittances received in an average year",
   });
 
   useGeoChart({
@@ -89,7 +89,7 @@ const GeoCharts = ({ ...props }) => {
     r: "disaster_remittances",
     fill: "disaster_remittances",
     rMax: 30,
-    title: "Disaster-induced remittances sent in an average year",
+    // title: "Disaster-induced remittances sent in an average year",
   });
 
   useGeoChart({
@@ -99,16 +99,23 @@ const GeoCharts = ({ ...props }) => {
     fill: "group",
     rMax: 30,
     color: incomeGroupColor,
-    title: "Disaster-induced remittances sent in an average year",
+    // title: "Disaster-induced remittances sent in an average year",
   });
 
   return (
-    <div className="mt-5 flex flex-col">
+    <div className="mt-10 flex flex-col items-center">
+      <div className="w-xl">
+        <b>Remittances received</b> in an <u>average year</u>
+      </div>
       <div className="overflow-x-auto">
         <div className="flex">
           <div ref={containerRef1} className="shrink-0" />
           <div ref={containerRef2} className="shrink-0" />
         </div>
+      </div>
+
+      <div className="w-xl mt-5">
+        <b>Remittances sent</b> in an <u>average year</u>
       </div>
       <div className="overflow-x-auto">
         <div className="flex">
@@ -116,11 +123,19 @@ const GeoCharts = ({ ...props }) => {
           <div ref={containerRef4} className="shrink-0" />
         </div>
       </div>
+
+      <div className="w-xl mt-5">
+        <b>Disaster-induced remittances received</b> in an <u>average year</u>
+      </div>
       <div className="overflow-x-auto">
         <div className="flex">
           <div ref={containerRef5} className="shrink-0" />
           <div ref={containerRef6} className="shrink-0" />
         </div>
+      </div>
+
+      <div className="w-xl mt-5">
+        <b>Disaster-induced remittances sent</b> in an <u>average year</u>
       </div>
       <div className="overflow-x-auto">
         <div className="flex">
