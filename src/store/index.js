@@ -39,11 +39,6 @@ export const { roomStore, useRoomStore } = createRoomStore(
       }),
       config: {
         dataSources: [
-          // {
-          //   tableName: "earthquakes",
-          //   type: "url",
-          //   url: "https://huggingface.co/datasets/sqlrooms/earthquakes/resolve/main/earthquakes.parquet",
-          // },
           {
             tableName: "countries_geo",
             type: "url",
@@ -101,6 +96,10 @@ export const { roomStore, useRoomStore } = createRoomStore(
     ...createMosaicSlice()(set, get, store),
 
     ...createMapSettingsSlice()(set, get, store),
+
+    // Data stores
+    countriesGeoMap: null,
+    setCountriesGeoMap: (map) => set({ countriesGeoMap: map }),
   }),
   // ),
 );

@@ -9,6 +9,8 @@ import DeckGLMap from "@/components/deckgl/DeckGLMap";
 
 const MainView = () => {
   useDataPreparation();
+
+  // TODO: .toArray() the data needed
   const {
     migAndRemAvgYear,
     disasters,
@@ -22,7 +24,7 @@ const MainView = () => {
   return (
     <>
       <DeckGLMap
-        rawData={migAndRemByDestination}
+        data={migAndRemByDestination?.toArray()}
       />
 
       {/* <Notebook

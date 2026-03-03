@@ -1,7 +1,7 @@
 import DeckGL from "@deck.gl/react";
 import { useMemo, useRef, useState } from "react";
 import Map from "react-map-gl/maplibre";
-import { ScatterplotLayer } from "@deck.gl/layers";
+import useScatterPlotLayer from "./useScatterPlotLayer";
 
 const MAP_STYLE =
   "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json";
@@ -15,28 +15,13 @@ const INITIAL_VIEW_STATE = {
 };
 
 const DeckGLMap = ({ data }) => {
-  const deckRef = useRef();
-
   const [viewState, setViewState] = useState(INITIAL_VIEW_STATE);
 
-  const scatterLayer = useMemo(() => {
-    if (!data) return null;
-
-    return new ScatterplotLayer({
-      id: "ScatterplotLayer",
-      data,
-
-      stroked: true,
-      getPosition: (d) => [d.longitude, d.latitude],
-      getRadius: (d) => Math.sqrt(d.sim_remittances_with),
-      getFillColor: [255, 140, 0],
-      getLineColor: [0, 0, 0],
-      getLineWidth: 10,
-      radiusScale: 6,
-      pickable: true,
-      lineWidthMinPixels: 1,
-    });
-  }, [data]);
+  const remFromLayer = useScatterPlotLayer({
+    data,
+    radiusScale: 2,
+    // radiusScale: getZoomFactor({ zoom: viewState.zoom }) * 0.0003,
+  });
 
   return (
     <>
@@ -47,14 +32,20 @@ const DeckGLMap = ({ data }) => {
         }}
         controller={true}
         getTooltip={({ object }) => {
-          return object && object.destination;
+          return (
+            object && JSON.stringify(object)
+          );
         }}
-        layers={[scatterLayer]}
+        layers={[remFromLayer]}
       >
         <Map mapStyle={MAP_STYLE} projection="mercator" />
       </DeckGL>
     </>
   );
 };
+
+function getZoomFactor({ zoom, zoomOffset = 0 }) {
+  return Math.pow(2, Math.max(14 - zoom + zoomOffset, 0));
+}
 
 export default DeckGLMap;

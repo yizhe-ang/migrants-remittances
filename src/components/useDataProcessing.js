@@ -1,5 +1,6 @@
 import { useRoomStore } from "@/store";
 import { useSql } from "@sqlrooms/duckdb";
+import { useMemo } from "react";
 
 export default function useDataProcessing() {
   const migAndRemAvgYearReady = useRoomStore((state) =>
@@ -10,6 +11,9 @@ export default function useDataProcessing() {
   );
   const disastersImpactsReady = useRoomStore((state) =>
     state.db.findTableByName("disasters_impacts"),
+  );
+  const countriesGeoReady = useRoomStore((state) =>
+    state.db.findTableByName("countries_geo"),
   );
 
   const { data: migAndRemAvgYear } = useSql({
@@ -73,6 +77,29 @@ export default function useDataProcessing() {
     enabled: Boolean(migAndRemAvgYearReady),
   });
 
+  const { data: countriesGeo } = useSql({
+    query: /* sql */ `
+      SELECT *
+      FROM countries_geo
+    `,
+    enabled: Boolean(countriesGeoReady),
+  });
+
+  const countriesGeoMap = useMemo(() => {
+    if (!countriesGeo) return;
+
+    const map = new Map();
+
+    for (const d of countriesGeo.rows()) {
+      map.set(d.country, {
+        latitude: d.latitude,
+        longitude: d.longitude,
+      });
+    }
+
+    return map;
+  }, [countriesGeo]);
+
   return {
     migAndRemAvgYear,
     disasters,
@@ -81,7 +108,7 @@ export default function useDataProcessing() {
     migAndRemByRegion,
     migAndRemByDestination,
     migAndRemByOrigin,
-  }
+  };
 }
 
 function migAndRemByCountryQuery(group) {
@@ -117,7 +144,6 @@ function migAndRemByCountryQuery(group) {
     ON step1.${group} = countries_geo.country
   `;
 }
-
 
 function migAndRemByGroupQuery(group) {
   return /* sql */ `
