@@ -1,8 +1,10 @@
 import { useRoomStore } from "@/store";
 import { useSql } from "@sqlrooms/duckdb";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 
 export default function useDataProcessing() {
+  const setCountriesGeoMap = useRoomStore((state) => state.setCountriesGeoMap);
+
   const migAndRemAvgYearReady = useRoomStore((state) =>
     state.db.findTableByName("mig_and_rem_avg_year"),
   );
@@ -85,10 +87,10 @@ export default function useDataProcessing() {
     enabled: Boolean(countriesGeoReady),
   });
 
-  const countriesGeoMap = useMemo(() => {
+  useEffect(() => {
     if (!countriesGeo) return;
 
-    const map = new Map();
+    const countriesGeoMap = new Map();
 
     for (const d of countriesGeo.rows()) {
       map.set(d.country, {
@@ -97,7 +99,7 @@ export default function useDataProcessing() {
       });
     }
 
-    return map;
+    setCountriesGeoMap(countriesGeoMap);
   }, [countriesGeo]);
 
   return {

@@ -2,6 +2,7 @@ import DeckGL from "@deck.gl/react";
 import { useMemo, useRef, useState } from "react";
 import Map from "react-map-gl/maplibre";
 import useScatterPlotLayer from "./useScatterPlotLayer";
+import useArcLayer from "./useArcLayer";
 
 const MAP_STYLE =
   "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json";
@@ -22,6 +23,15 @@ const DeckGLMap = ({ data }) => {
     radiusScale: 2,
     // radiusScale: getZoomFactor({ zoom: viewState.zoom }) * 0.0003,
   });
+  // const remToLayer = useScatterPlotLayer({
+  //   data,
+  //   radiusScale: 2,
+  //   // radiusScale: getZoomFactor({ zoom: viewState.zoom }) * 0.0003,
+  // });
+
+  const remFlowsLayer = useArcLayer({
+
+  })
 
   return (
     <>

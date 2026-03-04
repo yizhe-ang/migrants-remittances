@@ -5,6 +5,8 @@ export default function useArcLayer({ data, ...props } = {}) {
   return useMemo(() => {
     if (!data) return null;
 
-    return new ArcLayer
+    return new ArcLayer({
+
+    })
   }, [])
 }
