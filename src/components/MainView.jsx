@@ -22,10 +22,13 @@ const MainView = () => {
 
   return (
     <>
-      <DeckGLMap
-        migAndRemByDestination={migAndRemByDestination?.toArray()}
-        migAndRemAvgYear={migAndRemAvgYear?.toArray()}
-      />
+      {migAndRemByDestination && migAndRemByOrigin && migAndRemAvgYear && (
+        <DeckGLMap
+          migAndRemByDestination={migAndRemByDestination.toArray()}
+          migAndRemByOrigin={migAndRemByOrigin.toArray()}
+          migAndRemAvgYear={migAndRemAvgYear.toArray()}
+        />
+      )}
 
       {/* <Notebook
         migAndRemAvgYear={migAndRemAvgYear}

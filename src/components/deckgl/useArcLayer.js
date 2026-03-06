@@ -10,6 +10,8 @@ import { useRoomStore } from "@/store";
 
 // TODO: Create controls
 
+// TODO: Edge bundling?
+
 export default function useArcLayer({ data, ...props } = {}) {
   const countriesGeoMap = useRoomStore((s) => s.countriesGeoMap);
 
@@ -28,13 +30,9 @@ export default function useArcLayer({ data, ...props } = {}) {
       },
       getSourceColor: [255, 0, 128, 255 * 0.5],
       getTargetColor: [0, 200, 255, 255 * 0.5],
-      // TODO: Scale according to value
-      // getWidth: 0.1,
-      getWidth: (d) => {
-        return d.sim_remittances_with;
-      },
-      widthScale: 0.000000001,
-      // widthMinPixels: 0.01,
+
+      widthUnits: "pixels",
+      // widthMinPixels: 0.1,
 
       getHeight: 1,
 
