@@ -18,9 +18,8 @@ import { interpolateYlOrBr } from "d3-scale-chromatic";
 import { extent, max } from "d3-array";
 import { interpolatePuBuGn } from "d3-scale-chromatic";
 import colors from "tailwindcss/colors";
-import chroma from 'chroma-js';
-
-console.log(colors.orange['200'])
+import chroma from "chroma-js";
+import { useControls } from "leva";
 
 const MAP_STYLE =
   "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json";
@@ -37,6 +36,12 @@ const INITIAL_VIEW_STATE = {
 const valueAccessor = (d) => d.sim_remittances_with;
 
 const DeckGLMap = ({ ...props }) => {
+  const { showRemFrom, showRemTo, showFlow } = useControls("deckgl", {
+    showRemFrom: true,
+    showRemTo: true,
+    showFlow: true
+  });
+
   const { migAndRemByDestination, migAndRemByOrigin, migAndRemAvgYear } = props;
 
   const [viewState, setViewState] = useState(INITIAL_VIEW_STATE);
@@ -66,28 +71,31 @@ const DeckGLMap = ({ ...props }) => {
   const widthScale = useMemo(() => {
     return scaleLinear()
       .domain([0, max(migAndRemAvgYear, valueAccessor)])
-      .range([0, 50])
-  }, [])
+      .range([0, 50]);
+  }, []);
 
   // TODO: Allow toggling of different layers
 
   const remFromLayer = useScatterPlotLayer({
     data: migAndRemByDestination,
     getRadius: (d) => remRadiusScale(valueAccessor(d)),
-    getFillColor: (d) => chroma(remFromColorScale(valueAccessor(d))).rgb()
+    getFillColor: (d) => chroma(remFromColorScale(valueAccessor(d))).rgb(),
     // radiusScale: getZoomFactor({ zoom: viewState.zoom }) * 0.0003,
+    visible: showRemFrom
   });
   const remToLayer = useScatterPlotLayer({
     data: migAndRemByOrigin,
     getRadius: (d) => remRadiusScale(valueAccessor(d)),
     getFillColor: (d) => chroma(remToColorScale(valueAccessor(d))).rgb(),
+    visible: showRemTo
   });
 
   const remFlowsLayer = useArcLayer({
     data: migAndRemAvgYear,
-    getSourceColor: [...chroma(colors.orange['500']).rgb(), 255 * 0.6],
-    getTargetColor: [...chroma(colors.blue['500']).rgb(), 255 * 0.6],
+    getSourceColor: [...chroma(colors.orange["500"]).rgb(), 255 * 0.6],
+    getTargetColor: [...chroma(colors.blue["500"]).rgb(), 255 * 0.6],
     getWidth: (d) => widthScale(valueAccessor(d)),
+    visible: showFlow
   });
 
   return (

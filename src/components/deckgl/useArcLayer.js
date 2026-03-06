@@ -39,7 +39,8 @@ export default function useArcLayer({ data, ...props } = {}) {
       getTilt: 10,
 
       pickable: true,
+
       ...props,
     });
-  }, [data, countriesGeoMap]);
+  }, [data, countriesGeoMap, props]);
 }

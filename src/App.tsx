@@ -3,12 +3,15 @@ import { SqlEditorModal } from "@sqlrooms/sql-editor";
 import { ThemeProvider, ThemeSwitch, useDisclosure } from "@sqlrooms/ui";
 import { TerminalIcon } from "lucide-react";
 import { roomStore } from "@/store";
+import { Leva } from "leva";
 
 export function App() {
   const sqlEditorDisclosure = useDisclosure();
 
   return (
     <>
+      <Leva theme={{ space: { colGap: 0 } }} />
+
       <ThemeProvider defaultTheme="light" storageKey="sqlrooms-ui-theme">
         <RoomShell className="h-screen" roomStore={roomStore}>
           <RoomShell.Sidebar className="gap-2">
