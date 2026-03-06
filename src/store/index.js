@@ -100,6 +100,9 @@ export const { roomStore, useRoomStore } = createRoomStore(
     // Data stores
     countriesGeoMap: null,
     setCountriesGeoMap: (map) => set({ countriesGeoMap: map }),
+
+    countriesAggStatsMap: null,
+    setCountriesAggStatsMap: (map) => set({ countriesAggStatsMap: map }),
   }),
   // ),
 );

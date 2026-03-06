@@ -5,6 +5,9 @@ import { useEffect, useMemo } from "react";
 
 export default function useDataProcessing() {
   const setCountriesGeoMap = useRoomStore((state) => state.setCountriesGeoMap);
+  const setCountriesAggStatsMap = useRoomStore(
+    (state) => state.setCountriesAggStatsMap,
+  );
 
   const migAndRemAvgYearReady = useRoomStore((state) =>
     state.db.findTableByName("mig_and_rem_avg_year"),
@@ -17,6 +20,9 @@ export default function useDataProcessing() {
   );
   const countriesGeoReady = useRoomStore((state) =>
     state.db.findTableByName("countries_geo"),
+  );
+  const countriesAggStatsReady = useRoomStore((state) =>
+    state.db.findTableByName("countries_agg_stats"),
   );
 
   const { data: migAndRemAvgYear } = useSql({
@@ -95,6 +101,22 @@ export default function useDataProcessing() {
 
     setCountriesGeoMap(countriesGeoMap);
   }, [countriesGeo]);
+
+  const { data: countriesAggStats } = useSql({
+    query: /* sql */ `
+      SELECT *
+      FROM countries_agg_stats
+    `,
+    enabled: Boolean(countriesAggStatsReady),
+  });
+
+  useEffect(() => {
+    if (!countriesAggStats) return;
+
+    const countriesAggStatsMap = index(countriesAggStats, (d) => d.country);
+
+    setCountriesAggStatsMap(countriesAggStatsMap);
+  }, [countriesAggStats]);
 
   return {
     migAndRemAvgYear,

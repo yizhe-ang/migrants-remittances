@@ -50,6 +50,12 @@ export default function useDataPreparation() {
     enabled: Boolean(countriesStatsReady),
   });
 
+  useEffect(() => {
+    if (countriesAggStatsReady) {
+      refreshTableSchemas();
+    }
+  }, [countriesAggStatsReady]);
+
   // FIXME: Have to fix per capita computation
   // Flows for an average year (aggregation)
   const { data: migAndRemAvgYearReady } = useSql({
@@ -96,6 +102,7 @@ export default function useDataPreparation() {
         GROUP BY (origin, destination)
       )
 
+      -- TODO: Just perform all the joining here
       -- Grab income group information
       SELECT
         a.*,

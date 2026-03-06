@@ -10,7 +10,6 @@ import DeckGLMap from "@/components/deckgl/DeckGLMap";
 const MainView = () => {
   useDataPreparation();
 
-  // TODO: .toArray() the data needed
   const {
     migAndRemAvgYear,
     disasters,
