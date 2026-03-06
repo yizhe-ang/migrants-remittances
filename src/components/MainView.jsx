@@ -24,7 +24,8 @@ const MainView = () => {
   return (
     <>
       <DeckGLMap
-        data={migAndRemByDestination?.toArray()}
+        migAndRemByDestination={migAndRemByDestination?.toArray()}
+        migAndRemAvgYear={migAndRemAvgYear?.toArray()}
       />
 
       {/* <Notebook

@@ -3,10 +3,12 @@ import { useMemo, useRef, useState } from "react";
 import Map from "react-map-gl/maplibre";
 import useScatterPlotLayer from "./useScatterPlotLayer";
 import useArcLayer from "./useArcLayer";
+import { _GlobeView } from "deck.gl";
 
 const MAP_STYLE =
   "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json";
 
+// TODO: Can tilt the map a little bit
 const INITIAL_VIEW_STATE = {
   latitude: 0,
   longitude: 0,
@@ -15,11 +17,15 @@ const INITIAL_VIEW_STATE = {
   pitch: 0,
 };
 
-const DeckGLMap = ({ data }) => {
+const DeckGLMap = ({ ...props }) => {
+  const { migAndRemByDestination, migAndRemAvgYear } = props;
+
   const [viewState, setViewState] = useState(INITIAL_VIEW_STATE);
 
+  // TODO: Allow toggling of different layers
+
   const remFromLayer = useScatterPlotLayer({
-    data,
+    data: migAndRemByDestination,
     radiusScale: 2,
     // radiusScale: getZoomFactor({ zoom: viewState.zoom }) * 0.0003,
   });
@@ -30,8 +36,8 @@ const DeckGLMap = ({ data }) => {
   // });
 
   const remFlowsLayer = useArcLayer({
-
-  })
+    data: migAndRemAvgYear,
+  });
 
   return (
     <>
@@ -40,15 +46,21 @@ const DeckGLMap = ({ data }) => {
         onViewStateChange={({ viewState: next }) => {
           setViewState(next);
         }}
-        controller={true}
-        getTooltip={({ object }) => {
-          return (
-            object && JSON.stringify(object)
-          );
+        controller={{
+          inertia: true,
         }}
-        layers={[remFromLayer]}
+        getTooltip={({ object }) => {
+          return object && JSON.stringify(object);
+        }}
+        layers={[remFromLayer, remFlowsLayer]}
+        // views={new _GlobeView()}
       >
-        <Map mapStyle={MAP_STYLE} projection="mercator" />
+        <Map
+          reuseMaps
+          mapStyle={MAP_STYLE}
+          projection="mercator"
+          // projection="globe"
+        />
       </DeckGL>
     </>
   );

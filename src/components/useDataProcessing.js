@@ -1,5 +1,6 @@
 import { useRoomStore } from "@/store";
 import { useSql } from "@sqlrooms/duckdb";
+import { index } from "d3-array";
 import { useEffect, useMemo } from "react";
 
 export default function useDataProcessing() {
@@ -90,14 +91,7 @@ export default function useDataProcessing() {
   useEffect(() => {
     if (!countriesGeo) return;
 
-    const countriesGeoMap = new Map();
-
-    for (const d of countriesGeo.rows()) {
-      map.set(d.country, {
-        latitude: d.latitude,
-        longitude: d.longitude,
-      });
-    }
+    const countriesGeoMap = index(countriesGeo.toArray(), (d) => d.country);
 
     setCountriesGeoMap(countriesGeoMap);
   }, [countriesGeo]);

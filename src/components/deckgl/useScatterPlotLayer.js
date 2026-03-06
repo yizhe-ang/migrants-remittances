@@ -1,6 +1,8 @@
 import { useMemo } from "react";
 import { ScatterplotLayer } from "@deck.gl/layers";
 
+// TODO: Should cluster nearby countries?
+
 export default function useScatterPlotLayer({ data, ...props } = {}) {
   return useMemo(() => {
     if (!data) return null;

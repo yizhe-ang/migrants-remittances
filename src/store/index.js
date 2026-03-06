@@ -34,9 +34,9 @@ export const { roomStore, useRoomStore } = createRoomStore(
 
     // Room shell slice
     ...createRoomShellSlice({
-      connector: createWasmDuckDbConnector({
-        initializationQuery: "LOAD spatial",
-      }),
+      // connector: createWasmDuckDbConnector({
+      //   initializationQuery: "LOAD spatial",
+      // }),
       config: {
         dataSources: [
           {
