@@ -23,14 +23,15 @@ export default function useScatterPlotLayer({ data, ...props } = {}) {
 
       pickable: true,
 
-      // parameters: {
-      //   blendColorOperation: "add",
-      //   blendColorSrcFactor: "src-alpha",
-      //   blendColorDstFactor: "one",
-      //   blendAlphaOperation: "add",
-      //   blendAlphaSrcFactor: "one",
-      //   blendAlphaDstFactor: "one",
-      // },
+      parameters: {
+        depthTest: false,
+        // blendColorOperation: "add",
+        // blendColorSrcFactor: "src-alpha",
+        // blendColorDstFactor: "one",
+        // blendAlphaOperation: "add",
+        // blendAlphaSrcFactor: "one",
+        // blendAlphaDstFactor: "one",
+      },
 
       radiusUnits: "pixels",
       radiusMinPixels: 2,

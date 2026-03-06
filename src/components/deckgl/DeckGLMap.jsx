@@ -38,6 +38,8 @@ const INITIAL_VIEW_STATE = {
 
 const valueAccessor = (d) => d.sim_remittances_with;
 
+// TODO: Two views? One for remittances and one for disasters
+
 const DeckGLMap = ({ ...props }) => {
   const {
     migAndRemByDestination,
