@@ -13,6 +13,7 @@ const MainView = () => {
   const {
     migAndRemAvgYear,
     disasters,
+    disastersByCountry,
     disastersImpactsByMonth,
     migAndRemByIncome,
     migAndRemByRegion,
@@ -22,11 +23,13 @@ const MainView = () => {
 
   return (
     <>
-      {migAndRemByDestination && migAndRemByOrigin && migAndRemAvgYear && (
+      {migAndRemByDestination && migAndRemByOrigin && migAndRemAvgYear && disasters && disastersByCountry && (
         <DeckGLMap
           migAndRemByDestination={migAndRemByDestination.toArray()}
           migAndRemByOrigin={migAndRemByOrigin.toArray()}
           migAndRemAvgYear={migAndRemAvgYear.toArray()}
+          disasters={disasters.toArray()}
+          disastersByCountry={disastersByCountry.toArray()}
         />
       )}
 

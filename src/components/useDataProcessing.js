@@ -35,8 +35,44 @@ export default function useDataProcessing() {
 
   const { data: disasters } = useSql({
     query: /* sql */ `
-      SELECT *
-      FROM disasters
+      SELECT
+        a.*,
+        b.latitude,
+        b.longitude
+
+      FROM disasters a
+
+      LEFT JOIN countries_geo b
+        ON a.country = b.country
+    `,
+    enabled: Boolean(disastersReady) && Boolean(countriesGeoReady),
+  });
+
+  const { data: disastersByCountry } = useSql({
+    query: /* sql */ `
+      WITH step_1 AS (
+        SELECT
+          country,
+          disaster_type,
+          SUM(affected) AS affected,
+
+        FROM disasters
+
+        GROUP BY country, disaster_type
+      ),
+
+      step_2 AS (
+        PIVOT step_1
+        ON disaster_type
+        USING COALESCE(SUM(affected), 0)
+        GROUP BY country
+      )
+
+      SELECT
+        *,
+        (drought + earthquake + flood + storm) AS affected,
+
+      FROM step_2
     `,
     enabled: Boolean(disastersReady),
   });
@@ -122,6 +158,7 @@ export default function useDataProcessing() {
     migAndRemAvgYear,
     disasters,
     disastersImpactsByMonth,
+    disastersByCountry,
     migAndRemByIncome,
     migAndRemByRegion,
     migAndRemByDestination,
