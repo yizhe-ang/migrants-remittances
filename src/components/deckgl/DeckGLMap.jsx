@@ -1,5 +1,5 @@
 import DeckGL from "@deck.gl/react";
-import { useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import Map from "react-map-gl/maplibre";
 import useScatterPlotLayer from "./useScatterPlotLayer";
 import useArcLayer from "./useArcLayer";
@@ -197,6 +197,14 @@ const DeckGLMap = ({ ...props }) => {
     visible: showFlow,
   });
 
+  const layerFilter = useCallback(({ layer, viewport }) => {
+    if (viewport.id === "left") {
+      return !["disasters"].includes(layer.id);
+    } else {
+      return ["disasters"].includes(layer.id);
+    }
+  });
+
   return (
     <>
       <DeckGL
@@ -219,6 +227,7 @@ const DeckGLMap = ({ ...props }) => {
           );
         }}
         layers={[remFromLayer, remToLayer, remFlowsLayer, disastersLayer]}
+        layerFilter={layerFilter}
       >
         <MapView id="left" controller={true} x={0} width="50%">
           <Map id="left" mapStyle={MAP_STYLE} />
