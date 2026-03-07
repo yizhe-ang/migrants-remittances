@@ -21,8 +21,10 @@ import { extent, max } from "d3-array";
 import { interpolatePuBuGn } from "d3-scale-chromatic";
 import colors from "tailwindcss/colors";
 import chroma from "chroma-js";
-import { useControls } from "leva";
+import { folder, useControls } from "leva";
 import { useRoomStore } from "@/store";
+import { Slider } from "@/components/ui/slider";
+import { DataFilterExtension } from "@deck.gl/extensions";
 
 const MAP_STYLE =
   "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json";
@@ -49,15 +51,43 @@ const DeckGLMap = ({ ...props }) => {
     disastersByCountry,
   } = props;
 
-  const { showRemFrom, showRemTo, showFlow, showDisasters } = useControls(
-    "deckgl",
-    {
+  const disastersProcessed = useMemo(() => {
+    return disasters
+      .sort((a, b) => b.affected - a.affected)
+      .map((d) => {
+        return {
+          ...d,
+          longitude: d.longitude + (Math.random() * 2 - 1),
+          latitude: d.latitude + (Math.random() * 2 - 1),
+        };
+      });
+  }, [disasters]);
+
+  const {
+    filterByTimestamp,
+    showRemFrom,
+    showRemTo,
+    showFlow,
+    showDisasters,
+    disastersRadiusExponent,
+  } = useControls("deckgl", {
+    layers: folder({
+      filterByTimestamp: false,
       showRemFrom: false,
       showRemTo: false,
       showFlow: false,
       showDisasters: true,
-    },
-  );
+    }),
+    scales: folder({
+      disastersRadiusExponent: {
+        value: 0.25,
+        min: 0,
+        max: 1,
+      },
+    }),
+  });
+
+  const [timestamp, setTimestamp] = useState(new Date("2010-01-01").getTime());
 
   const countriesGeoMap = useRoomStore((s) => s.countriesGeoMap);
 
@@ -96,10 +126,11 @@ const DeckGLMap = ({ ...props }) => {
 
   const disastersRadiusScale = useMemo(() => {
     // return scaleSqrt()
-    return scalePow().exponent(0.25)
-      .domain([0, max(disasters, (d) => d.affected)])
+    return scalePow()
+      .exponent(disastersRadiusExponent)
+      .domain([0, max(disastersProcessed, (d) => d.affected)])
       .range([0, 70]);
-  }, []);
+  }, [disastersRadiusExponent]);
 
   const widthScale = useMemo(() => {
     return scaleLinear()
@@ -123,14 +154,34 @@ const DeckGLMap = ({ ...props }) => {
     visible: showRemTo,
   });
   const disastersLayer = useScatterPlotLayer({
-    data: disasters,
+    data: disastersProcessed,
+
     getRadius: (d) => disastersRadiusScale(d.affected),
-    getFillColor: (d) => [...chroma(disastersColorScale(d.disaster_type)).rgb(), 255 * 0.8],
+    radiusMinPixels: 3,
+
+    getFillColor: (d) => [
+      ...chroma(disastersColorScale(d.disaster_type)).rgb(),
+      255 * 0.8,
+    ],
     getPosition: (d) => [
-      d.longitude + (Math.random() * 2 - 1),
-      d.latitude + (Math.random() * 2 - 1)
+      // d.longitude + (Math.random() * 2 - 1),
+      // d.latitude + (Math.random() * 2 - 1)
+      d.longitude,
+      d.latitude,
     ],
     visible: showDisasters,
+
+    getFilterValue: (d) => [d.start_date, d.end_date],
+    filterSoftRange: [
+      [-Infinity, timestamp],
+      [timestamp, Infinity],
+    ],
+    filterRange: [
+      [-Infinity, timestamp + 2_592_000_000 * 3],
+      [timestamp - 2_592_000_000 * 3, Infinity],
+    ],
+    filterEnabled: filterByTimestamp,
+    extensions: [new DataFilterExtension({ filterSize: 2 })],
   });
 
   const remFlowsLayer = useArcLayer({
@@ -164,6 +215,16 @@ const DeckGLMap = ({ ...props }) => {
           // projection="globe"
         />
       </DeckGL>
+
+      <div className="absolute bottom-10 left-0 px-4 w-full flex-col flex gap-2">
+        <div>{new Date(timestamp).toISOString().split("T")[0]}</div>
+        <Slider
+          value={timestamp}
+          onValueChange={setTimestamp}
+          min={new Date("2010-01-01").getTime()}
+          max={new Date("2019-12-31").getTime()}
+        />
+      </div>
     </>
   );
 };

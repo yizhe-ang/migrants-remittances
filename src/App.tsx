@@ -10,7 +10,12 @@ export function App() {
 
   return (
     <>
-      <Leva theme={{ space: { colGap: 0 } }} />
+      <Leva
+        theme={{
+          space: { colGap: 0 },
+          sizes: { rootWidth: "300px", controlWidth: "150px" },
+        }}
+      />
 
       <ThemeProvider defaultTheme="light" storageKey="sqlrooms-ui-theme">
         <RoomShell className="h-screen" roomStore={roomStore}>

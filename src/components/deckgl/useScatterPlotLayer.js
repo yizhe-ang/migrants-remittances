@@ -1,6 +1,8 @@
 import { useMemo } from "react";
 import { ScatterplotLayer } from "@deck.gl/layers";
 
+// TODO: Sort by size
+
 // TODO: To cluster nearby points?
 
 export default function useScatterPlotLayer({ data, ...props } = {}) {
@@ -12,13 +14,11 @@ export default function useScatterPlotLayer({ data, ...props } = {}) {
 
       stroked: true,
 
-      // radiusScale: 1,
-
       getPosition: (d) => [d.longitude, d.latitude],
 
       getFillColor: [255, 140, 0],
 
-      getLineColor: [0, 0, 0],
+      getLineColor: [0, 0, 0, 255 * 0.5],
       getLineWidth: 10,
 
       pickable: true,
