@@ -203,7 +203,15 @@ const DeckGLMap = ({ ...props }) => {
           inertia: true,
         }}
         getTooltip={({ object }) => {
-          return object && JSON.stringify(object);
+          // return object && JSON.stringify(object);
+          return (
+            object && {
+              html: `<pre>${JSON.stringify(object, null, 2)}</pre>`,
+              style: {
+                fontSize: "10px",
+              },
+            }
+          );
         }}
         layers={[remFromLayer, remToLayer, remFlowsLayer, disastersLayer]}
         // views={new _GlobeView()}
