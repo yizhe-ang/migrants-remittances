@@ -3,7 +3,7 @@ import { useMemo, useRef, useState } from "react";
 import Map from "react-map-gl/maplibre";
 import useScatterPlotLayer from "./useScatterPlotLayer";
 import useArcLayer from "./useArcLayer";
-import { _GlobeView } from "deck.gl";
+import { _GlobeView, MapView } from "deck.gl";
 import {
   scaleLinear,
   scaleLog,
@@ -73,7 +73,7 @@ const DeckGLMap = ({ ...props }) => {
   } = useControls("deckgl", {
     layers: folder({
       filterByTimestamp: false,
-      showRemFrom: false,
+      showRemFrom: true,
       showRemTo: false,
       showFlow: false,
       showDisasters: true,
@@ -91,7 +91,7 @@ const DeckGLMap = ({ ...props }) => {
 
   const countriesGeoMap = useRoomStore((s) => s.countriesGeoMap);
 
-  // const [viewState, setViewState] = useState(INITIAL_VIEW_STATE);
+  const [viewState, setViewState] = useState(INITIAL_VIEW_STATE);
 
   const remFromColorScale = useMemo(() => {
     return scaleSequentialPow(interpolateYlOrBr)
@@ -141,6 +141,7 @@ const DeckGLMap = ({ ...props }) => {
   // TODO: Allow toggling of different layers
 
   const remFromLayer = useScatterPlotLayer({
+    id: "remFrom",
     data: migAndRemByDestination,
     getRadius: (d) => remRadiusScale(valueAccessor(d)),
     getFillColor: (d) => chroma(remFromColorScale(valueAccessor(d))).rgb(),
@@ -148,12 +149,15 @@ const DeckGLMap = ({ ...props }) => {
     visible: showRemFrom,
   });
   const remToLayer = useScatterPlotLayer({
+    id: "remTo",
     data: migAndRemByOrigin,
     getRadius: (d) => remRadiusScale(valueAccessor(d)),
     getFillColor: (d) => chroma(remToColorScale(valueAccessor(d))).rgb(),
     visible: showRemTo,
   });
+
   const disastersLayer = useScatterPlotLayer({
+    id: "disasters",
     data: disastersProcessed,
 
     getRadius: (d) => disastersRadiusScale(d.affected),
@@ -161,7 +165,7 @@ const DeckGLMap = ({ ...props }) => {
 
     getFillColor: (d) => [
       ...chroma(disastersColorScale(d.disaster_type)).rgb(),
-      255 * 0.8,
+      255 * 0.7,
     ],
     getPosition: (d) => [
       // d.longitude + (Math.random() * 2 - 1),
@@ -185,6 +189,7 @@ const DeckGLMap = ({ ...props }) => {
   });
 
   const remFlowsLayer = useArcLayer({
+    id: "remFlows",
     data: migAndRemAvgYear,
     getSourceColor: [...chroma(colors.orange["500"]).rgb(), 255 * 0.6],
     getTargetColor: [...chroma(colors.blue["500"]).rgb(), 255 * 0.6],
@@ -195,10 +200,10 @@ const DeckGLMap = ({ ...props }) => {
   return (
     <>
       <DeckGL
-        initialViewState={INITIAL_VIEW_STATE}
-        // onViewStateChange={({ viewState: next }) => {
-        //   setViewState(next);
-        // }}
+        viewState={viewState}
+        onViewStateChange={({ viewState: next }) => {
+          setViewState(next);
+        }}
         controller={{
           inertia: true,
         }}
@@ -214,14 +219,13 @@ const DeckGLMap = ({ ...props }) => {
           );
         }}
         layers={[remFromLayer, remToLayer, remFlowsLayer, disastersLayer]}
-        // views={new _GlobeView()}
       >
-        <Map
-          reuseMaps
-          mapStyle={MAP_STYLE}
-          projection="mercator"
-          // projection="globe"
-        />
+        <MapView id="left" controller={true} x={0} width="50%">
+          <Map id="left" mapStyle={MAP_STYLE} />
+        </MapView>
+        <MapView id="right" controller={true} x="50%" width="50%">
+          <Map id="right" mapStyle={MAP_STYLE} />
+        </MapView>
       </DeckGL>
 
       <div className="absolute bottom-10 left-0 px-4 w-full flex-col flex gap-2">
