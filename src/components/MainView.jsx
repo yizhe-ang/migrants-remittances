@@ -23,7 +23,7 @@ const MainView = () => {
 
   return (
     <>
-      {migAndRemByDestination && migAndRemByOrigin && migAndRemAvgYear && disasters && disastersByCountry && (
+      {/* {migAndRemByDestination && migAndRemByOrigin && migAndRemAvgYear && disasters && disastersByCountry && (
         <DeckGLMap
           migAndRemByDestination={migAndRemByDestination.toArray()}
           migAndRemByOrigin={migAndRemByOrigin.toArray()}
@@ -31,9 +31,9 @@ const MainView = () => {
           disasters={disasters.toArray()}
           disastersByCountry={disastersByCountry.toArray()}
         />
-      )}
+      )} */}
 
-      {/* <Notebook
+      <Notebook
         migAndRemAvgYear={migAndRemAvgYear}
         disasters={disasters}
         disastersImpactsByMonth={disastersImpactsByMonth}
@@ -41,7 +41,7 @@ const MainView = () => {
         migAndRemByRegion={migAndRemByRegion}
         migAndRemByDestination={migAndRemByDestination}
         migAndRemByOrigin={migAndRemByOrigin}
-      /> */}
+      />
     </>
   );
 };

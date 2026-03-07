@@ -3,11 +3,13 @@ import * as Plot from "@observablehq/plot";
 import { useSql } from "@sqlrooms/duckdb";
 import { mean, rollup, sum } from "d3-array";
 
+const disasterTypes = ["flood", "earthquake", "drought", "storm"];
+
 const disasterTypeMap = new Map([
-  ["Flood", "floods"],
-  ["Earthquake", "earthquakes"],
-  ["Storm", "storms"],
-  ["Drought", "droughts"],
+  ["flood", "floods"],
+  ["earthquake", "earthquakes"],
+  ["storm", "storms"],
+  ["drought", "droughts"],
 ]);
 
 const DisastersCharts = ({ ...props }) => {
@@ -19,18 +21,19 @@ const DisastersCharts = ({ ...props }) => {
     return disasters.toArray().map((d) => {
       return {
         ...d,
-        Date: new Date(d.Date),
-        Affected: Number(d.Affected),
+        start_date: new Date(d.start_date),
+        end_date: new Date(d.end_date),
       };
     });
   }, [disasters]);
+
+  console.log(disastersProcessed[0]);
 
   const disastersImpactsByMonthProcessed = useMemo(() => {
     return disastersImpactsByMonth.toArray().map((d) => {
       return {
         ...d,
         date: new Date(d.date),
-        // Affected: Number(d.Affected),
       };
     });
   }, [disastersImpactsByMonth]);
@@ -48,14 +51,14 @@ const DisastersCharts = ({ ...props }) => {
 
     const affectedByDisaster = rollup(
       disastersProcessed,
-      (v) => sum(v, (d) => d.Affected),
-      (d) => d["Disaster Type"],
+      (v) => sum(v, (d) => d.affected),
+      (d) => d["disaster_type"],
     );
 
     const affectedPerOccurrence = rollup(
       disastersProcessed,
-      (v) => mean(v, (d) => d.Affected),
-      (d) => d["Disaster Type"],
+      (v) => mean(v, (d) => d.affected),
+      (d) => d["disaster_type"],
     );
 
     [...disasterTypeMap.keys()].forEach((k) => {
@@ -84,13 +87,15 @@ const DisastersCharts = ({ ...props }) => {
 
   // Bee swarm
   useEffect(() => {
+    console.log(disastersProcessed[0]);
+
     const plot = Plot.plot({
       // title: "People affected by each disaster, over time",
       height: 500,
       width: 700,
       color: {
         legend: true,
-        domain: ["Flood", "Earthquake", "Drought", "Storm"],
+        domain: disasterTypes,
       },
       r: {
         range: [0, 70],
@@ -100,9 +105,9 @@ const DisastersCharts = ({ ...props }) => {
         Plot.dot(
           disastersProcessed,
           Plot.dodgeY("middle", {
-            x: "Date",
-            r: "Affected",
-            fill: "Disaster Type",
+            x: "start_date",
+            r: "affected",
+            fill: "disaster_type",
             // fy: "Disaster Type",
           }),
         ),
@@ -116,7 +121,7 @@ const DisastersCharts = ({ ...props }) => {
       marginTop: 50,
       color: {
         // legend: true,
-        domain: ["Flood", "Earthquake", "Drought", "Storm"],
+        domain: disasterTypes,
       },
       r: {
         range: [0, 70],
@@ -126,10 +131,10 @@ const DisastersCharts = ({ ...props }) => {
         Plot.dot(
           disastersProcessed,
           Plot.dodgeY("middle", {
-            x: "Date",
-            r: "Affected",
-            fill: "Disaster Type",
-            fy: "Disaster Type",
+            x: "start_date",
+            r: "affected",
+            fill: "disaster_type",
+            fy: "disaster_type",
           }),
         ),
       ],
@@ -154,7 +159,7 @@ const DisastersCharts = ({ ...props }) => {
       marginLeft: 90,
       color: {
         // legend: true,
-        domain: ["Flood", "Earthquake", "Drought", "Storm"],
+        domain: disasterTypes,
       },
       marks: [
         Plot.barX(
@@ -164,9 +169,9 @@ const DisastersCharts = ({ ...props }) => {
               x: "sum",
             },
             {
-              x: "Affected",
-              y: "Disaster Type",
-              fill: "Disaster Type",
+              x: "affected",
+              y: "disaster_type",
+              fill: "disaster_type",
               sort: { y: "x", reverse: true },
             },
           ),
@@ -182,7 +187,7 @@ const DisastersCharts = ({ ...props }) => {
       marginLeft: 90,
       color: {
         // legend: true,
-        domain: ["Flood", "Earthquake", "Drought", "Storm"],
+        domain: disasterTypes,
       },
       marks: [
         Plot.barX(
@@ -192,9 +197,9 @@ const DisastersCharts = ({ ...props }) => {
               x: "mean",
             },
             {
-              x: "Affected",
-              y: "Disaster Type",
-              fill: "Disaster Type",
+              x: "affected",
+              y: "disaster_type",
+              fill: "disaster_type",
               sort: { y: "x", reverse: true },
             },
           ),
@@ -210,7 +215,7 @@ const DisastersCharts = ({ ...props }) => {
       marginLeft: 90,
       color: {
         // legend: true,
-        domain: ["Flood", "Earthquake", "Drought", "Storm"],
+        domain: disasterTypes,
       },
       marks: [
         Plot.barX(
@@ -220,9 +225,9 @@ const DisastersCharts = ({ ...props }) => {
               x: "count",
             },
             {
-              x: "Affected",
-              y: "Disaster Type",
-              fill: "Disaster Type",
+              x: "affected",
+              y: "disaster_type",
+              fill: "disaster_type",
               sort: { y: "x", reverse: true },
             },
           ),
@@ -337,44 +342,42 @@ const DisastersCharts = ({ ...props }) => {
 
     // containerRef4.current.append(plot);
 
-    const plots = ["Flood", "Earthquake", "Drought", "Storm"].map(
-      (disasterType) => {
-        const plot = Plot.plot({
-          height: 100,
-          width: 700,
-          marginLeft: 80,
-          color: {
-            // legend: true,
-            domain: ["Flood", "Earthquake", "Drought", "Storm"],
-          },
-          y: {
-            // type: "log",
-          },
-          marks: [
-            Plot.areaY(
-              disastersProcessed,
-              Plot.binX(
-                {
-                  y: "sum",
-                },
-                {
-                  x: "Date",
-                  y: "Affected",
-                  fill: "Disaster Type",
-                  // interval: "year",
-                  interval: "month",
-                  filter: (d) => d["Disaster Type"] === disasterType,
-                },
-              ),
+    const plots = disasterTypes.map((disasterType) => {
+      const plot = Plot.plot({
+        height: 100,
+        width: 700,
+        marginLeft: 80,
+        color: {
+          // legend: true,
+          domain: disasterTypes,
+        },
+        y: {
+          // type: "log",
+        },
+        marks: [
+          Plot.areaY(
+            disastersProcessed,
+            Plot.binX(
+              {
+                y: "sum",
+              },
+              {
+                x: "start_date",
+                y: "affected",
+                fill: "disaster_type",
+                // interval: "year",
+                interval: "month",
+                filter: (d) => d["disaster_type"] === disasterType,
+              },
             ),
-          ],
-        });
+          ),
+        ],
+      });
 
-        containerRef4.current.append(plot);
+      containerRef4.current.append(plot);
 
-        return plot;
-      },
-    );
+      return plot;
+    });
 
     return () => {
       plots.forEach((plot) => plot.remove());
@@ -390,7 +393,7 @@ const DisastersCharts = ({ ...props }) => {
       marginLeft: 80,
       color: {
         // legend: true,
-        domain: ["Flood", "Earthquake", "Drought", "Storm"],
+        domain: disasterTypes,
       },
       marks: [
         Plot.rectY(
@@ -412,7 +415,7 @@ const DisastersCharts = ({ ...props }) => {
       marginLeft: 80,
       color: {
         // legend: true,
-        domain: ["Flood", "Earthquake", "Drought", "Storm"],
+        domain: disasterTypes,
       },
       marks: [
         Plot.rectY(
