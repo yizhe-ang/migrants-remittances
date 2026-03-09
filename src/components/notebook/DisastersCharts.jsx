@@ -27,8 +27,6 @@ const DisastersCharts = ({ ...props }) => {
     });
   }, [disasters]);
 
-  console.log(disastersProcessed[0]);
-
   const disastersImpactsByMonthProcessed = useMemo(() => {
     return disastersImpactsByMonth.toArray().map((d) => {
       return {
@@ -87,8 +85,6 @@ const DisastersCharts = ({ ...props }) => {
 
   // Bee swarm
   useEffect(() => {
-    console.log(disastersProcessed[0]);
-
     const plot = Plot.plot({
       // title: "People affected by each disaster, over time",
       height: 500,

@@ -3,6 +3,7 @@ import GeoCharts from "./GeoCharts";
 import DisastersCharts from "./DisastersCharts";
 import EurostatmapCharts from "./EurostatmapCharts";
 import FlowMap from "./FlowMap";
+import ChordCharts from "./ChordCharts";
 
 const Notebook = ({ ...props }) => {
   const {
@@ -35,8 +36,16 @@ const Notebook = ({ ...props }) => {
 
       <FlowMap />
 
-      {migAndRemByIncome && migAndRemAvgYear && (
+      {migAndRemByIncome && migAndRemAvgYear && migAndRemByRegion && (
         <SankeyCharts
+          migAndRemByIncome={migAndRemByIncome.toArray()}
+          migAndRemByRegion={migAndRemByRegion.toArray()}
+          migAndRemAvgYear={migAndRemAvgYear.toArray()}
+        />
+      )}
+
+      {migAndRemByIncome && migAndRemAvgYear && migAndRemByRegion && (
+        <ChordCharts
           migAndRemByIncome={migAndRemByIncome.toArray()}
           migAndRemByRegion={migAndRemByRegion.toArray()}
           migAndRemAvgYear={migAndRemAvgYear.toArray()}

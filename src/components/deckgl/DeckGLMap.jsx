@@ -229,6 +229,9 @@ const DeckGLMap = ({ ...props }) => {
         layers={[remFromLayer, remToLayer, remFlowsLayer, disastersLayer]}
         layerFilter={layerFilter}
       >
+        {/* <MapView controller={true} x={0} width="100%">
+          <Map mapStyle={MAP_STYLE} />
+        </MapView> */}
         <MapView id="left" controller={true} x={0} width="50%">
           <Map id="left" mapStyle={MAP_STYLE} />
         </MapView>

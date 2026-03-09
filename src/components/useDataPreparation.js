@@ -133,4 +133,27 @@ export default function useDataPreparation() {
       refreshTableSchemas();
     }
   }, [migAndRemAvgYearReady]);
+
+  const { data: flowsPerYearReady } = useSql({
+    query: /* sql */ `
+      CREATE OR REPLACE VIEW flows_per_year AS
+
+      SELECT
+        EXTRACT('year' FROM date) AS year,
+        origin,
+        destination,
+        sum(sim_remittances_with) AS sim_remittances_with
+
+      FROM mig_and_rem_derived
+
+      GROUP BY (year, origin, destination)
+    `,
+    enabled: Boolean(migAndRemDerivedReady),
+  });
+
+  useEffect(() => {
+    if (flowsPerYearReady) {
+      refreshTableSchemas();
+    }
+  }, [flowsPerYearReady]);
 }
