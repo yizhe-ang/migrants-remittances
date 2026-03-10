@@ -80,6 +80,12 @@ export const { roomStore, useRoomStore } = createRoomStore(
     remRadiusScale: null,
     setRemRadiusScale: (scale) => set({ remRadiusScale: scale }),
 
+    remFromColorScale: null,
+    setRemFromColorScale: (scale) => set({ remFromColorScale: scale }),
+
+    remToColorScale: null,
+    setRemToColorScale: (scale) => set({ remToColorScale: scale }),
+
     // Controls
     selectedYear: 2019,
     setSelectedYear: (selectedYear) => set({ selectedYear }),

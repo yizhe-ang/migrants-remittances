@@ -20,7 +20,7 @@ const WorldMap = () => {
     material.colorNode = Fn(() => {
       const color = texture(dayTexture, uv()).toVar();
 
-      color.mulAssign(30.0);
+      color.mulAssign(40.0).saturate();
 
       return color;
     })();

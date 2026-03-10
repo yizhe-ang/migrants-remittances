@@ -7,6 +7,7 @@ import Notebook from "@/components/notebook/Notebook";
 import useDataProcessing from "@/components/data/useDataProcessing";
 import DeckGLMap from "@/components/deckgl/DeckGLMap";
 import Three from "@/components/three/Three";
+import useScales from "@/components/data/useScales";
 
 const MainView = () => {
   useDataPreparation();
@@ -24,6 +25,8 @@ const MainView = () => {
     flowsPerYear,
     countriesStats,
   } = useDataProcessing();
+
+  useScales()
 
   return (
     <>

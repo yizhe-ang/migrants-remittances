@@ -1,5 +1,6 @@
 import { useRoomStore } from "@/store";
 import { useFrame } from "@react-three/fiber";
+import { index } from "d3-array";
 import { useMemo, useRef } from "react";
 import {
   Fn,
@@ -12,6 +13,8 @@ import {
   uv,
   vec2,
   smoothstep,
+  fwidth,
+  float,
   cameraPosition,
   uniform,
 } from "three/tsl";
@@ -25,14 +28,20 @@ const Points = ({ ...props }) => {
   const flowsByOrigin = useRoomStore((state) => state.flowsByOrigin);
   const countriesGeo = useRoomStore((state) => state.countriesGeo);
 
-  const data = useMemo(() => {
+  const remRadiusScale = useRoomStore((state) => state.remRadiusScale);
+  const remToColorScale = useRoomStore((state) => state.remToColorScale);
+
+  const dataIndex = useMemo(() => {
     if (!flowsByOrigin) return null;
 
-    return flowsByOrigin.filter((d) => d.year === 2019);
+    const data = flowsByOrigin.filter((d) => d.year === 2019);
+
+    return index(data, (d) => d.origin);
   }, [flowsByOrigin]);
 
   const { mesh, pickingTexture, pickingScene, u } = useMemo(() => {
-    if (!countriesGeo) return {};
+    if (!countriesGeo || !dataIndex || !remRadiusScale || !remToColorScale)
+      return {};
 
     const u = {
       hoveredId: uniform(0),
@@ -40,10 +49,16 @@ const Points = ({ ...props }) => {
 
     const geometry = new THREE.PlaneGeometry(1, 1);
 
-    const material = new THREE.MeshPhysicalNodeMaterial({
+    // const material = new THREE.MeshPhysicalNodeMaterial({
+    //   roughness: 0.5,
+    //   metalness: 0.5,
+    //   transparent: true,
+    // });
+    const material = new THREE.MeshBasicNodeMaterial({
       roughness: 0.5,
       metalness: 0.5,
       transparent: true,
+      // alphaTest: 0.01,
     });
 
     const mesh = new THREE.InstancedMesh(
@@ -56,6 +71,7 @@ const Points = ({ ...props }) => {
     // Init buffers / attributes
     const positions = [];
     const sizes = [];
+    const colors = [];
 
     const pickingColors = [];
 
@@ -64,14 +80,27 @@ const Points = ({ ...props }) => {
 
       positions.push(c.longitude, c.latitude, 0);
 
+      const d = dataIndex.get(c.country);
+      if (d) {
+        sizes.push(remRadiusScale(d.sim_remittances_with));
+
+        colorDummy.setStyle(remToColorScale(d.sim_remittances_with));
+        colors.push(colorDummy.r, colorDummy.g, colorDummy.b);
+      } else {
+        // If doesn't exist, don't render at all
+        sizes.push(0);
+
+        colors.push(0, 0, 0);
+      }
+
+      // GPU picking
       colorDummy.setHex(i + 1, THREE.NoColorSpace);
       pickingColors.push(colorDummy.r, colorDummy.g, colorDummy.b);
-
-      sizes.push(Math.random() * 3);
     }
 
     const positionsBuffer = instancedArray(new Float32Array(positions), "vec3");
     const sizesBuffer = instancedArray(new Float32Array(sizes), "float");
+    const colorsBuffer = instancedArray(new Float32Array(colors), "vec3");
 
     const pickingColorsAttribute = instancedBufferAttribute(
       new THREE.InstancedBufferAttribute(new Float32Array(pickingColors), 3),
@@ -79,12 +108,32 @@ const Points = ({ ...props }) => {
 
     material.colorNode = Fn(() => {
       const distUV = uv().sub(vec2(0.5, 0.5)).length();
-      const edge = smoothstep(0.48, 0.5, distUV).oneMinus();
 
-      const isHovered = instanceIndex.add(1).equal(u.hoveredId).toFloat()
-      const color = vec3(1, 0, 0).mix(vec3(0, 1, 0), isHovered);
+      const fw = fwidth(distUV);
+      const strokePx = float(2.0); // stroke width in pixels
+      const strokeWidth = fw.mul(strokePx);
 
-      return vec4(color, edge);
+      // Outer edge with 1px AA
+      const outer = smoothstep(float(0.5), float(0.5).sub(fw), distUV);
+      // Inner edge of stroke
+      const innerEdge = float(0.5).sub(strokeWidth);
+      const inner = smoothstep(innerEdge.sub(fw), innerEdge, distUV);
+
+      const stroke = outer.mul(inner);
+      const fill = outer.mul(inner.oneMinus());
+
+      const isHovered = instanceIndex.add(1).equal(u.hoveredId).toFloat();
+
+      const dataColor = colorsBuffer.element(instanceIndex);
+
+      // const fillColor = dataColor.mix(vec3(0, 1, 0), isHovered);
+      const fillColor = dataColor
+
+      const strokeColor = vec3(0, 0, 0);
+
+      const color = fillColor.mul(fill).add(strokeColor.mul(stroke));
+
+      return vec4(color, outer);
     })();
 
     material.positionNode = Fn(() => {
@@ -95,13 +144,13 @@ const Points = ({ ...props }) => {
       const dist = cameraPosition.sub(offset).length();
       const scale = size.mul(dist).mul(0.01);
 
-      return positionLocal.mul(scale).add(offset);
+      return positionLocal.mul(scale).add(offset)
     })();
 
     // Picking mesh
     const pickingMaterial = new THREE.MeshBasicNodeMaterial({
-      blending: THREE.NormalBlending,
-      depthWrite: true,
+      // blending: THREE.NormalBlending,
+      // depthWrite: true,
     });
     pickingMaterial.colorNode = pickingColorsAttribute;
     pickingMaterial.positionNode = material.positionNode;
@@ -118,7 +167,7 @@ const Points = ({ ...props }) => {
     pickingScene.add(pickingMesh);
 
     return { mesh, u, pickingTexture, pickingScene };
-  }, [countriesGeo]);
+  }, [countriesGeo, dataIndex, remRadiusScale, remToColorScale]);
 
   useFrame(({ gl, pointer, camera, size }) => {
     if (!pickingTexture || !pickingScene) return;
