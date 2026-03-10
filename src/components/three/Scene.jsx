@@ -6,6 +6,7 @@ import {
 } from "@react-three/drei";
 import WorldMap from "@/components/three/WorldMap";
 import Points from "@/components/three/Points";
+import Arcs from "@/components/three/Arcs";
 import { CameraControlsImpl } from "@react-three/drei";
 
 const { ACTION } = CameraControlsImpl;
@@ -34,6 +35,8 @@ const Scene = () => {
       <WorldMap position={[0, 0, 0]} />
 
       <Points position={[0, 0, 0]} />
+
+      <Arcs position={[0, 0, 0]} />
     </>
   );
 };
