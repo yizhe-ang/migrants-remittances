@@ -58,8 +58,8 @@ const Points = ({ ...props }) => {
     // });
     const material = new THREE.MeshBasicNodeMaterial({
       transparent: true,
-      // alphaTest: 0.5,
       depthWrite: false,
+      depthTest: false
     });
 
     const mesh = new THREE.InstancedMesh(
@@ -90,7 +90,13 @@ const Points = ({ ...props }) => {
     for (let i = 0; i < countriesGeo.length; i++) {
       const c = countriesGeoSorted[i];
 
-      positions.push(c.longitude, c.latitude, 0);
+      const clampedLat = Math.max(-85.051, Math.min(85.051, c.latitude));
+      const mercatorY =
+        (180 / Math.PI) *
+        Math.log(
+          Math.tan(Math.PI / 4 + (clampedLat * Math.PI) / 360),
+        );
+      positions.push(c.longitude, mercatorY, 0);
 
       const d = dataIndex.get(c.country);
       if (d) {
