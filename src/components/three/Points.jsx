@@ -13,29 +13,27 @@ const Points = ({ ...props }) => {
   // TODO: Create for all unique countries
 
   const flowsByOrigin = useRoomStore((state) => state.flowsByOrigin);
+  const countriesGeo = useRoomStore((state) => state.countriesGeo);
 
-  const data = useMemo(() => {
-    if (!flowsByOrigin) return null;
+  console.log(countriesGeo)
 
-    return flowsByOrigin.filter((d) => d.year === 2019);
-  }, [flowsByOrigin]);
+  // const data = useMemo(() => {
+  //   if (!flowsByOrigin) return null;
+
+  //   return flowsByOrigin.filter((d) => d.year === 2019);
+  // }, [flowsByOrigin]);
 
   const { mesh } = useMemo(() => {
-    if (!data) return {};
-
-    console.log(data);
+    if (!countriesGeo) return {};
 
     // Init buffers / attributes
     const positions = [];
 
-    for (let i = 0; i < data.length; i++) {
-      const d = data[i];
+    for (let i = 0; i < countriesGeo.length; i++) {
+      const c = countriesGeo[i];
 
-      // positions.push((d.longitude + 180), (90 - d.latitude), 0);
-      positions.push(d.longitude, d.latitude, 0);
+      positions.push(c.longitude, c.latitude, 0);
     }
-
-    console.log(positions);
 
     const positionAttribute = new THREE.InstancedBufferAttribute(
       new Float32Array(positions),
@@ -49,7 +47,7 @@ const Points = ({ ...props }) => {
       metalness: 0.5,
     });
 
-    const mesh = new THREE.InstancedMesh(geometry, material, data.length);
+    const mesh = new THREE.InstancedMesh(geometry, material, countriesGeo.length);
     mesh.frustumCulled = false
 
     material.colorNode = Fn(() => {
@@ -65,7 +63,7 @@ const Points = ({ ...props }) => {
     })();
 
     return { mesh };
-  }, [data]);
+  }, [countriesGeo]);
 
   return <>{mesh && <primitive object={mesh} {...props} />}</>;
 };

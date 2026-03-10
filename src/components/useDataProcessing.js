@@ -4,6 +4,7 @@ import { index } from "d3-array";
 import { useEffect, useMemo } from "react";
 
 export default function useDataProcessing() {
+  const setCountriesGeo = useRoomStore((state) => state.setCountriesGeo);
   const setCountriesGeoMap = useRoomStore((state) => state.setCountriesGeoMap);
   const setCountriesAggStatsMap = useRoomStore(
     (state) => state.setCountriesAggStatsMap,
@@ -169,6 +170,12 @@ export default function useDataProcessing() {
   useEffect(() => {
     if (!countriesGeo) return;
 
+    setCountriesGeo(countriesGeo.toArray());
+  }, [countriesGeo]);
+
+  useEffect(() => {
+    if (!countriesGeo) return;
+
     const countriesGeoMap = index(countriesGeo.toArray(), (d) => d.country);
 
     setCountriesGeoMap(countriesGeoMap);
@@ -274,8 +281,8 @@ function flowsByCountryQuery(group) {
       -- (s.gdp * s.population) AS gdp,
       a.sim_remittances_with / (s.gdp * s.population) AS prop_of_gdp,
 
-      g.longitude,
-      g.latitude
+      -- g.longitude,
+      -- g.latitude
 
     FROM step_1 a
 
@@ -283,8 +290,8 @@ function flowsByCountryQuery(group) {
     ON a.${group} = s.country
       AND a.year = s.year
 
-    LEFT JOIN countries_geo g
-      ON a.${group} = g.country
+    -- LEFT JOIN countries_geo g
+      -- ON a.${group} = g.country
 
     WHERE prop_of_gdp IS NOT NULL
   `;
