@@ -14,6 +14,7 @@ export default function useScales() {
     (state) => state.setRemFromColorScale,
   );
 
+  // rem radius scale
   useEffect(() => {
     if (!flowsByOrigin || !flowsByDestination) return;
 
@@ -27,11 +28,12 @@ export default function useScales() {
           (d) => d.sim_remittances_with,
         ),
       ])
-      .range([0.5, 10]);
+      .range([0.7, 10]);
 
     setRemRadiusScale(remRadiusScale);
   }, [flowsByDestination, flowsByOrigin]);
 
+  // rem to color scale
   useEffect(() => {
     if (!flowsByOrigin) return;
 
@@ -42,7 +44,7 @@ export default function useScales() {
     setRemToColorScale(remToColorScale);
   }, [flowsByOrigin]);
 
-  // remFromColorScale
+  // rem from color scale
   useEffect(() => {
     if (!flowsByDestination) return;
 
