@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import * as THREE from "three/webgpu";
 import { Fn, texture, uv } from "three/tsl";
 
-const WorldMap = () => {
+const WorldMap = ({...props}) => {
   const dayTexture = useTexture("/textures/earth/day.jpg");
   dayTexture.colorSpace = THREE.SRGBColorSpace;
 
@@ -30,7 +30,7 @@ const WorldMap = () => {
 
   return (
     <>
-      <primitive object={mesh} />
+      <primitive object={mesh} {...props} />
     </>
   );
 };

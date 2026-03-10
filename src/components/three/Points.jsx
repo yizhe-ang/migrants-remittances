@@ -55,10 +55,8 @@ const Points = ({ ...props }) => {
     //   transparent: true,
     // });
     const material = new THREE.MeshBasicNodeMaterial({
-      roughness: 0.5,
-      metalness: 0.5,
       transparent: true,
-      // alphaTest: 0.01,
+      alphaTest: 0.5,
     });
 
     const mesh = new THREE.InstancedMesh(
@@ -144,7 +142,11 @@ const Points = ({ ...props }) => {
       const dist = cameraPosition.sub(offset).length();
       const scale = size.mul(dist).mul(0.01);
 
-      return positionLocal.mul(scale).add(offset)
+      // Push smaller points forward so they render on top of larger ones
+      const zOffset = size.negate().mul(0.7).add(float(instanceIndex).mul(-0.0001));
+
+      return positionLocal.mul(scale).add(offset).add(vec3(0, 0, zOffset));
+      // return positionLocal.mul(scale).add(offset)
     })();
 
     // Picking mesh
