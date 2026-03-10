@@ -94,10 +94,6 @@ const Points = ({ ...props }) => {
       {mesh && (
         <primitive
           object={mesh}
-          onClick={(e) => {
-            e.stopPropagation();
-            console.log(e.instanceId);
-          }}
           {...props}
         />
       )}
