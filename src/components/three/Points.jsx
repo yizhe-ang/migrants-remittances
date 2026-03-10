@@ -137,7 +137,7 @@ const Points = ({ ...props }) => {
       const dataColor = colorsBuffer.element(instanceIndex);
       const hoveredColor = vec3(0, 0, 0);
 
-      const fillColor = hoveredColor.mix(dataColor, isHovered.oneMinus());
+      const fillColor = dataColor.mul(isHovered.oneMinus()).add(hoveredColor.mul(isHovered));
 
       const strokeColor = vec3(0, 0, 0);
 
