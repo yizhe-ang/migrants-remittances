@@ -79,7 +79,7 @@ const Points = ({ ...props }) => {
     const material = new THREE.MeshBasicNodeMaterial({
       transparent: true,
       depthWrite: false,
-      depthTest: false,
+      // depthTest: false,
     });
 
     const mesh = new THREE.InstancedMesh(

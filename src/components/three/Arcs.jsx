@@ -95,6 +95,7 @@ const Arcs = ({ ...props }) => {
 
     const mesh = new THREE.InstancedMesh(geometry, material, count);
     mesh.frustumCulled = false;
+    // mesh.renderOrder = 1;
 
     // Instance buffers
     const srcBuffer = instancedArray(new Float32Array(sources), "vec3");
