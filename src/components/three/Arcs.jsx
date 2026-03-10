@@ -11,9 +11,16 @@ import {
   cos,
   sin,
   atan,
+  uv,
+  vec4,
+  uniform,
+  color,
+  mix,
 } from "three/tsl";
 import * as THREE from "three/webgpu";
 import { latToMercatorY } from "@/lib/utils";
+import colors from "tailwindcss/colors";
+import chroma from "chroma-js";
 
 const MAX_ARCS = 500;
 const TUBE_RADIUS = 0.002;
@@ -24,29 +31,33 @@ const TILT_FACTOR = 0.2;
 
 
 const Arcs = ({ ...props }) => {
+  const flowsPerYear = useRoomStore((state) => state.flowsPerYear);
   const countriesGeoMap = useRoomStore((state) => state.countriesGeoMap);
 
-  const migAndRemAvgYearReady = useRoomStore((state) =>
-    state.db.findTableByName("mig_and_rem_avg_year"),
-  );
+  // const { data: topFlows } = useSql({
+  //   query: /* sql */ `
+  //     SELECT
+  //       origin,
+  //       destination,
+  //       sim_remittances_with
+  //     FROM mig_and_rem_avg_year
+  //     ORDER BY sim_remittances_with DESC
+  //     LIMIT ${MAX_ARCS}
+  //   `,
+  //   enabled: Boolean(migAndRemAvgYearReady),
+  // });
 
-  const { data: topFlows } = useSql({
-    query: /* sql */ `
-      SELECT
-        origin,
-        destination,
-        sim_remittances_with
-      FROM mig_and_rem_avg_year
-      ORDER BY sim_remittances_with DESC
-      LIMIT ${MAX_ARCS}
-    `,
-    enabled: Boolean(migAndRemAvgYearReady),
-  });
+  const { mesh, u } = useMemo(() => {
+    if (!flowsPerYear || !countriesGeoMap) return {};
 
-  const { mesh } = useMemo(() => {
-    if (!topFlows || !countriesGeoMap) return {};
+    const u = {
+      srcColor: uniform(new THREE.Color(chroma(colors.orange['400']).hex())),
+      tgtColor: uniform(new THREE.Color(chroma(colors.blue['400']).hex())),
+      // srcColor: uniform(new THREE.Color("white")),
+      // tgtColor: uniform(new THREE.Color("black")),
+    }
 
-    const flows = topFlows.toArray();
+    const flows = flowsPerYear.filter(d => d.year === 2019).slice(0, 500)
 
     // Build per-instance data
     const sources = [];
@@ -63,8 +74,7 @@ const Arcs = ({ ...props }) => {
       amounts.push(flow.sim_remittances_with);
     }
 
-    const count = amounts.length;
-    if (count === 0) return {};
+    const count = flows.length;
 
     // Canonical arc: height baked into curve so we can scale uniformly
     const curve = new THREE.QuadraticBezierCurve3(
@@ -81,15 +91,16 @@ const Arcs = ({ ...props }) => {
       false,
     );
 
+    // const material = new THREE.MeshBasicNodeMaterial({
     const material = new THREE.MeshPhysicalNodeMaterial({
       side: THREE.DoubleSide,
       roughness: 0.5,
-      metalness: 0.3,
+      transparent: true,
+      // metalness: 0.3,
     });
 
     const mesh = new THREE.InstancedMesh(geometry, material, count);
     mesh.frustumCulled = false;
-    // mesh.renderOrder = 1;
 
     // Instance buffers
     const srcBuffer = instancedArray(new Float32Array(sources), "vec3");
@@ -137,18 +148,13 @@ const Arcs = ({ ...props }) => {
     })();
 
     material.colorNode = Fn(() => {
-      const amount = amountsBuffer.element(instanceIndex);
-      const t = amount.div(float(maxAmount)).clamp(0.1, 1.0);
+      const color = mix(u.tgtColor, u.srcColor, uv().x)
 
-      return vec3(
-        float(1.0).mul(t),
-        float(0.6).mul(t),
-        float(0.2),
-      );
+      return vec4(color, 1.0)
     })();
 
-    return { mesh };
-  }, [topFlows, countriesGeoMap]);
+    return { mesh, u };
+  }, [flowsPerYear, countriesGeoMap]);
 
   return <>{mesh && <primitive object={mesh} {...props} />}</>;
 };

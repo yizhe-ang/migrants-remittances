@@ -52,4 +52,6 @@ export default function useScales() {
 
     setRemFromColorScale(remFromColorScale);
   }, [flowsByDestination]);
+
+  // Flows radius scale
 }

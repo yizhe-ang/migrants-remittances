@@ -70,6 +70,9 @@ export const { roomStore, useRoomStore } = createRoomStore(
     countriesAggStatsMap: null,
     setCountriesAggStatsMap: (map) => set({ countriesAggStatsMap: map }),
 
+    flowsPerYear: null,
+    setFlowsPerYear: (flowsPerYear) => set({ flowsPerYear }),
+
     flowsByOrigin: null,
     setFlowsByOrigin: (flowsByOrigin) => set({ flowsByOrigin }),
 
