@@ -71,26 +71,26 @@ export const { roomStore, useRoomStore } = createRoomStore(
           },
         ],
       },
-      layout: {
-        config: {
-          type: LayoutTypes.enum.mosaic,
-          nodes: "main",
-        },
-        panels: {
-          data: {
-            title: "Data",
-            icon: DatabaseIcon,
-            component: DataSourcesPanel,
-            placement: "sidebar",
-          },
-          main: {
-            title: "Main view",
-            icon: () => null,
-            component: MainView,
-            placement: "main",
-          },
-        },
-      },
+      // layout: {
+      //   config: {
+      //     type: LayoutTypes.enum.mosaic,
+      //     nodes: "main",
+      //   },
+      //   panels: {
+      //     data: {
+      //       title: "Data",
+      //       icon: DatabaseIcon,
+      //       component: DataSourcesPanel,
+      //       placement: "sidebar",
+      //     },
+      //     main: {
+      //       title: "Main view",
+      //       icon: () => null,
+      //       component: MainView,
+      //       placement: "main",
+      //     },
+      //   },
+      // },
     })(set, get, store),
 
     ...createMosaicSlice()(set, get, store),
@@ -103,6 +103,9 @@ export const { roomStore, useRoomStore } = createRoomStore(
 
     countriesAggStatsMap: null,
     setCountriesAggStatsMap: (map) => set({ countriesAggStatsMap: map }),
+
+    flowsByOrigin: null,
+    setFlowsByOrigin: (flowsByOrigin) => set({ flowsByOrigin }),
   }),
   // ),
 );

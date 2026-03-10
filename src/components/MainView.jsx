@@ -6,6 +6,7 @@ import useDataPreparation from "@/components/useDataPreparation";
 import Notebook from "@/components/notebook/Notebook";
 import useDataProcessing from "./useDataProcessing";
 import DeckGLMap from "@/components/deckgl/DeckGLMap";
+import Three from "@/components/three/Three";
 
 const MainView = () => {
   useDataPreparation();
@@ -21,7 +22,7 @@ const MainView = () => {
     migAndRemByOrigin,
     flowsByOrigin,
     flowsPerYear,
-    countriesStats
+    countriesStats,
   } = useDataProcessing();
 
   return (
@@ -44,7 +45,7 @@ const MainView = () => {
           />
         )} */}
 
-      <Notebook
+      {/* <Notebook
         migAndRemAvgYear={migAndRemAvgYear}
         disasters={disasters}
         disastersImpactsByMonth={disastersImpactsByMonth}
@@ -54,7 +55,11 @@ const MainView = () => {
         migAndRemByOrigin={migAndRemByOrigin}
         flowsPerYear={flowsPerYear}
         countriesStats={countriesStats}
-      />
+      /> */}
+
+      <div className="fixed inset-0 bg-stone-200">
+        <Three />
+      </div>
     </>
   );
 };

@@ -8,6 +8,7 @@ export default function useDataProcessing() {
   const setCountriesAggStatsMap = useRoomStore(
     (state) => state.setCountriesAggStatsMap,
   );
+  const setFlowsByOrigin = useRoomStore((state) => state.setFlowsByOrigin);
 
   const migAndRemAvgYearReady = useRoomStore((state) =>
     state.db.findTableByName("mig_and_rem_avg_year"),
@@ -151,6 +152,12 @@ export default function useDataProcessing() {
     enabled: Boolean(flowsPerYearReady),
   });
 
+  useEffect(() => {
+    if (!flowsByOrigin) return;
+
+    setFlowsByOrigin(flowsByOrigin.toArray());
+  }, [flowsByOrigin]);
+
   const { data: countriesGeo } = useSql({
     query: /* sql */ `
       SELECT *
@@ -194,7 +201,7 @@ export default function useDataProcessing() {
     migAndRemByDestination,
     migAndRemByOrigin,
     flowsByOrigin,
-    countriesStats
+    countriesStats,
   };
 }
 
