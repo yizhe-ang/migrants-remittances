@@ -42,6 +42,7 @@ export default function useScales() {
     setRemToColorScale(remToColorScale);
   }, [flowsByOrigin]);
 
+  // remFromColorScale
   useEffect(() => {
     if (!flowsByDestination) return;
 

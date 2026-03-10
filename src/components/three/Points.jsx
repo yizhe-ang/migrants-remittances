@@ -121,7 +121,11 @@ const Points = ({ ...props }) => {
       if (d) {
         sizes.push(remRadiusScale(d.sim_remittances_with));
 
-        colorDummy.setStyle(remToColorScale(d.sim_remittances_with));
+        if (c.type === "origin") {
+          colorDummy.setStyle(remToColorScale(d.sim_remittances_with));
+        } else {
+          colorDummy.setStyle(remFromColorScale(d.sim_remittances_with));
+        }
         colors.push(colorDummy.r, colorDummy.g, colorDummy.b);
       } else {
         // If doesn't exist, don't render at all
@@ -172,7 +176,7 @@ const Points = ({ ...props }) => {
 
       const color = fillColor.mul(fill).add(strokeColor.mul(stroke));
 
-      return vec4(color, outer);
+      return vec4(color, outer.mul(1));
     })();
 
     material.positionNode = Fn(() => {
