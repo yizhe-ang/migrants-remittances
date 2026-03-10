@@ -24,9 +24,30 @@ export default function useDataProcessing() {
   const countriesGeoReady = useRoomStore((state) =>
     state.db.findTableByName("countries_geo"),
   );
+  const countriesStatsReady = useRoomStore((state) =>
+    state.db.findTableByName("countries_stats"),
+  );
   const countriesAggStatsReady = useRoomStore((state) =>
     state.db.findTableByName("countries_agg_stats"),
   );
+
+  const { data: countriesStats } = useSql({
+    query: /* sql */ `
+      SELECT
+        * EXCLUDE(year),
+        year::INTEGER AS year
+      FROM countries_stats
+    `,
+    enabled: Boolean(countriesStatsReady),
+  });
+
+  const { data: flowsPerYear } = useSql({
+    query: /* sql */ `
+      SELECT *
+      FROM flows_per_year
+    `,
+    enabled: Boolean(flowsPerYearReady),
+  });
 
   const { data: migAndRemAvgYear } = useSql({
     query: /* sql */ `
@@ -164,6 +185,7 @@ export default function useDataProcessing() {
 
   return {
     migAndRemAvgYear,
+    flowsPerYear,
     disasters,
     disastersImpactsByMonth,
     disastersByCountry,
@@ -172,6 +194,7 @@ export default function useDataProcessing() {
     migAndRemByDestination,
     migAndRemByOrigin,
     flowsByOrigin,
+    countriesStats
   };
 }
 

@@ -4,6 +4,7 @@ import DisastersCharts from "./DisastersCharts";
 import EurostatmapCharts from "./EurostatmapCharts";
 import FlowMap from "./FlowMap";
 import ChordCharts from "./ChordCharts";
+import ArcCharts from "./ArcCharts";
 
 const Notebook = ({ ...props }) => {
   const {
@@ -14,6 +15,8 @@ const Notebook = ({ ...props }) => {
     migAndRemByRegion,
     migAndRemByDestination,
     migAndRemByOrigin,
+    flowsPerYear,
+    countriesStats,
   } = props;
 
   return (
@@ -30,9 +33,9 @@ const Notebook = ({ ...props }) => {
         <span className="font-bold">Remittance flows</span> across the globe,
         between <span className="underline">2010 and 2019</span>
       </div>
-      <div className="mt-2">
+      {/* <div className="mt-2">
         <img src="/notebook/flow-map-1.png" />
-      </div>
+      </div> */}
 
       <FlowMap />
 
@@ -44,13 +47,22 @@ const Notebook = ({ ...props }) => {
         />
       )}
 
-      {migAndRemByIncome && migAndRemAvgYear && migAndRemByRegion && (
+      {flowsPerYear && countriesStats && (
+        <ArcCharts
+          flowsPerYear={flowsPerYear.toArray().filter((d) => d.year === 2019)}
+          countriesStats={countriesStats
+            .toArray()
+            .filter((d) => d.year === 2019)}
+        />
+      )}
+
+      {/* {migAndRemByIncome && migAndRemAvgYear && migAndRemByRegion && (
         <ChordCharts
           migAndRemByIncome={migAndRemByIncome.toArray()}
           migAndRemByRegion={migAndRemByRegion.toArray()}
           migAndRemAvgYear={migAndRemAvgYear.toArray()}
         />
-      )}
+      )} */}
 
       {migAndRemByOrigin && migAndRemByDestination && (
         <GeoCharts
@@ -63,12 +75,12 @@ const Notebook = ({ ...props }) => {
         <EurostatmapCharts data={migAndRemByDestination.toArray()} />
       )} */}
 
-      {disasters && disastersImpactsByMonth && (
+      {/* {disasters && disastersImpactsByMonth && (
         <DisastersCharts
           disasters={disasters}
           disastersImpactsByMonth={disastersImpactsByMonth}
         />
-      )}
+      )} */}
 
       <div className="h-screen" />
     </div>

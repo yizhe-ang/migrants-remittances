@@ -20,11 +20,13 @@ const MainView = () => {
     migAndRemByDestination,
     migAndRemByOrigin,
     flowsByOrigin,
+    flowsPerYear,
+    countriesStats
   } = useDataProcessing();
 
   return (
     <>
-      {migAndRemByDestination &&
+      {/* {migAndRemByDestination &&
         migAndRemByOrigin &&
         migAndRemAvgYear &&
         disasters &&
@@ -40,9 +42,9 @@ const MainView = () => {
               .toArray()
               .filter((d) => d.year === 2019)}
           />
-        )}
+        )} */}
 
-      {/* <Notebook
+      <Notebook
         migAndRemAvgYear={migAndRemAvgYear}
         disasters={disasters}
         disastersImpactsByMonth={disastersImpactsByMonth}
@@ -50,7 +52,9 @@ const MainView = () => {
         migAndRemByRegion={migAndRemByRegion}
         migAndRemByDestination={migAndRemByDestination}
         migAndRemByOrigin={migAndRemByOrigin}
-      /> */}
+        flowsPerYear={flowsPerYear}
+        countriesStats={countriesStats}
+      />
     </>
   );
 };
