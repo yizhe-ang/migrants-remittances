@@ -57,7 +57,7 @@ const Points = ({ ...props }) => {
     const material = new THREE.MeshBasicNodeMaterial({
       transparent: true,
       // alphaTest: 0.5,
-      depthWrite: false
+      depthWrite: false,
     });
 
     const mesh = new THREE.InstancedMesh(
@@ -74,8 +74,19 @@ const Points = ({ ...props }) => {
 
     const pickingColors = [];
 
+    // Sort for depth buffer
+    const countriesGeoSorted = [...countriesGeo].sort((a, b) => {
+      if (!dataIndex.has(b.country)) return 1;
+      if (!dataIndex.has(a.country)) return -1;
+
+      return (
+        dataIndex.get(b.country).sim_remittances_with -
+        dataIndex.get(a.country).sim_remittances_with
+      );
+    });
+
     for (let i = 0; i < countriesGeo.length; i++) {
-      const c = countriesGeo[i];
+      const c = countriesGeoSorted[i];
 
       positions.push(c.longitude, c.latitude, 0);
 
@@ -126,7 +137,7 @@ const Points = ({ ...props }) => {
       const dataColor = colorsBuffer.element(instanceIndex);
 
       // const fillColor = dataColor.mix(vec3(0, 1, 0), isHovered);
-      const fillColor = dataColor
+      const fillColor = dataColor;
 
       const strokeColor = vec3(0, 0, 0);
 
@@ -147,7 +158,7 @@ const Points = ({ ...props }) => {
       // const zOffset = size.negate().mul(0.7).add(float(instanceIndex).mul(-0.0001));
 
       // return positionLocal.mul(scale).add(offset).add(vec3(0, 0, zOffset));
-      return positionLocal.mul(scale).add(offset)
+      return positionLocal.mul(scale).add(offset);
     })();
 
     // Picking mesh
