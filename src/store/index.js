@@ -75,6 +75,14 @@ export const { roomStore, useRoomStore } = createRoomStore(
 
     flowsByDestination: null,
     setFlowsByDestination: (flowsByDestination) => set({ flowsByDestination }),
+
+    // Scales
+    remRadiusScale: null,
+    setRemRadiusScale: (scale) => set({ remRadiusScale: scale }),
+
+    // Controls
+    selectedYear: 2019,
+    setSelectedYear: (selectedYear) => set({ selectedYear }),
   }),
   // ),
 );

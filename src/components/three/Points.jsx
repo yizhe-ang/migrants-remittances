@@ -2,8 +2,10 @@ import { useRoomStore } from "@/store";
 import { useMemo } from "react";
 import {
   Fn,
+  instancedArray,
   instancedBufferAttribute,
   positionLocal,
+  instanceIndex,
   vec3,
   vec4,
 } from "three/tsl";
@@ -15,16 +17,16 @@ const Points = ({ ...props }) => {
   const flowsByOrigin = useRoomStore((state) => state.flowsByOrigin);
   const countriesGeo = useRoomStore((state) => state.countriesGeo);
 
-  console.log(countriesGeo)
+  const data = useMemo(() => {
+    if (!flowsByOrigin) return null;
 
-  // const data = useMemo(() => {
-  //   if (!flowsByOrigin) return null;
-
-  //   return flowsByOrigin.filter((d) => d.year === 2019);
-  // }, [flowsByOrigin]);
+    return flowsByOrigin.filter((d) => d.year === 2019);
+  }, [flowsByOrigin]);
 
   const { mesh } = useMemo(() => {
     if (!countriesGeo) return {};
+
+    console.log(countriesGeo)
 
     // Init buffers / attributes
     const positions = [];
@@ -35,10 +37,8 @@ const Points = ({ ...props }) => {
       positions.push(c.longitude, c.latitude, 0);
     }
 
-    const positionAttribute = new THREE.InstancedBufferAttribute(
-      new Float32Array(positions),
-      3,
-    );
+    const positionsBuffer = instancedArray(new Float32Array(positions), "vec3")
+    const sizesBuffer = instancedArray(countriesGeo.length, "vec3")
 
     const geometry = new THREE.PlaneGeometry(1, 1);
 
@@ -57,7 +57,7 @@ const Points = ({ ...props }) => {
     // material.scaleNode = vec3(1);
 
     material.positionNode = Fn(() => {
-      const offset = instancedBufferAttribute(positionAttribute);
+      const offset = positionsBuffer.element(instanceIndex)
 
       return positionLocal.add(offset);
     })();

@@ -2,9 +2,9 @@ import { useRoomStore } from "@/store";
 import { useSql } from "@sqlrooms/duckdb";
 import { useMemo } from "react";
 import { SpinnerPane } from "@sqlrooms/ui";
-import useDataPreparation from "@/components/useDataPreparation";
+import useDataPreparation from "@/components/data/useDataPreparation";
 import Notebook from "@/components/notebook/Notebook";
-import useDataProcessing from "./useDataProcessing";
+import useDataProcessing from "@/components/data/useDataProcessing";
 import DeckGLMap from "@/components/deckgl/DeckGLMap";
 import Three from "@/components/three/Three";
 
