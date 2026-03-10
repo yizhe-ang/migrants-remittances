@@ -12,6 +12,9 @@ export default function useDataProcessing() {
   const migAndRemAvgYearReady = useRoomStore((state) =>
     state.db.findTableByName("mig_and_rem_avg_year"),
   );
+  const flowsPerYearReady = useRoomStore((state) =>
+    state.db.findTableByName("flows_per_year"),
+  );
   const disastersReady = useRoomStore((state) =>
     state.db.findTableByName("disasters"),
   );
@@ -122,6 +125,11 @@ export default function useDataProcessing() {
     enabled: Boolean(migAndRemAvgYearReady),
   });
 
+  const { data: flowsByOrigin } = useSql({
+    query: flowsByCountryQuery("origin"),
+    enabled: Boolean(flowsPerYearReady),
+  });
+
   const { data: countriesGeo } = useSql({
     query: /* sql */ `
       SELECT *
@@ -163,6 +171,7 @@ export default function useDataProcessing() {
     migAndRemByRegion,
     migAndRemByDestination,
     migAndRemByOrigin,
+    flowsByOrigin,
   };
 }
 
@@ -214,5 +223,39 @@ function migAndRemByGroupQuery(group) {
     FROM mig_and_rem_avg_year
 
     GROUP BY (origin_${group}, destination_${group})
+  `;
+}
+
+function flowsByCountryQuery(group) {
+  return /* sql */ `
+    WITH step_1 AS (
+      SELECT
+        ${group},
+        year,
+        sum(sim_remittances_with) AS sim_remittances_with
+
+      FROM flows_per_year
+
+      GROUP BY (year, ${group})
+    )
+
+    SELECT
+      a.*,
+      -- (s.gdp * s.population) AS gdp,
+      a.sim_remittances_with / (s.gdp * s.population) AS prop_of_gdp,
+
+      g.longitude,
+      g.latitude
+
+    FROM step_1 a
+
+    LEFT JOIN countries_stats s
+    ON a.${group} = s.country
+      AND a.year = s.year
+
+    LEFT JOIN countries_geo g
+      ON a.${group} = g.country
+
+    WHERE prop_of_gdp IS NOT NULL
   `;
 }

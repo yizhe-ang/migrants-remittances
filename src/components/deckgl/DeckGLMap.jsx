@@ -16,7 +16,11 @@ import {
   scaleSqrt,
 } from "d3-scale";
 import { scale } from "@observablehq/plot";
-import { interpolateYlOrBr, schemeObservable10 } from "d3-scale-chromatic";
+import {
+  interpolateRdBu,
+  interpolateYlOrBr,
+  schemeObservable10,
+} from "d3-scale-chromatic";
 import { extent, max } from "d3-array";
 import { interpolatePuBuGn } from "d3-scale-chromatic";
 import colors from "tailwindcss/colors";
@@ -49,6 +53,7 @@ const DeckGLMap = ({ ...props }) => {
     migAndRemAvgYear,
     disasters,
     disastersByCountry,
+    flowsByOrigin,
   } = props;
 
   const disastersProcessed = useMemo(() => {
@@ -67,16 +72,18 @@ const DeckGLMap = ({ ...props }) => {
     filterByTimestamp,
     showRemFrom,
     showRemTo,
+    showGdp,
     showFlow,
     showDisasters,
     disastersRadiusExponent,
   } = useControls("deckgl", {
     layers: folder({
       filterByTimestamp: false,
-      showRemFrom: true,
+      showRemFrom: false,
       showRemTo: false,
+      showGdp: true,
       showFlow: false,
-      showDisasters: true,
+      showDisasters: false,
     }),
     scales: folder({
       disastersRadiusExponent: {
@@ -105,6 +112,12 @@ const DeckGLMap = ({ ...props }) => {
       .exponent(0.4);
   }, []);
 
+  const gdpColorScale = useMemo(() => {
+    return scaleSequential(interpolatePuBuGn).domain(
+      extent(flowsByOrigin, (d) => d.prop_of_gdp),
+    );
+  }, []);
+
   const disastersColorScale = useMemo(() => {
     return scaleOrdinal(schemeObservable10).domain([
       "flood",
@@ -122,6 +135,12 @@ const DeckGLMap = ({ ...props }) => {
         max([...migAndRemByDestination, ...migAndRemByOrigin], valueAccessor),
       ])
       .range([0, 50]);
+  }, []);
+
+  const gdpRadiusScale = useMemo(() => {
+    return scaleSqrt()
+      .domain([0, max(flowsByOrigin, (d) => d.prop_of_gdp)])
+      .range([0, 40]);
   }, []);
 
   const disastersRadiusScale = useMemo(() => {
@@ -154,6 +173,14 @@ const DeckGLMap = ({ ...props }) => {
     getRadius: (d) => remRadiusScale(valueAccessor(d)),
     getFillColor: (d) => chroma(remToColorScale(valueAccessor(d))).rgb(),
     visible: showRemTo,
+  });
+
+  const gdpLayer = useScatterPlotLayer({
+    id: "gdp",
+    data: flowsByOrigin.sort((d1, d2) => d2.prop_of_gdp - d1.prop_of_gdp),
+    getRadius: (d) => gdpRadiusScale(d.prop_of_gdp),
+    getFillColor: (d) => chroma(gdpColorScale(d.prop_of_gdp)).rgb(),
+    visible: showGdp,
   });
 
   const disastersLayer = useScatterPlotLayer({
@@ -226,18 +253,18 @@ const DeckGLMap = ({ ...props }) => {
             }
           );
         }}
-        layers={[remFromLayer, remToLayer, remFlowsLayer, disastersLayer]}
-        layerFilter={layerFilter}
+        layers={[remFromLayer, remToLayer, gdpLayer, remFlowsLayer, disastersLayer]}
+        // layerFilter={layerFilter}
       >
-        {/* <MapView controller={true} x={0} width="100%">
+        <MapView controller={true} x={0} width="100%">
           <Map mapStyle={MAP_STYLE} />
-        </MapView> */}
-        <MapView id="left" controller={true} x={0} width="50%">
+        </MapView>
+        {/* <MapView id="left" controller={true} x={0} width="50%">
           <Map id="left" mapStyle={MAP_STYLE} />
         </MapView>
         <MapView id="right" controller={true} x="50%" width="50%">
           <Map id="right" mapStyle={MAP_STYLE} />
-        </MapView>
+        </MapView> */}
       </DeckGL>
 
       <div className="absolute bottom-10 left-0 px-4 w-full flex-col flex gap-2">

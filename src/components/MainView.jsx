@@ -19,21 +19,30 @@ const MainView = () => {
     migAndRemByRegion,
     migAndRemByDestination,
     migAndRemByOrigin,
+    flowsByOrigin,
   } = useDataProcessing();
 
   return (
     <>
-      {/* {migAndRemByDestination && migAndRemByOrigin && migAndRemAvgYear && disasters && disastersByCountry && (
-        <DeckGLMap
-          migAndRemByDestination={migAndRemByDestination.toArray()}
-          migAndRemByOrigin={migAndRemByOrigin.toArray()}
-          migAndRemAvgYear={migAndRemAvgYear.toArray()}
-          disasters={disasters.toArray()}
-          disastersByCountry={disastersByCountry.toArray()}
-        />
-      )} */}
+      {migAndRemByDestination &&
+        migAndRemByOrigin &&
+        migAndRemAvgYear &&
+        disasters &&
+        disastersByCountry &&
+        flowsByOrigin && (
+          <DeckGLMap
+            migAndRemByDestination={migAndRemByDestination.toArray()}
+            migAndRemByOrigin={migAndRemByOrigin.toArray()}
+            migAndRemAvgYear={migAndRemAvgYear.toArray()}
+            disasters={disasters.toArray()}
+            disastersByCountry={disastersByCountry.toArray()}
+            flowsByOrigin={flowsByOrigin
+              .toArray()
+              .filter((d) => d.year === 2019)}
+          />
+        )}
 
-      <Notebook
+      {/* <Notebook
         migAndRemAvgYear={migAndRemAvgYear}
         disasters={disasters}
         disastersImpactsByMonth={disastersImpactsByMonth}
@@ -41,7 +50,7 @@ const MainView = () => {
         migAndRemByRegion={migAndRemByRegion}
         migAndRemByDestination={migAndRemByDestination}
         migAndRemByOrigin={migAndRemByOrigin}
-      />
+      /> */}
     </>
   );
 };

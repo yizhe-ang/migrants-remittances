@@ -139,7 +139,7 @@ export default function useDataPreparation() {
       CREATE OR REPLACE VIEW flows_per_year AS
 
       SELECT
-        EXTRACT('year' FROM date) AS year,
+        EXTRACT('year' FROM date)::INTEGER AS year,
         origin,
         destination,
         sum(sim_remittances_with) AS sim_remittances_with
