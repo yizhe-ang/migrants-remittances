@@ -19,6 +19,7 @@ import {
   uniform,
 } from "three/tsl";
 import * as THREE from "three/webgpu";
+import { latToMercatorY } from "@/lib/utils";
 
 const colorDummy = new THREE.Color();
 
@@ -111,11 +112,10 @@ const Points = ({ ...props }) => {
       const c = countriesGeoSorted[i];
 
       // Compute mercator projection
-      const clampedLat = Math.max(-85.051, Math.min(85.051, c.latitude));
-      const mercatorY =
-        (180 / Math.PI) *
-        Math.log(Math.tan(Math.PI / 4 + (clampedLat * Math.PI) / 360));
+      const mercatorY = latToMercatorY(c.latitude);
+
       positions.push(c.longitude, mercatorY, 0);
+
 
       const d = dataIndex.get(c.type).get(c.country);
       if (d) {

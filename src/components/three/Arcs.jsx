@@ -13,6 +13,7 @@ import {
   atan,
 } from "three/tsl";
 import * as THREE from "three/webgpu";
+import { latToMercatorY } from "@/lib/utils";
 
 const MAX_ARCS = 500;
 const TUBE_RADIUS = 0.002;
@@ -21,13 +22,6 @@ const TUBE_RADIAL_SEGMENTS = 6;
 const HEIGHT_FACTOR = 0.5;
 const TILT_FACTOR = 0.2;
 
-function latToMercatorY(lat) {
-  const clamped = Math.max(-85.051, Math.min(85.051, lat));
-  return (
-    (180 / Math.PI) *
-    Math.log(Math.tan(Math.PI / 4 + (clamped * Math.PI) / 360))
-  );
-}
 
 const Arcs = ({ ...props }) => {
   const countriesGeoMap = useRoomStore((state) => state.countriesGeoMap);
