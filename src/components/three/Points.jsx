@@ -26,10 +26,12 @@ const Points = ({ ...props }) => {
   const pickedId = useRef(0);
 
   const flowsByOrigin = useRoomStore((state) => state.flowsByOrigin);
+  const flowsByDestination = useRoomStore((state) => state.flowsByDestination);
   const countriesGeo = useRoomStore((state) => state.countriesGeo);
 
   const remRadiusScale = useRoomStore((state) => state.remRadiusScale);
   const remToColorScale = useRoomStore((state) => state.remToColorScale);
+  const remFromColorScale = useRoomStore((state) => state.remFromColorScale);
 
   const dataIndex = useMemo(() => {
     if (!flowsByOrigin) return null;
@@ -137,7 +139,9 @@ const Points = ({ ...props }) => {
       const dataColor = colorsBuffer.element(instanceIndex);
       const hoveredColor = vec3(0, 0, 0);
 
-      const fillColor = dataColor.mul(isHovered.oneMinus()).add(hoveredColor.mul(isHovered));
+      const fillColor = dataColor
+        .mul(isHovered.oneMinus())
+        .add(hoveredColor.mul(isHovered));
 
       const strokeColor = vec3(0, 0, 0);
 
