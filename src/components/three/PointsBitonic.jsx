@@ -5,7 +5,6 @@ import { useMemo, useRef } from "react";
 import {
   Fn,
   instancedArray,
-  instancedBufferAttribute,
   positionLocal,
   instanceIndex,
   vec3,
@@ -15,15 +14,19 @@ import {
   smoothstep,
   fwidth,
   float,
+  uint,
   cameraPosition,
   uniform,
 } from "three/tsl";
 import * as THREE from "three/webgpu";
+import { BitonicSort } from "three/examples/jsm/gpgpu/BitonicSort.js";
 
 const colorDummy = new THREE.Color();
 
 const Points = ({ ...props }) => {
   const pickedId = useRef(0);
+  const sortRef = useRef(null);
+  const sortedRef = useRef(false);
 
   const flowsByOrigin = useRoomStore((state) => state.flowsByOrigin);
   const countriesGeo = useRoomStore((state) => state.countriesGeo);
@@ -39,7 +42,7 @@ const Points = ({ ...props }) => {
     return index(data, (d) => d.origin);
   }, [flowsByOrigin]);
 
-  const { mesh, pickingTexture, pickingScene, u } = useMemo(() => {
+  const { mesh, pickingTexture, pickingScene, u, sortBuffer } = useMemo(() => {
     if (!countriesGeo || !dataIndex || !remRadiusScale || !remToColorScale)
       return {};
 
@@ -56,8 +59,8 @@ const Points = ({ ...props }) => {
     // });
     const material = new THREE.MeshBasicNodeMaterial({
       transparent: true,
-      // alphaTest: 0.5,
-      depthWrite: false
+      alphaTest: 0.5,
+      depthWrite: false,
     });
 
     const mesh = new THREE.InstancedMesh(
@@ -100,10 +103,34 @@ const Points = ({ ...props }) => {
     const positionsBuffer = instancedArray(new Float32Array(positions), "vec3");
     const sizesBuffer = instancedArray(new Float32Array(sizes), "float");
     const colorsBuffer = instancedArray(new Float32Array(colors), "vec3");
-
-    const pickingColorsAttribute = instancedBufferAttribute(
-      new THREE.InstancedBufferAttribute(new Float32Array(pickingColors), 3),
+    const pickingColorsBuffer = instancedArray(
+      new Float32Array(pickingColors),
+      "vec3",
     );
+
+    // Pack (invertedSize, originalIndex) into uint32 for BitonicSort
+    const paddedN = Math.pow(2, Math.ceil(Math.log2(countriesGeo.length)));
+    const sortKeys = new Uint32Array(paddedN);
+    const maxSize = Math.max(...sizes);
+    for (let i = 0; i < countriesGeo.length; i++) {
+      const normalizedSize = maxSize > 0 ? sizes[i] / maxSize : 0;
+      const sizeQuantized = Math.min(
+        Math.floor(normalizedSize * 65535),
+        0xffff,
+      );
+      const invertedSize = 0xffff - sizeQuantized;
+      sortKeys[i] = (invertedSize << 16) | (i & 0xffff);
+    }
+    // Pad entries sort to end
+    for (let i = countriesGeo.length; i < paddedN; i++) {
+      sortKeys[i] = 0xffffffff;
+    }
+    const sortBuffer = instancedArray(sortKeys, "uint");
+
+    // Unpack original index from sorted buffer
+    const originalIndex = sortBuffer
+      .element(instanceIndex)
+      .bitAnd(uint(0xffff));
 
     material.colorNode = Fn(() => {
       const distUV = uv().sub(vec2(0.5, 0.5)).length();
@@ -121,12 +148,12 @@ const Points = ({ ...props }) => {
       const stroke = outer.mul(inner);
       const fill = outer.mul(inner.oneMinus());
 
-      const isHovered = instanceIndex.add(1).equal(u.hoveredId).toFloat();
+      const isHovered = originalIndex.add(1).equal(u.hoveredId).toFloat();
 
-      const dataColor = colorsBuffer.element(instanceIndex);
+      const dataColor = colorsBuffer.element(originalIndex);
 
       // const fillColor = dataColor.mix(vec3(0, 1, 0), isHovered);
-      const fillColor = dataColor
+      const fillColor = dataColor;
 
       const strokeColor = vec3(0, 0, 0);
 
@@ -136,26 +163,19 @@ const Points = ({ ...props }) => {
     })();
 
     material.positionNode = Fn(() => {
-      const offset = positionsBuffer.element(instanceIndex);
-      const size = sizesBuffer.element(instanceIndex);
+      const offset = positionsBuffer.element(originalIndex);
+      const size = sizesBuffer.element(originalIndex);
 
       // Always same size
       const dist = cameraPosition.sub(offset).length();
       const scale = size.mul(dist).mul(0.01);
 
-      // Push smaller points forward so they render on top of larger ones
-      // const zOffset = size.negate().mul(0.7).add(float(instanceIndex).mul(-0.0001));
-
-      // return positionLocal.mul(scale).add(offset).add(vec3(0, 0, zOffset));
-      return positionLocal.mul(scale).add(offset)
+      return positionLocal.mul(scale).add(offset);
     })();
 
     // Picking mesh
-    const pickingMaterial = new THREE.MeshBasicNodeMaterial({
-      // blending: THREE.NormalBlending,
-      // depthWrite: true,
-    });
-    pickingMaterial.colorNode = pickingColorsAttribute;
+    const pickingMaterial = new THREE.MeshBasicNodeMaterial();
+    pickingMaterial.colorNode = pickingColorsBuffer.element(originalIndex);
     pickingMaterial.positionNode = material.positionNode;
 
     const pickingMesh = new THREE.InstancedMesh(
@@ -169,10 +189,19 @@ const Points = ({ ...props }) => {
     const pickingTexture = new THREE.RenderTarget(1, 1);
     pickingScene.add(pickingMesh);
 
-    return { mesh, u, pickingTexture, pickingScene };
+    return { mesh, u, pickingTexture, pickingScene, sortBuffer };
   }, [countriesGeo, dataIndex, remRadiusScale, remToColorScale]);
 
   useFrame(({ gl, pointer, camera, size }) => {
+    // Run BitonicSort once on GPU to sort instances by size (descending)
+    if (sortBuffer && !sortedRef.current) {
+      if (!sortRef.current) {
+        sortRef.current = new BitonicSort(gl, sortBuffer);
+      }
+      sortRef.current.compute(gl);
+      sortedRef.current = true;
+    }
+
     if (!pickingTexture || !pickingScene) return;
 
     const mouseX = ((pointer.x + 1) / 2) * size.width;
