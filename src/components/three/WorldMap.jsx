@@ -27,9 +27,7 @@ const WorldMap = ({...props}) => {
       const correctedUV = vec2(uv().x, equirectV);
       const color = texture(dayTexture, correctedUV).toVar();
 
-      color.mulAssign(40.0).saturate();
-
-      return color;
+      return color.mul(60)
     })();
 
     return { mesh };

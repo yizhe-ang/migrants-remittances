@@ -174,7 +174,7 @@ const Points = ({ ...props }) => {
     // Picking mesh
     const pickingMaterial = new THREE.MeshBasicNodeMaterial({
       // blending: THREE.NormalBlending,
-      // depthWrite: true,
+      depthWrite: false,
     });
     pickingMaterial.colorNode = pickingColorsAttribute;
     pickingMaterial.positionNode = material.positionNode;
