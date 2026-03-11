@@ -1,6 +1,5 @@
 import { useRoomStore } from "@/store";
 import { useMemo } from "react";
-import { useSql } from "@sqlrooms/duckdb";
 import {
   Fn,
   instancedArray,
@@ -16,53 +15,43 @@ import {
   uniform,
   color,
   mix,
+  If,
+  Discard,
+  deltaTime,
 } from "three/tsl";
 import * as THREE from "three/webgpu";
 import { latToMercatorY } from "@/lib/utils";
 import colors from "tailwindcss/colors";
 import chroma from "chroma-js";
+import { useFrame } from "@react-three/fiber";
 
-const MAX_ARCS = 500;
 const TUBE_RADIUS = 0.002;
 const TUBE_SEGMENTS = 48;
 const TUBE_RADIAL_SEGMENTS = 6;
 const HEIGHT_FACTOR = 0.5;
 const TILT_FACTOR = 0.2;
 
-
 const Arcs = ({ ...props }) => {
   const flowsPerYear = useRoomStore((state) => state.flowsPerYear);
   const countriesGeoMap = useRoomStore((state) => state.countriesGeoMap);
 
-  // const { data: topFlows } = useSql({
-  //   query: /* sql */ `
-  //     SELECT
-  //       origin,
-  //       destination,
-  //       sim_remittances_with
-  //     FROM mig_and_rem_avg_year
-  //     ORDER BY sim_remittances_with DESC
-  //     LIMIT ${MAX_ARCS}
-  //   `,
-  //   enabled: Boolean(migAndRemAvgYearReady),
-  // });
-
-  const { mesh, u } = useMemo(() => {
+  const { mesh, u, computeUpdate, progressesToBuffer } = useMemo(() => {
     if (!flowsPerYear || !countriesGeoMap) return {};
 
     const u = {
-      srcColor: uniform(new THREE.Color(chroma(colors.orange['400']).hex())),
-      tgtColor: uniform(new THREE.Color(chroma(colors.blue['400']).hex())),
-      // srcColor: uniform(new THREE.Color("white")),
-      // tgtColor: uniform(new THREE.Color("black")),
-    }
+      srcColor: uniform(new THREE.Color(chroma(colors.orange["400"]).hex())),
+      tgtColor: uniform(new THREE.Color(chroma(colors.blue["400"]).hex())),
+      progress: uniform(0),
+    };
 
-    const flows = flowsPerYear.filter(d => d.year === 2019).slice(0, 500)
+    // DEBUG:
+    const flows = flowsPerYear.filter((d) => d.year === 2019).slice(0, 500);
 
     // Build per-instance data
     const sources = [];
     const targets = [];
-    const amounts = [];
+    const progresses = [];
+    const progressesTo = [];
 
     for (const flow of flows) {
       const originGeo = countriesGeoMap.get(flow.origin);
@@ -71,7 +60,9 @@ const Arcs = ({ ...props }) => {
 
       sources.push(originGeo.longitude, latToMercatorY(originGeo.latitude), 0);
       targets.push(destGeo.longitude, latToMercatorY(destGeo.latitude), 0);
-      amounts.push(flow.sim_remittances_with);
+
+      progresses.push(0);
+      progressesTo.push(0);
     }
 
     const count = flows.length;
@@ -105,10 +96,14 @@ const Arcs = ({ ...props }) => {
     // Instance buffers
     const srcBuffer = instancedArray(new Float32Array(sources), "vec3");
     const tgtBuffer = instancedArray(new Float32Array(targets), "vec3");
-    const amountsBuffer = instancedArray(new Float32Array(amounts), "float");
-
-    // Find max amount for normalization
-    const maxAmount = Math.max(...amounts);
+    const progressesBuffer = instancedArray(
+      new Float32Array(progresses),
+      "float",
+    );
+    const progressesToBuffer = instancedArray(
+      new Float32Array(progressesTo),
+      "float",
+    );
 
     material.positionNode = Fn(() => {
       const src = srcBuffer.element(instanceIndex);
@@ -133,28 +128,59 @@ const Arcs = ({ ...props }) => {
       // A→B and B→A have opposite angles, so tilt flips automatically
       const tilt = scaled.y.mul(float(TILT_FACTOR));
 
-      const worldX = scaled.x.mul(cosA).add(scaled.z.mul(sinA.negate())).add(tilt.mul(sinA.negate()));
-      const worldY = scaled.x.mul(sinA).add(scaled.z.mul(cosA)).add(tilt.mul(cosA));
+      const worldX = scaled.x
+        .mul(cosA)
+        .add(scaled.z.mul(sinA.negate()))
+        .add(tilt.mul(sinA.negate()));
+      const worldY = scaled.x
+        .mul(sinA)
+        .add(scaled.z.mul(cosA))
+        .add(tilt.mul(cosA));
       const worldZ = scaled.y; // height becomes Z
 
       // Midpoint of source and target
       const mid = src.add(tgt).mul(0.5);
 
-      return vec3(
-        worldX.add(mid.x),
-        worldY.add(mid.y),
-        worldZ,
-      );
+      return vec3(worldX.add(mid.x), worldY.add(mid.y), worldZ);
     })();
 
     material.colorNode = Fn(() => {
-      const color = mix(u.tgtColor, u.srcColor, uv().x)
+      const progress = progressesBuffer.element(instanceIndex);
 
-      return vec4(color, 1.0)
+      // Draw phase (0→0.5): high goes 0→1, low stays 0
+      // Undraw phase (0.5→1): low goes 0→1, high stays 1
+      const low = progress.mul(2).sub(1).max(0);
+      const high = progress.mul(2).min(1);
+      const t = uv().x;
+
+      If(t.lessThan(low).or(t.greaterThan(high)), () => {
+        Discard();
+      });
+
+      const c = mix(u.tgtColor, u.srcColor, t);
+      return vec4(c, 1.0);
     })();
 
-    return { mesh, u };
+    const computeUpdate = Fn(() => {
+      const currentProgress = progressesBuffer.element(instanceIndex);
+      const targetProgress = progressesToBuffer.element(instanceIndex);
+
+      currentProgress.addAssign(
+        targetProgress.sub(currentProgress).mul(1.0).mul(deltaTime),
+      );
+    })().compute(count);
+
+    return { mesh, u, computeUpdate, progressesToBuffer };
   }, [flowsPerYear, countriesGeoMap]);
+
+  useFrame(({ gl }, delta) => {
+    if (!computeUpdate) return;
+
+    gl.compute(computeUpdate);
+
+    // progressesToBuffer.value.array[Math.floor(Math.random() * 500)] = 1.0
+    // progressesToBuffer.value.needsUpdate = true
+  });
 
   return <>{mesh && <primitive object={mesh} {...props} />}</>;
 };
