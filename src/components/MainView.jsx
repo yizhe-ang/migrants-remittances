@@ -8,6 +8,7 @@ import useDataProcessing from "@/components/data/useDataProcessing";
 import DeckGLMap from "@/components/deckgl/DeckGLMap";
 import Three from "@/components/three/Three";
 import useScales from "@/components/data/useScales";
+import CountryTooltip from "@/components/interface/CountryTooltip";
 
 const MainView = () => {
   useDataPreparation();
@@ -63,6 +64,8 @@ const MainView = () => {
       <div className="fixed inset-0 bg-stone-200">
         <Three />
       </div>
+
+      <CountryTooltip />
     </>
   );
 };

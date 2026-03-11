@@ -36,6 +36,7 @@
     "leva": "^0.10.1",
     "lucide-react": "^0.574.0",
     "maplibre-gl": "^5.19.0",
+    "motion": "^12.35.2",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-map-gl": "^8.1.0",

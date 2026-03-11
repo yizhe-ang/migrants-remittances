@@ -286,6 +286,8 @@ const Points = ({ ...props }) => {
         const entry = countriesGeoSortedRef.current[pickedId.current - 1];
         if (entry) {
           setSelectedCountry({ country: entry.country, type: entry.type });
+
+          console.log(entry)
           return;
         }
       }
