@@ -186,7 +186,7 @@ const Points = ({ ...props }) => {
         .mul(isHovered.oneMinus())
         .add(hoveredColor.mul(isHovered));
 
-      const strokeColor = vec3(0, 0, 0);
+      const strokeColor = vec3(0.1, 0.1, 0.1);
 
       const color = fillColor.mul(fill).add(strokeColor.mul(stroke));
 
