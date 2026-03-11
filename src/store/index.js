@@ -89,9 +89,12 @@ export const { roomStore, useRoomStore } = createRoomStore(
     remToColorScale: null,
     setRemToColorScale: (scale) => set({ remToColorScale: scale }),
 
-    // Controls
+    // Controls / Interactions
     selectedYear: 2019,
     setSelectedYear: (selectedYear) => set({ selectedYear }),
+
+    hoveredCountry: null,
+    setHoveredCountry: (hoveredCountry) => set({ hoveredCountry }),
   }),
   // ),
 );

@@ -49,13 +49,8 @@ const Points = ({ ...props }) => {
     ]);
   }, [flowsByOrigin, flowsByDestination]);
 
-  const { mesh, pickingTexture, pickingScene, u } = useMemo(() => {
-    if (!countriesGeo || !dataIndex || !remRadiusScale || !remToColorScale)
-      return {};
-
-    const u = {
-      hoveredId: uniform(0),
-    };
+  const countriesGeoSorted = useMemo(() => {
+    if (!countriesGeo || !dataIndex) return null;
 
     const countriesGeoOrigin = countriesGeo.map((d) => ({
       ...d,
@@ -69,6 +64,29 @@ const Points = ({ ...props }) => {
       ...countriesGeoOrigin,
       ...countriesGeoDestination,
     ];
+
+    // Sort for depth buffer
+    // const countriesGeoSorted = [...countriesGeoProcessed].sort((a, b) => {
+    const countriesGeoSorted = countriesGeoProcessed.sort((a, b) => {
+      if (!dataIndex.get(b.type).has(b.country)) return 1;
+      if (!dataIndex.get(a.type).has(a.country)) return -1;
+
+      return (
+        dataIndex.get(b.type).get(b.country).sim_remittances_with -
+        dataIndex.get(a.type).get(a.country).sim_remittances_with
+      );
+    });
+
+    return countriesGeoSorted;
+  }, [countriesGeo, dataIndex])
+
+  const { mesh, pickingTexture, pickingScene, u } = useMemo(() => {
+    if (!countriesGeoSorted || !dataIndex || !remRadiusScale || !remToColorScale)
+      return {};
+
+    const u = {
+      hoveredId: uniform(0),
+    };
 
     const geometry = new THREE.PlaneGeometry(1, 1);
 
@@ -86,7 +104,7 @@ const Points = ({ ...props }) => {
     const mesh = new THREE.InstancedMesh(
       geometry,
       material,
-      countriesGeoProcessed.length,
+      countriesGeoSorted.length,
     );
     mesh.frustumCulled = false;
 
@@ -97,25 +115,13 @@ const Points = ({ ...props }) => {
 
     const pickingColors = [];
 
-    // Sort for depth buffer
-    const countriesGeoSorted = [...countriesGeoProcessed].sort((a, b) => {
-      if (!dataIndex.get(b.type).has(b.country)) return 1;
-      if (!dataIndex.get(a.type).has(a.country)) return -1;
-
-      return (
-        dataIndex.get(b.type).get(b.country).sim_remittances_with -
-        dataIndex.get(a.type).get(a.country).sim_remittances_with
-      );
-    });
-
-    for (let i = 0; i < countriesGeoProcessed.length; i++) {
+    for (let i = 0; i < countriesGeoSorted.length; i++) {
       const c = countriesGeoSorted[i];
 
       // Compute mercator projection
       const mercatorY = latToMercatorY(c.latitude);
 
       positions.push(c.longitude, mercatorY, 0);
-
 
       const d = dataIndex.get(c.type).get(c.country);
       if (d) {
@@ -205,7 +211,7 @@ const Points = ({ ...props }) => {
     const pickingMesh = new THREE.InstancedMesh(
       geometry,
       pickingMaterial,
-      countriesGeoProcessed.length,
+      countriesGeoSorted.length,
     );
     pickingMesh.frustumCulled = false;
 
@@ -214,7 +220,7 @@ const Points = ({ ...props }) => {
     pickingScene.add(pickingMesh);
 
     return { mesh, u, pickingTexture, pickingScene };
-  }, [countriesGeo, dataIndex, remRadiusScale, remToColorScale]);
+  }, [countriesGeoSorted, dataIndex, remRadiusScale, remToColorScale]);
 
   useFrame(({ gl, pointer, camera, size }) => {
     if (!pickingTexture || !pickingScene) return;
