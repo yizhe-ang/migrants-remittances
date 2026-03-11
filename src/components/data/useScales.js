@@ -63,7 +63,7 @@ export default function useScales() {
 
     const flowRadiusScale = scaleSqrt()
       .domain([0, max(flowsPerYear, (d) => d.sim_remittances_with)])
-      .range([0, 1]);
+      .range([0, 1000]);
 
     setFlowRadiusScale(flowRadiusScale);
   }, [flowsPerYear]);

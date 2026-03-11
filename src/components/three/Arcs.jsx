@@ -42,7 +42,7 @@ const Arcs = ({ ...props }) => {
     if (!flowsPerYear) return null;
 
     // DEBUG:
-    const flows = flowsPerYear.filter((d) => d.year === 2019);
+    const flows = flowsPerYear.filter((d) => d.year === 2019)
 
     return flows;
   }, [flowsPerYear]);
@@ -149,8 +149,13 @@ const Arcs = ({ ...props }) => {
       const dist = dx.mul(dx).add(dy.mul(dy)).sqrt();
       const angle = atan(dy, dx);
 
-      // Scale uniformly to preserve circular cross-section
-      const scaled = positionLocal.mul(dist);
+      // Scale arc shape by distance, cross-section by per-instance radius
+      const radius = radiusBuffer.element(instanceIndex);
+      const scaled = vec3(
+        positionLocal.x.mul(dist),
+        positionLocal.y.mul(dist),
+        positionLocal.z.mul(radius),
+      );
 
       // Rotate around Z axis so X aligns with source→target direction
       // Y (arc height) maps to world Z (toward camera)
@@ -187,7 +192,7 @@ const Arcs = ({ ...props }) => {
       // Undraw phase (0.5→1): low goes 0→1, high stays 1
       const low = progress.mul(2).sub(1).max(0);
       const high = progress.mul(2).min(1);
-      const t = uv().x;
+      const t = float(1).sub(uv().x);
 
       If(t.lessThan(low).or(t.greaterThan(high)), () => {
         Discard();
