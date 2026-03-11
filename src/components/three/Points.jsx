@@ -53,6 +53,7 @@ const Points = ({ ...props }) => {
 
   const setHoveredCountry = useRoomStore((state) => state.setHoveredCountry);
   const setSelectedCountry = useRoomStore((state) => state.setSelectedCountry);
+  const setMousePosition = useRoomStore((state) => state.setMousePosition);
 
   const countriesGeoSorted = useMemo(() => {
     if (!countriesGeo || !dataIndex) return null;
@@ -294,9 +295,17 @@ const Points = ({ ...props }) => {
       setSelectedCountry(null);
     };
 
+    const handleMouseMove = (e) => {
+      setMousePosition({ x: e.clientX, y: e.clientY });
+    };
+
     canvas.addEventListener("click", handleClick);
-    return () => canvas.removeEventListener("click", handleClick);
-  }, [gl, setSelectedCountry]);
+    canvas.addEventListener("mousemove", handleMouseMove);
+    return () => {
+      canvas.removeEventListener("click", handleClick);
+      canvas.removeEventListener("mousemove", handleMouseMove);
+    };
+  }, [gl, setSelectedCountry, setMousePosition]);
 
   return <>{mesh && <primitive object={mesh} {...props} />}</>;
 };

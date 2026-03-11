@@ -101,6 +101,9 @@ export const { roomStore, useRoomStore } = createRoomStore(
 
     selectedCountry: null,
     setSelectedCountry: (selectedCountry) => set({ selectedCountry }),
+
+    mousePosition: { x: 0, y: 0 },
+    setMousePosition: (mousePosition) => set({ mousePosition }),
   }),
   // ),
 );
