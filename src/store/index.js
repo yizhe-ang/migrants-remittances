@@ -95,6 +95,9 @@ export const { roomStore, useRoomStore } = createRoomStore(
 
     hoveredCountry: null,
     setHoveredCountry: (hoveredCountry) => set({ hoveredCountry }),
+
+    selectedCountry: null,
+    setSelectedCountry: (selectedCountry) => set({ selectedCountry }),
   }),
   // ),
 );

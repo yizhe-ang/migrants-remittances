@@ -1,7 +1,7 @@
 import { useRoomStore } from "@/store";
-import { useFrame } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import { index } from "d3-array";
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import {
   Fn,
   instancedArray,
@@ -25,6 +25,8 @@ const colorDummy = new THREE.Color();
 
 const Points = ({ ...props }) => {
   const pickedId = useRef(0);
+  const prevPickedId = useRef(0);
+  const countriesGeoSortedRef = useRef(null);
 
   const flowsByOrigin = useRoomStore((state) => state.flowsByOrigin);
   const flowsByDestination = useRoomStore((state) => state.flowsByDestination);
@@ -48,6 +50,9 @@ const Points = ({ ...props }) => {
       ["destination", destinationIndex],
     ]);
   }, [flowsByOrigin, flowsByDestination]);
+
+  const setHoveredCountry = useRoomStore((state) => state.setHoveredCountry);
+  const setSelectedCountry = useRoomStore((state) => state.setSelectedCountry);
 
   const countriesGeoSorted = useMemo(() => {
     if (!countriesGeo || !dataIndex) return null;
@@ -78,7 +83,10 @@ const Points = ({ ...props }) => {
     });
 
     return countriesGeoSorted;
-  }, [countriesGeo, dataIndex])
+  }, [countriesGeo, dataIndex]);
+
+  // Keep ref in sync for use in useFrame/click handlers
+  countriesGeoSortedRef.current = countriesGeoSorted;
 
   const { mesh, pickingTexture, pickingScene, u } = useMemo(() => {
     if (!countriesGeoSorted || !dataIndex || !remRadiusScale || !remToColorScale)
@@ -250,9 +258,43 @@ const Points = ({ ...props }) => {
           (pixelBuffer[0] << 16) | (pixelBuffer[1] << 8) | pixelBuffer[2];
 
         u.hoveredId.value = pickedId.current;
+
+        // Update store only when pickedId changes
+        if (pickedId.current !== prevPickedId.current) {
+          prevPickedId.current = pickedId.current;
+
+          if (pickedId.current > 0 && countriesGeoSortedRef.current) {
+            const entry = countriesGeoSortedRef.current[pickedId.current - 1];
+            if (entry) {
+              setHoveredCountry({ country: entry.country, type: entry.type });
+            }
+          } else {
+            setHoveredCountry(null);
+          }
+        }
       },
     );
   });
+
+  const gl = useThree((state) => state.gl);
+
+  useEffect(() => {
+    const canvas = gl.domElement;
+
+    const handleClick = () => {
+      if (pickedId.current > 0 && countriesGeoSortedRef.current) {
+        const entry = countriesGeoSortedRef.current[pickedId.current - 1];
+        if (entry) {
+          setSelectedCountry({ country: entry.country, type: entry.type });
+          return;
+        }
+      }
+      setSelectedCountry(null);
+    };
+
+    canvas.addEventListener("click", handleClick);
+    return () => canvas.removeEventListener("click", handleClick);
+  }, [gl, setSelectedCountry]);
 
   return <>{mesh && <primitive object={mesh} {...props} />}</>;
 };
