@@ -202,8 +202,8 @@ const Arcs = ({ ...props }) => {
     // progressesToBuffer.value.array[Math.floor(Math.random() * 500)] = 1.0
     // progressesToBuffer.value.needsUpdate = true
 
-    if (!u) return;
-    u.progressT.value = Math.min(u.progressT.value + delta * 0.3, 1.0);
+    // if (!u) return;
+    // u.progressT.value = Math.min(u.progressT.value + delta * 0.3, 1.0);
   });
 
   return <>{mesh && <primitive object={mesh} {...props} />}</>;
