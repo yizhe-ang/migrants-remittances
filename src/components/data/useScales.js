@@ -7,12 +7,14 @@ import { useEffect } from "react";
 export default function useScales() {
   const flowsByOrigin = useRoomStore((state) => state.flowsByOrigin);
   const flowsByDestination = useRoomStore((state) => state.flowsByDestination);
+  const flowsPerYear = useRoomStore((state) => state.flowsPerYear);
 
   const setRemRadiusScale = useRoomStore((state) => state.setRemRadiusScale);
   const setRemToColorScale = useRoomStore((state) => state.setRemToColorScale);
   const setRemFromColorScale = useRoomStore(
     (state) => state.setRemFromColorScale,
   );
+  const setFlowRadiusScale = useRoomStore((state) => state.setFlowRadiusScale);
 
   // rem radius scale
   useEffect(() => {
@@ -56,4 +58,13 @@ export default function useScales() {
   }, [flowsByDestination]);
 
   // Flows radius scale
+  useEffect(() => {
+    if (!flowsPerYear) return;
+
+    const flowRadiusScale = scaleSqrt()
+      .domain([0, max(flowsPerYear, (d) => d.sim_remittances_with)])
+      .range([0, 1]);
+
+    setFlowRadiusScale(flowRadiusScale);
+  }, [flowsPerYear]);
 }

@@ -36,6 +36,7 @@ const Arcs = ({ ...props }) => {
 
   const flowsPerYear = useRoomStore((state) => state.flowsPerYear);
   const countriesGeoMap = useRoomStore((state) => state.countriesGeoMap);
+  const flowRadiusScale = useRoomStore((state) => state.flowRadiusScale);
 
   const flows = useMemo(() => {
     if (!flowsPerYear) return null;
@@ -54,7 +55,7 @@ const Arcs = ({ ...props }) => {
     flowIndexByOrigin,
     flowIndexByDestination,
   } = useMemo(() => {
-    if (!flows || !countriesGeoMap) return {};
+    if (!flows || !countriesGeoMap || !flowRadiusScale) return {};
 
     const u = {
       srcColor: uniform(new THREE.Color(chroma(colors.orange["400"]).hex())),
@@ -67,6 +68,7 @@ const Arcs = ({ ...props }) => {
     const targets = [];
     const progressFrom = [];
     const progressTo = [];
+    const radii = [];
 
     const flowIndexByOrigin = new Map();
     const flowIndexByDestination = new Map();
@@ -82,6 +84,8 @@ const Arcs = ({ ...props }) => {
 
       progressFrom.push(0);
       progressTo.push(0);
+
+      radii.push(flowRadiusScale(flow.sim_remittances_with));
 
       if (!flowIndexByOrigin.has(flow.origin))
         flowIndexByOrigin.set(flow.origin, []);
@@ -133,6 +137,7 @@ const Arcs = ({ ...props }) => {
       new Float32Array(progressTo),
       "float",
     );
+    const radiusBuffer = instancedArray(new Float32Array(radii), "float");
 
     material.positionNode = Fn(() => {
       const src = srcBuffer.element(instanceIndex);
@@ -209,7 +214,7 @@ const Arcs = ({ ...props }) => {
       flowIndexByOrigin,
       flowIndexByDestination,
     };
-  }, [flows, countriesGeoMap]);
+  }, [flows, countriesGeoMap, flowRadiusScale]);
 
   useEffect(() => {
     if (!progressFromBuffer || !progressToBuffer || !u) return;
@@ -246,7 +251,9 @@ const Arcs = ({ ...props }) => {
     animationRef.current = animate(0, 1, {
       duration: 0.5,
       ease: "easeOut",
-      onUpdate: (v) => { u.progressT.value = v; },
+      onUpdate: (v) => {
+        u.progressT.value = v;
+      },
     });
 
     return () => animationRef.current?.stop();

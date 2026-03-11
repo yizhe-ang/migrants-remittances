@@ -89,6 +89,9 @@ export const { roomStore, useRoomStore } = createRoomStore(
     remToColorScale: null,
     setRemToColorScale: (scale) => set({ remToColorScale: scale }),
 
+    flowRadiusScale: null,
+    setFlowRadiusScale: (scale) => set({ flowRadiusScale: scale }),
+
     // Controls / Interactions
     selectedYear: 2019,
     setSelectedYear: (selectedYear) => set({ selectedYear }),
