@@ -58,8 +58,8 @@ const Arcs = ({ ...props }) => {
     if (!flows || !countriesGeoMap || !flowRadiusScale) return {};
 
     const u = {
-      srcColor: uniform(new THREE.Color(chroma(colors.orange["400"]).hex())),
-      tgtColor: uniform(new THREE.Color(chroma(colors.blue["400"]).hex())),
+      srcColor: uniform(new THREE.Color(chroma(colors.blue["400"]).hex())),
+      tgtColor: uniform(new THREE.Color(chroma(colors.orange["400"]).hex())),
       progressT: uniform(0),
     };
 
@@ -115,8 +115,8 @@ const Arcs = ({ ...props }) => {
       false,
     );
 
-    // const material = new THREE.MeshBasicNodeMaterial({
-    const material = new THREE.MeshPhysicalNodeMaterial({
+    const material = new THREE.MeshBasicNodeMaterial({
+    // const material = new THREE.MeshPhysicalNodeMaterial({
       side: THREE.DoubleSide,
       roughness: 0.5,
       transparent: true,
@@ -199,7 +199,7 @@ const Arcs = ({ ...props }) => {
       });
 
       const c = mix(u.tgtColor, u.srcColor, t);
-      return vec4(c, 1.0);
+      return vec4(c, 0.9);
     })();
 
     // const computeUpdate = Fn(() => {
