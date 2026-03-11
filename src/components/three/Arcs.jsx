@@ -201,7 +201,7 @@ const Arcs = ({ ...props }) => {
       });
 
       const c = mix(u.tgtColor, u.srcColor, t);
-      return vec4(c, 0.5);
+      return vec4(c, 1);
     })();
 
     // const computeUpdate = Fn(() => {

@@ -121,6 +121,7 @@ const Points = ({ ...props }) => {
     // Init buffers / attributes
     const positions = [];
     const sizes = [];
+    const sizesTo = []
     const colors = [];
 
     const pickingColors = [];
@@ -132,6 +133,8 @@ const Points = ({ ...props }) => {
       const mercatorY = latToMercatorY(c.latitude);
 
       positions.push(c.longitude, mercatorY, 0);
+
+      sizesTo.push(0)
 
       const d = dataIndex.get(c.type).get(c.country);
       if (d) {
@@ -157,6 +160,7 @@ const Points = ({ ...props }) => {
 
     const positionsBuffer = instancedArray(new Float32Array(positions), "vec3");
     const sizesBuffer = instancedArray(new Float32Array(sizes), "float");
+    const sizesToBuffer = instancedArray(new Float32Array(sizesTo), "float");
     const colorsBuffer = instancedArray(new Float32Array(colors), "vec3");
 
     const pickingColorsAttribute = instancedBufferAttribute(
@@ -167,7 +171,7 @@ const Points = ({ ...props }) => {
       const distUV = uv().sub(vec2(0.5, 0.5)).length();
 
       const fw = fwidth(distUV);
-      const strokePx = float(2.0); // stroke width in pixels
+      const strokePx = float(1.5); // stroke width in pixels
       const strokeWidth = fw.mul(strokePx);
 
       // Outer edge with 1px AA
@@ -192,7 +196,7 @@ const Points = ({ ...props }) => {
 
       const color = fillColor.mul(fill).add(strokeColor.mul(stroke));
 
-      return vec4(color, outer.mul(1));
+      return vec4(color, outer.mul(0.995));
     })();
 
     material.positionNode = Fn(() => {
