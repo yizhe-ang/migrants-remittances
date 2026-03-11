@@ -1,5 +1,5 @@
 import { useRoomStore } from "@/store";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import {
   Fn,
   instancedArray,
@@ -35,151 +35,175 @@ const Arcs = ({ ...props }) => {
   const flowsPerYear = useRoomStore((state) => state.flowsPerYear);
   const countriesGeoMap = useRoomStore((state) => state.countriesGeoMap);
 
-  const { mesh, u, computeUpdate, progressesToBuffer } = useMemo(() => {
-    if (!flowsPerYear || !countriesGeoMap) return {};
+  const { mesh, u, computeUpdate, progressFromBuffer, progressToBuffer } =
+    useMemo(() => {
+      if (!flowsPerYear || !countriesGeoMap) return {};
 
-    const u = {
-      srcColor: uniform(new THREE.Color(chroma(colors.orange["400"]).hex())),
-      tgtColor: uniform(new THREE.Color(chroma(colors.blue["400"]).hex())),
-      progress: uniform(0),
-    };
+      const u = {
+        srcColor: uniform(new THREE.Color(chroma(colors.orange["400"]).hex())),
+        tgtColor: uniform(new THREE.Color(chroma(colors.blue["400"]).hex())),
+        progressT: uniform(0),
+      };
 
-    // DEBUG:
-    const flows = flowsPerYear.filter((d) => d.year === 2019).slice(0, 500);
+      // DEBUG:
+      const flows = flowsPerYear.filter((d) => d.year === 2019).slice(0, 500);
 
-    // Build per-instance data
-    const sources = [];
-    const targets = [];
-    const progresses = [];
-    const progressesTo = [];
+      // Build per-instance data
+      const sources = [];
+      const targets = [];
+      const progressFrom = [];
+      const progressTo = [];
 
-    for (const flow of flows) {
-      const originGeo = countriesGeoMap.get(flow.origin);
-      const destGeo = countriesGeoMap.get(flow.destination);
-      if (!originGeo || !destGeo) continue;
+      for (const flow of flows) {
+        const originGeo = countriesGeoMap.get(flow.origin);
+        const destGeo = countriesGeoMap.get(flow.destination);
+        if (!originGeo || !destGeo) continue;
 
-      sources.push(originGeo.longitude, latToMercatorY(originGeo.latitude), 0);
-      targets.push(destGeo.longitude, latToMercatorY(destGeo.latitude), 0);
+        sources.push(
+          originGeo.longitude,
+          latToMercatorY(originGeo.latitude),
+          0,
+        );
+        targets.push(destGeo.longitude, latToMercatorY(destGeo.latitude), 0);
 
-      progresses.push(0);
-      progressesTo.push(0);
-    }
+        progressFrom.push(0);
+        progressTo.push(1);
+      }
 
-    const count = flows.length;
+      const count = flows.length;
 
-    // Canonical arc: height baked into curve so we can scale uniformly
-    const curve = new THREE.QuadraticBezierCurve3(
-      new THREE.Vector3(-0.5, 0, 0),
-      new THREE.Vector3(0, HEIGHT_FACTOR, 0),
-      new THREE.Vector3(0.5, 0, 0),
-    );
+      // Canonical arc: height baked into curve so we can scale uniformly
+      const curve = new THREE.QuadraticBezierCurve3(
+        new THREE.Vector3(-0.5, 0, 0),
+        new THREE.Vector3(0, HEIGHT_FACTOR, 0),
+        new THREE.Vector3(0.5, 0, 0),
+      );
 
-    const geometry = new THREE.TubeGeometry(
-      curve,
-      TUBE_SEGMENTS,
-      TUBE_RADIUS,
-      TUBE_RADIAL_SEGMENTS,
-      false,
-    );
+      const geometry = new THREE.TubeGeometry(
+        curve,
+        TUBE_SEGMENTS,
+        TUBE_RADIUS,
+        TUBE_RADIAL_SEGMENTS,
+        false,
+      );
 
-    // const material = new THREE.MeshBasicNodeMaterial({
-    const material = new THREE.MeshPhysicalNodeMaterial({
-      side: THREE.DoubleSide,
-      roughness: 0.5,
-      transparent: true,
-      // metalness: 0.3,
-    });
-
-    const mesh = new THREE.InstancedMesh(geometry, material, count);
-    mesh.frustumCulled = false;
-
-    // Instance buffers
-    const srcBuffer = instancedArray(new Float32Array(sources), "vec3");
-    const tgtBuffer = instancedArray(new Float32Array(targets), "vec3");
-    const progressesBuffer = instancedArray(
-      new Float32Array(progresses),
-      "float",
-    );
-    const progressesToBuffer = instancedArray(
-      new Float32Array(progressesTo),
-      "float",
-    );
-
-    material.positionNode = Fn(() => {
-      const src = srcBuffer.element(instanceIndex);
-      const tgt = tgtBuffer.element(instanceIndex);
-
-      // Direction and distance
-      const dx = tgt.x.sub(src.x);
-      const dy = tgt.y.sub(src.y);
-      const dist = dx.mul(dx).add(dy.mul(dy)).sqrt();
-      const angle = atan(dy, dx);
-
-      // Scale uniformly to preserve circular cross-section
-      const scaled = positionLocal.mul(dist);
-
-      // Rotate around Z axis so X aligns with source→target direction
-      // Y (arc height) maps to world Z (toward camera)
-      const cosA = cos(angle);
-      const sinA = sin(angle);
-
-      // Tilt: offset arc height into the perpendicular XY direction
-      // Perpendicular to travel direction is (-sinA, cosA)
-      // A→B and B→A have opposite angles, so tilt flips automatically
-      const tilt = scaled.y.mul(float(TILT_FACTOR));
-
-      const worldX = scaled.x
-        .mul(cosA)
-        .add(scaled.z.mul(sinA.negate()))
-        .add(tilt.mul(sinA.negate()));
-      const worldY = scaled.x
-        .mul(sinA)
-        .add(scaled.z.mul(cosA))
-        .add(tilt.mul(cosA));
-      const worldZ = scaled.y; // height becomes Z
-
-      // Midpoint of source and target
-      const mid = src.add(tgt).mul(0.5);
-
-      return vec3(worldX.add(mid.x), worldY.add(mid.y), worldZ);
-    })();
-
-    material.colorNode = Fn(() => {
-      const progress = progressesBuffer.element(instanceIndex);
-
-      // Draw phase (0→0.5): high goes 0→1, low stays 0
-      // Undraw phase (0.5→1): low goes 0→1, high stays 1
-      const low = progress.mul(2).sub(1).max(0);
-      const high = progress.mul(2).min(1);
-      const t = uv().x;
-
-      If(t.lessThan(low).or(t.greaterThan(high)), () => {
-        Discard();
+      // const material = new THREE.MeshBasicNodeMaterial({
+      const material = new THREE.MeshPhysicalNodeMaterial({
+        side: THREE.DoubleSide,
+        roughness: 0.5,
+        transparent: true,
+        // metalness: 0.3,
       });
 
-      const c = mix(u.tgtColor, u.srcColor, t);
-      return vec4(c, 1.0);
-    })();
+      const mesh = new THREE.InstancedMesh(geometry, material, count);
+      mesh.frustumCulled = false;
 
-    const computeUpdate = Fn(() => {
-      const currentProgress = progressesBuffer.element(instanceIndex);
-      const targetProgress = progressesToBuffer.element(instanceIndex);
-
-      currentProgress.addAssign(
-        targetProgress.sub(currentProgress).mul(1.0).mul(deltaTime),
+      // Instance buffers
+      const srcBuffer = instancedArray(new Float32Array(sources), "vec3");
+      const tgtBuffer = instancedArray(new Float32Array(targets), "vec3");
+      const progressFromBuffer = instancedArray(
+        new Float32Array(progressFrom),
+        "float",
       );
-    })().compute(count);
+      const progressToBuffer = instancedArray(
+        new Float32Array(progressTo),
+        "float",
+      );
 
-    return { mesh, u, computeUpdate, progressesToBuffer };
-  }, [flowsPerYear, countriesGeoMap]);
+      material.positionNode = Fn(() => {
+        const src = srcBuffer.element(instanceIndex);
+        const tgt = tgtBuffer.element(instanceIndex);
+
+        // Direction and distance
+        const dx = tgt.x.sub(src.x);
+        const dy = tgt.y.sub(src.y);
+        const dist = dx.mul(dx).add(dy.mul(dy)).sqrt();
+        const angle = atan(dy, dx);
+
+        // Scale uniformly to preserve circular cross-section
+        const scaled = positionLocal.mul(dist);
+
+        // Rotate around Z axis so X aligns with source→target direction
+        // Y (arc height) maps to world Z (toward camera)
+        const cosA = cos(angle);
+        const sinA = sin(angle);
+
+        // Tilt: offset arc height into the perpendicular XY direction
+        // Perpendicular to travel direction is (-sinA, cosA)
+        // A→B and B→A have opposite angles, so tilt flips automatically
+        const tilt = scaled.y.mul(float(TILT_FACTOR));
+
+        const worldX = scaled.x
+          .mul(cosA)
+          .add(scaled.z.mul(sinA.negate()))
+          .add(tilt.mul(sinA.negate()));
+        const worldY = scaled.x
+          .mul(sinA)
+          .add(scaled.z.mul(cosA))
+          .add(tilt.mul(cosA));
+        const worldZ = scaled.y; // height becomes Z
+
+        // Midpoint of source and target
+        const mid = src.add(tgt).mul(0.5);
+
+        return vec3(worldX.add(mid.x), worldY.add(mid.y), worldZ);
+      })();
+
+      material.colorNode = Fn(() => {
+        const progressFrom = progressFromBuffer.element(instanceIndex);
+        const progressTo = progressToBuffer.element(instanceIndex);
+        const progress = mix(progressFrom, progressTo, u.progressT);
+
+        // Draw phase (0→0.5): high goes 0→1, low stays 0
+        // Undraw phase (0.5→1): low goes 0→1, high stays 1
+        const low = progress.mul(2).sub(1).max(0);
+        const high = progress.mul(2).min(1);
+        const t = uv().x;
+
+        If(t.lessThan(low).or(t.greaterThan(high)), () => {
+          Discard();
+        });
+
+        const c = mix(u.tgtColor, u.srcColor, t);
+        return vec4(c, 1.0);
+      })();
+
+      // const computeUpdate = Fn(() => {
+      //   const currentProgress = progressFromBuffer.element(instanceIndex);
+      //   const targetProgress = progressFromBuffer.element(instanceIndex);
+
+      //   currentProgress.addAssign(
+      //     targetProgress.sub(currentProgress).mul(1.0).mul(deltaTime),
+      //   );
+      // })().compute(count);
+
+      return { mesh, u, progressFromBuffer, progressToBuffer };
+    }, [flowsPerYear, countriesGeoMap]);
+
+  const animateProgress = useCallback(() => {
+    // 1. Copy current "to" into "from"
+    progressFromBuffer.value.array.set(progressToBuffer.value.array);
+    progressFromBuffer.value.needsUpdate = true;
+
+    // 2. Set new targets
+    progressToBuffer.value.array[i] = 1.0; // or any value per arc
+    progressToBuffer.value.needsUpdate = true;
+
+    // 3. Reset playhead
+    u.playhead.value = 0;
+    // useFrame will animate it 0 → 1
+  }, []);
 
   useFrame(({ gl }, delta) => {
-    if (!computeUpdate) return;
+    //   if (!computeUpdate) return;
 
-    gl.compute(computeUpdate);
+    //   gl.compute(computeUpdate);
 
     // progressesToBuffer.value.array[Math.floor(Math.random() * 500)] = 1.0
     // progressesToBuffer.value.needsUpdate = true
+
+    if (!u) return;
+    u.progressT.value = Math.min(u.progressT.value + delta * 0.3, 1.0);
   });
 
   return <>{mesh && <primitive object={mesh} {...props} />}</>;
