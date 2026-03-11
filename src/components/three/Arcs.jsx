@@ -120,11 +120,13 @@ const Arcs = ({ ...props }) => {
       side: THREE.DoubleSide,
       roughness: 0.5,
       transparent: true,
+      depthWrite: false,
       // metalness: 0.3,
     });
 
     const mesh = new THREE.InstancedMesh(geometry, material, count);
     mesh.frustumCulled = false;
+    mesh.renderOrder = 2;
 
     // Instance buffers
     const srcBuffer = instancedArray(new Float32Array(sources), "vec3");
@@ -199,7 +201,7 @@ const Arcs = ({ ...props }) => {
       });
 
       const c = mix(u.tgtColor, u.srcColor, t);
-      return vec4(c, 0.9);
+      return vec4(c, 0.5);
     })();
 
     // const computeUpdate = Fn(() => {

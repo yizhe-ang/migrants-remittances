@@ -116,6 +116,7 @@ const Points = ({ ...props }) => {
       countriesGeoSorted.length,
     );
     mesh.frustumCulled = false;
+    mesh.renderOrder = 1;
 
     // Init buffers / attributes
     const positions = [];

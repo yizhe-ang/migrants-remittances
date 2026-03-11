@@ -10,12 +10,14 @@ const WorldMap = ({...props}) => {
   const { mesh } = useMemo(() => {
     const geometry = new THREE.PlaneGeometry(360, 360);
 
-    const material = new THREE.MeshPhysicalNodeMaterial({
+    // const material = new THREE.MeshPhysicalNodeMaterial({
+    const material = new THREE.MeshBasicNodeMaterial({
       // roughness: 0.5,
       // metalness: 0.5,
     });
 
     const mesh = new THREE.Mesh(geometry, material);
+    mesh.renderOrder = -1
 
     material.colorNode = Fn(() => {
       // Remap v from Mercator space back to equirectangular
