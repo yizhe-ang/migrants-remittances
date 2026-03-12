@@ -253,16 +253,14 @@ const Arcs = ({ ...props }) => {
     if (!buffers || !u || !flowsMap) return;
 
     const targets = new Float32Array(buffers.progress.to.value.array.length);
+
     if (hoveredCountry) {
       const { country, type } = hoveredCountry;
-      const indexMap =
-        type === "origin"
-          ? flowsMap.get("origin")
-          : flowsMap.get("destination");
-      const indices = indexMap?.get(country).map((d) => d.idx) || [];
-      for (const i of indices) {
-        targets[i] = 0.5;
-      }
+
+      const flows = flowsMap.get(type).get(country);
+      flows.forEach((d) => {
+        targets[d.idx] = 0.5;
+      });
     }
 
     progressAnimRef.current = transitionBuffer(
