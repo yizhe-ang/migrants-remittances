@@ -1,11 +1,9 @@
 import { useRoomStore } from "@/store";
-import { useFrame, useThree } from "@react-three/fiber";
 import { index } from "d3-array";
-import { useEffect, useMemo, useRef } from "react";
+import { useMemo, useRef } from "react";
 import {
   Fn,
   instancedArray,
-  instancedBufferAttribute,
   positionLocal,
   instanceIndex,
   vec3,
@@ -22,12 +20,11 @@ import {
 import * as THREE from "three/webgpu";
 import { latToMercatorY } from "@/lib/utils";
 import useInteractions from "./useInteractions";
+import useGpuPicking from "./useGpuPicking";
 
 const colorDummy = new THREE.Color();
 
 const Points = ({ ...props }) => {
-  const pickedId = useRef(0);
-  const prevPickedId = useRef(0);
   const countriesGeoSortedRef = useRef(null);
 
   const flowsByOrigin = useRoomStore((state) => state.flowsByOrigin);
@@ -52,10 +49,6 @@ const Points = ({ ...props }) => {
       ["destination", destinationIndex],
     ]);
   }, [flowsByOrigin, flowsByDestination]);
-
-  const setHoveredCountry = useRoomStore((state) => state.setHoveredCountry);
-  const setSelectedCountry = useRoomStore((state) => state.setSelectedCountry);
-  const setMousePosition = useRoomStore((state) => state.setMousePosition);
 
   const countriesGeoSorted = useMemo(() => {
     if (!countriesGeo || !dataIndex) return null;
@@ -106,7 +99,7 @@ const Points = ({ ...props }) => {
   // Keep ref in sync for use in useFrame/click handlers
   countriesGeoSortedRef.current = countriesGeoSorted;
 
-  const { mesh, pickingTexture, pickingScene, u, buffers } = useMemo(() => {
+  const { mesh, u, buffers } = useMemo(() => {
     if (
       !countriesGeoSorted ||
       !dataIndex ||
@@ -122,15 +115,9 @@ const Points = ({ ...props }) => {
 
     const geometry = new THREE.PlaneGeometry(1, 1);
 
-    // const material = new THREE.MeshPhysicalNodeMaterial({
-    //   roughness: 0.5,
-    //   metalness: 0.5,
-    //   transparent: true,
-    // });
     const material = new THREE.MeshBasicNodeMaterial({
       transparent: true,
       depthWrite: false,
-      // depthTest: false,
     });
 
     const mesh = new THREE.InstancedMesh(
@@ -146,8 +133,6 @@ const Points = ({ ...props }) => {
     const sizesFrom = [];
     const sizesTo = [];
     const colors = [];
-
-    const pickingColors = [];
 
     for (let i = 0; i < countriesGeoSorted.length; i++) {
       const c = countriesGeoSorted[i];
@@ -175,10 +160,6 @@ const Points = ({ ...props }) => {
 
         colors.push(0, 0, 0);
       }
-
-      // GPU picking colors
-      colorDummy.setHex(i + 1, THREE.NoColorSpace);
-      pickingColors.push(colorDummy.r, colorDummy.g, colorDummy.b);
     }
 
     const sizesOg = new Float32Array(sizesFrom);
@@ -190,10 +171,6 @@ const Points = ({ ...props }) => {
     );
     const sizesToBuffer = instancedArray(new Float32Array(sizesTo), "float");
     const colorsBuffer = instancedArray(new Float32Array(colors), "vec3");
-
-    const pickingColorsAttribute = instancedBufferAttribute(
-      new THREE.InstancedBufferAttribute(new Float32Array(pickingColors), 3),
-    );
 
     material.colorNode = Fn(() => {
       const distUV = uv().sub(vec2(0.5, 0.5)).length();
@@ -245,30 +222,9 @@ const Points = ({ ...props }) => {
       return positionLocal.mul(scale).add(offset);
     })();
 
-    // Picking mesh
-    const pickingMaterial = new THREE.MeshBasicNodeMaterial({
-      // blending: THREE.NormalBlending,
-      depthWrite: false,
-    });
-    pickingMaterial.colorNode = pickingColorsAttribute;
-    pickingMaterial.positionNode = material.positionNode;
-
-    const pickingMesh = new THREE.InstancedMesh(
-      geometry,
-      pickingMaterial,
-      countriesGeoSorted.length,
-    );
-    pickingMesh.frustumCulled = false;
-
-    const pickingScene = new THREE.Scene();
-    const pickingTexture = new THREE.RenderTarget(1, 1);
-    pickingScene.add(pickingMesh);
-
     return {
       mesh,
       u,
-      pickingTexture,
-      pickingScene,
       buffers: {
         size: {
           og: sizesOg,
@@ -279,81 +235,13 @@ const Points = ({ ...props }) => {
     };
   }, [countriesGeoSorted, dataIndex, remRadiusScale, remToColorScale]);
 
-  useFrame(({ gl, pointer, camera, size }) => {
-    if (!pickingTexture || !pickingScene) return;
-
-    const mouseX = ((pointer.x + 1) / 2) * size.width;
-    const mouseY = ((1 - pointer.y) / 2) * size.height;
-
-    // GPU PICKING #############################################################
-    const pixelRatio = gl.getPixelRatio();
-
-    camera.setViewOffset(
-      gl.domElement.width,
-      gl.domElement.height,
-      Math.floor(mouseX * pixelRatio),
-      Math.floor(mouseY * pixelRatio),
-      1,
-      1,
-    );
-
-    gl.setRenderTarget(pickingTexture);
-    gl.render(pickingScene, camera);
-    gl.setRenderTarget(null);
-    camera.clearViewOffset();
-    gl.readRenderTargetPixelsAsync(pickingTexture, 0, 0, 1, 1, 0).then(
-      (pixelBuffer) => {
-        pickedId.current =
-          (pixelBuffer[0] << 16) | (pixelBuffer[1] << 8) | pixelBuffer[2];
-
-        u.hoveredId.value = pickedId.current;
-
-        // Update store only when pickedId changes
-        if (pickedId.current !== prevPickedId.current) {
-          prevPickedId.current = pickedId.current;
-
-          if (pickedId.current > 0 && countriesGeoSortedRef.current) {
-            const entry = countriesGeoSortedRef.current[pickedId.current - 1];
-            if (entry) {
-              setHoveredCountry({ country: entry.country, type: entry.type });
-            }
-          } else {
-            setHoveredCountry(null);
-          }
-        }
-      },
-    );
+  useGpuPicking({
+    positionNode: mesh?.material?.positionNode,
+    instanceCount: countriesGeoSorted?.length,
+    geometry: mesh?.geometry,
+    dataRef: countriesGeoSortedRef,
+    hoveredIdUniform: u?.hoveredId,
   });
-
-  const gl = useThree((state) => state.gl);
-
-  useEffect(() => {
-    const canvas = gl.domElement;
-
-    const handleClick = () => {
-      if (pickedId.current > 0 && countriesGeoSortedRef.current) {
-        const entry = countriesGeoSortedRef.current[pickedId.current - 1];
-        if (entry) {
-          setSelectedCountry({ country: entry.country, type: entry.type });
-
-          console.log(entry);
-          return;
-        }
-      }
-      setSelectedCountry(null);
-    };
-
-    const handleMouseMove = (e) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
-    };
-
-    canvas.addEventListener("click", handleClick);
-    canvas.addEventListener("mousemove", handleMouseMove);
-    return () => {
-      canvas.removeEventListener("click", handleClick);
-      canvas.removeEventListener("mousemove", handleMouseMove);
-    };
-  }, [gl, setSelectedCountry, setMousePosition]);
 
   useInteractions({
     buffers,
