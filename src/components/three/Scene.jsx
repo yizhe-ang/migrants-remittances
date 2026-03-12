@@ -1,32 +1,16 @@
 import {
-  CameraControls,
-  Center,
   Environment,
   PerspectiveCamera,
 } from "@react-three/drei";
 import WorldMap from "@/components/three/WorldMap";
 import Points from "@/components/three/Points/Points";
 import Arcs from "@/components/three/Arcs";
-import { CameraControlsImpl } from "@react-three/drei";
-
-const { ACTION } = CameraControlsImpl;
+import CameraControls from "@/components/three/CameraControls";
 
 const Scene = () => {
   return (
     <>
-      <CameraControls
-        mouseButtons={{
-          left: ACTION.TRUCK,
-          middle: ACTION.DOLLY,
-          right: ACTION.ROTATE,
-          wheel: ACTION.DOLLY,
-        }}
-        touches={{
-          one: ACTION.TOUCH_ROTATE,
-          two: ACTION.TOUCH_DOLLY_TRUCK,
-          three: ACTION.TOUCH_DOLLY_TRUCK,
-        }}
-      />
+      <CameraControls />
 
       <PerspectiveCamera makeDefault position={[0, 0, 300]} />
 

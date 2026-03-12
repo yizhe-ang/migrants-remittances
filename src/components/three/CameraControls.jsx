@@ -1,8 +1,11 @@
 import { CameraControls as CameraControlsDrei } from "@react-three/drei";
 import { useControls, button, folder } from "leva";
 import { forwardRef, useEffect } from "react";
+import { CameraControlsImpl } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
+
+const { ACTION } = CameraControlsImpl;
 
 const CameraControls = forwardRef(({ ...props }, ref) => {
   useControls({
@@ -39,7 +42,22 @@ const CameraControls = forwardRef(({ ...props }, ref) => {
   //   }
   // });
 
-  return <CameraControlsDrei ref={ref}></CameraControlsDrei>;
+  return (
+    <CameraControlsDrei
+      ref={ref}
+      mouseButtons={{
+        left: ACTION.TRUCK,
+        middle: ACTION.DOLLY,
+        right: ACTION.ROTATE,
+        wheel: ACTION.DOLLY,
+      }}
+      touches={{
+        one: ACTION.TOUCH_ROTATE,
+        two: ACTION.TOUCH_DOLLY_TRUCK,
+        three: ACTION.TOUCH_DOLLY_TRUCK,
+      }}
+    ></CameraControlsDrei>
+  );
 });
 
 export default CameraControls;
