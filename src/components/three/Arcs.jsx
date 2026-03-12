@@ -17,11 +17,13 @@ import {
   If,
   Discard,
   time,
+  mx_noise_float,
 } from "three/tsl";
 import * as THREE from "three/webgpu";
 import { latToMercatorY, transitionBuffer } from "@/lib/utils";
 import colors from "tailwindcss/colors";
 import chroma from "chroma-js";
+import { hash } from "@/lib/tsl";
 
 const TUBE_RADIUS = 0.002;
 const TUBE_SEGMENTS = 48;
@@ -39,7 +41,7 @@ const Arcs = ({ ...props }) => {
   const flowRadiusScale = useRoomStore((state) => state.flowRadiusScale);
   const enableMapInteractions = useRoomStore(
     (state) => state.enableMapInteractions,
-  )
+  );
 
   const setArcs = useRoomStore((state) => state.setArcs);
 
@@ -164,11 +166,27 @@ const Arcs = ({ ...props }) => {
     })();
 
     material.colorNode = Fn(() => {
+      const seed = instanceIndex.toFloat();
+
       const progressFrom = progressFromBuffer.element(instanceIndex);
       const progressTo = progressToBuffer.element(instanceIndex);
-      const progress = mix(progressFrom, progressTo, u.progressT).toVar();
+      const progressBase = mix(progressFrom, progressTo, u.progressT);
 
-      progress.addAssign(time).mod(1)
+      // Draw randomly: per-arc phase offset + per-arc speed
+      // const randOffset = randomOffsetBuffer.element(instanceIndex);
+      // const randSpeed = randomSpeedBuffer.element(instanceIndex);
+      // const progress = progressBase
+      //   .add(time.mul(randSpeed))
+      //   .add(randOffset)
+      //   .mod(1);
+
+      const randOffset = hash(seed).mul(10)
+      const randSpeed = hash(seed.add(1)).mul(0.1);
+
+      const progress = progressBase
+        .add(time.mul(randSpeed))
+        .add(randOffset)
+        .mod(1);
 
       // Draw phase (0→0.5): high goes 0→1, low stays 0
       // Undraw phase (0.5→1): low goes 0→1, high stays 1
@@ -215,7 +233,7 @@ const Arcs = ({ ...props }) => {
   }, [u, buffers]);
 
   useEffect(() => {
-    if (!enableMapInteractions) return
+    if (!enableMapInteractions) return;
     if (!buffers || !u || !flowsMap) return;
 
     const targets = new Float32Array(buffers.progress.to.value.array.length);
