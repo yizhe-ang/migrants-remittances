@@ -7,15 +7,26 @@ export default function useInteractions({ buffers, u, countryTypeToIndex }) {
 
   const flowsMap = useRoomStore((state) => state.flowsMap);
   const remRadiusScale = useRoomStore((state) => state.remRadiusScale);
+  const remToColorScale = useRoomStore((state) => state.remToColorScale);
+  const remFromColorScale = useRoomStore((state) => state.remFromColorScale);
 
   const sizeAnimRef = useRef(null);
-  const colorAnimRef = useRef(null)
+  const colorAnimRef = useRef(null);
 
   // Animate on hovered country change
   useEffect(() => {
-    if (!flowsMap || !u || !buffers || !countryTypeToIndex) return;
+    if (
+      !flowsMap ||
+      !u ||
+      !buffers ||
+      !countryTypeToIndex ||
+      !remRadiusScale ||
+      !remToColorScale ||
+      !remFromColorScale
+    )
+      return;
 
-    const targets = hoveredCountry
+    const sizeTargets = hoveredCountry
       ? new Float32Array(buffers.size.from.value.array.length)
       : buffers.size.og;
 
@@ -28,15 +39,15 @@ export default function useInteractions({ buffers, u, countryTypeToIndex }) {
           .get(type === "origin" ? "destination" : "origin")
           .get(type === "origin" ? d.flow.destination : d.flow.origin);
 
-        targets[idx] = remRadiusScale(d.flow.sim_remittances_with);
+        sizeTargets[idx] = remRadiusScale(d.flow.sim_remittances_with);
       });
 
       // Hovered country should be the same
       const countryOriginIdx = countryTypeToIndex.get("origin").get(country);
-      targets[countryOriginIdx] = buffers.size.og[countryOriginIdx];
+      sizeTargets[countryOriginIdx] = buffers.size.og[countryOriginIdx];
 
       const countryDestIdx = countryTypeToIndex.get("destination").get(country);
-      targets[countryDestIdx] = buffers.size.og[countryDestIdx];
+      sizeTargets[countryDestIdx] = buffers.size.og[countryDestIdx];
 
       // TODO: Animate color too
     }
@@ -45,11 +56,20 @@ export default function useInteractions({ buffers, u, countryTypeToIndex }) {
       buffers.size.from,
       buffers.size.to,
       u.sizeT,
-      targets,
+      sizeTargets,
     );
 
     return () => {
       sizeAnimRef.current?.stop();
     };
-  }, [hoveredCountry, flowsMap, buffers, u, countryTypeToIndex]);
+  }, [
+    hoveredCountry,
+    flowsMap,
+    buffers,
+    u,
+    countryTypeToIndex,
+    remRadiusScale,
+    remToColorScale,
+    remFromColorScale,
+  ]);
 }

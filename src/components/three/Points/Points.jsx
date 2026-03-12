@@ -111,6 +111,7 @@ const Points = ({ ...props }) => {
     const u = {
       hoveredId: uniform(0),
       sizeT: uniform(0),
+      colorT: uniform(0)
     };
 
     const geometry = new THREE.PlaneGeometry(1, 1);
@@ -132,7 +133,8 @@ const Points = ({ ...props }) => {
     const positions = [];
     const sizesFrom = [];
     const sizesTo = [];
-    const colors = [];
+    const colorsFrom = [];
+    const colorsTo = []
 
     for (let i = 0; i < countriesGeoSorted.length; i++) {
       const c = countriesGeoSorted[i];
@@ -143,6 +145,7 @@ const Points = ({ ...props }) => {
       positions.push(c.longitude, mercatorY, 0);
 
       sizesTo.push(0);
+      colorsTo.push(0, 0, 0)
 
       const d = dataIndex.get(c.type).get(c.country);
       if (d) {
@@ -153,15 +156,16 @@ const Points = ({ ...props }) => {
         } else {
           colorDummy.setStyle(remFromColorScale(d.sim_remittances_with));
         }
-        colors.push(colorDummy.r, colorDummy.g, colorDummy.b);
+        colorsFrom.push(colorDummy.r, colorDummy.g, colorDummy.b);
       } else {
         // If doesn't exist, don't render at all
         sizesFrom.push(0);
 
-        colors.push(0, 0, 0);
+        colorsFrom.push(0, 0, 0);
       }
     }
 
+    const colorsOg = new Float32Array(colorsFrom);
     const sizesOg = new Float32Array(sizesFrom);
 
     const positionsBuffer = instancedArray(new Float32Array(positions), "vec3");
@@ -170,7 +174,8 @@ const Points = ({ ...props }) => {
       "float",
     );
     const sizesToBuffer = instancedArray(new Float32Array(sizesTo), "float");
-    const colorsBuffer = instancedArray(new Float32Array(colors), "vec3");
+    const colorsFromBuffer = instancedArray(new Float32Array(colorsFrom), "vec3");
+    const colorsToBuffer = instancedArray(new Float32Array(colorsTo), "vec3");
 
     material.colorNode = Fn(() => {
       const distUV = uv().sub(vec2(0.5, 0.5)).length();
@@ -190,7 +195,10 @@ const Points = ({ ...props }) => {
 
       const isHovered = instanceIndex.add(1).equal(u.hoveredId).toFloat();
 
-      const dataColor = colorsBuffer.element(instanceIndex);
+      const colorFrom = colorsFromBuffer.element(instanceIndex);
+      const colorTo = colorsToBuffer.element(instanceIndex);
+      const dataColor = mix(colorFrom, colorTo, u.colorT);
+
       const hoveredColor = vec3(0, 0, 0);
 
       const fillColor = dataColor
