@@ -81,14 +81,14 @@ export default function useDataProcessing() {
       if (!flowsByOriginMap.has(flow.origin))
         flowsByOriginMap.set(flow.origin, []);
       flowsByOriginMap.get(flow.origin).push({
-        ...flow,
+        flow,
         idx,
       });
 
       if (!flowsByDestinationMap.has(flow.destination))
         flowsByDestinationMap.set(flow.destination, []);
       flowsByDestinationMap.get(flow.destination).push({
-        ...flow,
+        flow,
         idx,
       });
     });
