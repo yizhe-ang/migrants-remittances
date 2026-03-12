@@ -12,7 +12,7 @@ const Scene = () => {
     <>
       <CameraControls />
 
-      <PerspectiveCamera makeDefault position={[0, 0, 300]} />
+      <PerspectiveCamera />
 
       <Environment preset="city" />
 

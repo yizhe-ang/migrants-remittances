@@ -5,6 +5,7 @@ import {
 import { useControls, button, folder } from "leva";
 import { useRef, useEffect } from "react";
 import { useRoomStore } from "@/store";
+import cameraPositions from "@/components/data/cameraPositions";
 
 const { ACTION } = CameraControlsImpl;
 
@@ -15,6 +16,15 @@ const CameraControls = (props) => {
   useEffect(() => {
     if (ref.current) setCameraControls(ref.current);
   }, [setCameraControls]);
+
+  // Init camera position
+  useEffect(() => {
+    console.log('wot')
+    ref.current.setLookAt(...cameraPositions.init, false);
+    // ref.current.setLookAt(...cameraPositions.takeoffStart, false);
+
+    // ref.autoRotate = false;
+  }, []);
 
   useControls({
     Camera: folder(
@@ -34,6 +44,7 @@ const CameraControls = (props) => {
 
   return (
     <CameraControlsDrei
+      makeDefault
       ref={ref}
       mouseButtons={{
         left: ACTION.TRUCK,
