@@ -177,9 +177,9 @@ const Points = ({ ...props }) => {
     const sizesToBuffer = instancedArray(new Float32Array(sizesTo), "float");
     const colorsFromBuffer = instancedArray(
       new Float32Array(colorsFrom),
-      "vec3",
+      "vec4",
     );
-    const colorsToBuffer = instancedArray(new Float32Array(colorsTo), "vec3");
+    const colorsToBuffer = instancedArray(new Float32Array(colorsTo), "vec4");
 
     material.colorNode = Fn(() => {
       const distUV = uv().sub(vec2(0.5, 0.5)).length();
@@ -199,8 +199,8 @@ const Points = ({ ...props }) => {
 
       const isHovered = instanceIndex.add(1).equal(u.hoveredId).toFloat();
 
-      const colorFrom = colorsFromBuffer.element(instanceIndex);
-      const colorTo = colorsToBuffer.element(instanceIndex);
+      const colorFrom = colorsFromBuffer.element(instanceIndex).xyz;
+      const colorTo = colorsToBuffer.element(instanceIndex).xyz;
       const dataColor = mix(colorFrom, colorTo, u.colorT);
 
       const hoveredColor = vec3(0, 0, 0);

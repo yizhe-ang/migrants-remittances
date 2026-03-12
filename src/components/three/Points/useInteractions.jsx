@@ -51,9 +51,9 @@ export default function useInteractions({ buffers, u, countryTypeToIndex }) {
         } else {
           colorDummy.setStyle(remFromColorScale(d.flow.sim_remittances_with));
         }
-        colorTargets[idx * 3] = colorDummy.r;
-        colorTargets[idx * 3 + 1] = colorDummy.g;
-        colorTargets[idx * 3 + 2] = colorDummy.b;
+        colorTargets[idx * 4] = colorDummy.r;
+        colorTargets[idx * 4 + 1] = colorDummy.g;
+        colorTargets[idx * 4 + 2] = colorDummy.b;
       });
 
       // Hovered country should be the same
@@ -63,18 +63,18 @@ export default function useInteractions({ buffers, u, countryTypeToIndex }) {
       sizeTargets[countryOriginIdx] = buffers.size.og[countryOriginIdx];
       sizeTargets[countryDestIdx] = buffers.size.og[countryDestIdx];
 
-      // colorTargets[countryOriginIdx * 3] =
-      //   buffers.color.og[countryOriginIdx * 3];
-      // colorTargets[countryOriginIdx * 3 + 1] =
-      //   buffers.color.og[countryOriginIdx * 3 + 1];
-      // colorTargets[countryOriginIdx * 3 + 2] =
-      //   buffers.color.og[countryOriginIdx * 3 + 2];
+      // colorTargets[countryOriginIdx * 4] =
+      //   buffers.color.og[countryOriginIdx * 4];
+      // colorTargets[countryOriginIdx * 4 + 1] =
+      //   buffers.color.og[countryOriginIdx * 4 + 1];
+      // colorTargets[countryOriginIdx * 4 + 2] =
+      //   buffers.color.og[countryOriginIdx * 4 + 2];
 
-      // colorTargets[countryDestIdx * 3] = buffers.color.og[countryDestIdx * 3];
-      // colorTargets[countryDestIdx * 3 + 1] =
-      //   buffers.color.og[countryDestIdx * 3 + 1];
-      // colorTargets[countryDestIdx * 3 + 2] =
-      //   buffers.color.og[countryDestIdx * 3 + 2];
+      // colorTargets[countryDestIdx * 4] = buffers.color.og[countryDestIdx * 4];
+      // colorTargets[countryDestIdx * 4 + 1] =
+      //   buffers.color.og[countryDestIdx * 4 + 1];
+      // colorTargets[countryDestIdx * 4 + 2] =
+      //   buffers.color.og[countryDestIdx * 4 + 2];
     }
 
     sizeAnimRef.current = transitionBuffer(
