@@ -37,7 +37,9 @@ const Arcs = ({ ...props }) => {
   const countriesGeoMap = useRoomStore((state) => state.countriesGeoMap);
   const flowRadiusScale = useRoomStore((state) => state.flowRadiusScale);
 
-  const { mesh, u, progressFromBuffer, progressToBuffer } = useMemo(() => {
+  const setArcs = useRoomStore((state) => state.setArcs);
+
+  const { mesh, u, buffers } = useMemo(() => {
     if (!flows || !countriesGeoMap || !flowRadiusScale) return {};
 
     const u = {
@@ -185,15 +187,19 @@ const Arcs = ({ ...props }) => {
     return {
       mesh,
       u,
-      progressFromBuffer,
-      progressToBuffer,
+      buffers: {
+        progress: {
+          from: progressFromBuffer,
+          to: progressToBuffer,
+        },
+      },
     };
   }, [flows, countriesGeoMap, flowRadiusScale]);
 
   useEffect(() => {
-    if (!progressFromBuffer || !progressToBuffer || !u || !flowsMap) return;
+    if (!buffers || !u || !flowsMap) return;
 
-    const targets = new Float32Array(progressToBuffer.value.array.length);
+    const targets = new Float32Array(buffers.progress.to.value.array.length);
     if (hoveredCountry) {
       const { country, type } = hoveredCountry;
       const indexMap =
@@ -207,14 +213,14 @@ const Arcs = ({ ...props }) => {
     }
 
     progressAnimRef.current = transitionBuffer(
-      progressFromBuffer,
-      progressToBuffer,
+      buffers.progress.from,
+      buffers.progress.to,
       u.progressT,
       targets,
     );
 
     return () => progressAnimRef.current?.stop();
-  }, [hoveredCountry, progressFromBuffer, progressToBuffer, u, flowsMap]);
+  }, [hoveredCountry, buffers, u, flowsMap]);
 
   return <>{mesh && <primitive object={mesh} {...props} />}</>;
 };

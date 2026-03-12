@@ -1,6 +1,6 @@
 import { useRoomStore } from "@/store";
 import { index } from "d3-array";
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import {
   Fn,
   instancedArray,
@@ -34,6 +34,8 @@ const Points = ({ ...props }) => {
   const remRadiusScale = useRoomStore((state) => state.remRadiusScale);
   const remToColorScale = useRoomStore((state) => state.remToColorScale);
   const remFromColorScale = useRoomStore((state) => state.remFromColorScale);
+
+  const setPoints = useRoomStore((state) => state.setPoints);
 
   const dataIndex = useMemo(() => {
     if (!flowsByOrigin || !flowsByDestination) return null;
@@ -205,9 +207,9 @@ const Points = ({ ...props }) => {
 
       const hoveredColor = vec3(0, 0, 0);
 
-      const fillColor = dataColor
-        // .mul(isHovered.oneMinus())
-        // .add(hoveredColor.mul(isHovered));
+      const fillColor = dataColor;
+      // .mul(isHovered.oneMinus())
+      // .add(hoveredColor.mul(isHovered));
 
       const strokeColor = vec3(0.1, 0.1, 0.1);
 
@@ -251,6 +253,16 @@ const Points = ({ ...props }) => {
       },
     };
   }, [countriesGeoSorted, dataIndex, remRadiusScale, remToColorScale]);
+
+  useEffect(() => {
+    if (!u || !buffers) return;
+
+    setPoints({
+      u,
+      buffers,
+      // TODO: Other data processing stuff
+    });
+  }, [u, buffers]);
 
   useGpuPicking({
     positionNode: mesh?.material?.positionNode,

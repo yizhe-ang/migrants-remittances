@@ -115,7 +115,11 @@ export const { roomStore, useRoomStore } = createRoomStore(
     cameraControls: null,
     setCameraControls: (cameraControls) => set({ cameraControls }),
 
+    points: null,
+    setPoints: (points) => set({ points }),
 
+    arcs: null,
+    setArcs: (arcs) => set({ arcs }),
   }),
   // ),
 );
