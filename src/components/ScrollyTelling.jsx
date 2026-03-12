@@ -60,16 +60,29 @@ const ScrollyTelling = () => {
       })
       .to(arcs.u.progressT, {
         value: 1,
+        duration: 1,
       })
       .to(
         cameraLookAt,
         {
-          endArray: cameraPositions.usaEnd,
+          endArray: cameraPositions.usaMid,
+          duration: 0.4,
           onUpdate: () => {
             cameraControls.setLookAt(...cameraLookAt, false);
           },
         },
-        "<",
+        0,
+      )
+      .to(
+        cameraLookAt,
+        {
+          endArray: cameraPositions.usaEnd,
+          duration: 0.6,
+          onUpdate: () => {
+            cameraControls.setLookAt(...cameraLookAt, false);
+          },
+        },
+        0.4,
       );
   }, [cameraControls, arcs, points]);
 
