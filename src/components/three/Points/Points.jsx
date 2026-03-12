@@ -111,7 +111,7 @@ const Points = ({ ...props }) => {
     const u = {
       hoveredId: uniform(0),
       sizeT: uniform(0),
-      colorT: uniform(0)
+      colorT: uniform(0),
     };
 
     const geometry = new THREE.PlaneGeometry(1, 1);
@@ -134,7 +134,7 @@ const Points = ({ ...props }) => {
     const sizesFrom = [];
     const sizesTo = [];
     const colorsFrom = [];
-    const colorsTo = []
+    const colorsTo = [];
 
     for (let i = 0; i < countriesGeoSorted.length; i++) {
       const c = countriesGeoSorted[i];
@@ -145,7 +145,7 @@ const Points = ({ ...props }) => {
       positions.push(c.longitude, mercatorY, 0);
 
       sizesTo.push(0);
-      colorsTo.push(0, 0, 0)
+      colorsTo.push(0, 0, 0);
 
       const d = dataIndex.get(c.type).get(c.country);
       if (d) {
@@ -174,7 +174,10 @@ const Points = ({ ...props }) => {
       "float",
     );
     const sizesToBuffer = instancedArray(new Float32Array(sizesTo), "float");
-    const colorsFromBuffer = instancedArray(new Float32Array(colorsFrom), "vec3");
+    const colorsFromBuffer = instancedArray(
+      new Float32Array(colorsFrom),
+      "vec3",
+    );
     const colorsToBuffer = instancedArray(new Float32Array(colorsTo), "vec3");
 
     material.colorNode = Fn(() => {
@@ -238,6 +241,11 @@ const Points = ({ ...props }) => {
           og: sizesOg,
           from: sizesFromBuffer,
           to: sizesToBuffer,
+        },
+        color: {
+          og: colorsOg,
+          from: colorsFromBuffer,
+          to: colorsToBuffer,
         },
       },
     };

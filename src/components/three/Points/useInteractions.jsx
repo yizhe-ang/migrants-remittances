@@ -1,6 +1,9 @@
 import { useRoomStore } from "@/store";
 import { transitionBuffer } from "@/lib/utils";
 import { useEffect, useRef } from "react";
+import * as THREE from "three/webgpu";
+
+const colorDummy = new THREE.Color();
 
 export default function useInteractions({ buffers, u, countryTypeToIndex }) {
   const hoveredCountry = useRoomStore((state) => state.hoveredCountry);
@@ -30,26 +33,50 @@ export default function useInteractions({ buffers, u, countryTypeToIndex }) {
       ? new Float32Array(buffers.size.from.value.array.length)
       : buffers.size.og;
 
+    const colorTargets = hoveredCountry
+      ? new Float32Array(buffers.color.from.value.array.length)
+      : buffers.color.og;
+
     if (hoveredCountry) {
       const { type, country } = hoveredCountry;
       const highlightFlows = flowsMap.get(type).get(country);
 
       highlightFlows.forEach((d) => {
-        const idx = countryTypeToIndex
-          .get(type === "origin" ? "destination" : "origin")
-          .get(type === "origin" ? d.flow.destination : d.flow.origin);
+        const flowType = type === "origin" ? "destination" : "origin";
+
+        const idx = countryTypeToIndex.get(flowType).get(d.flow[flowType]);
 
         sizeTargets[idx] = remRadiusScale(d.flow.sim_remittances_with);
+
+        if (flowType === "origin") {
+          colorDummy.setStyle(remToColorScale(d.flow.sim_remittances_with));
+        } else {
+          colorDummy.setStyle(remFromColorScale(d.flow.sim_remittances_with));
+        }
+        colorTargets[idx * 3] = colorDummy.r;
+        colorTargets[idx * 3 + 1] = colorDummy.g;
+        colorTargets[idx * 3 + 2] = colorDummy.b;
       });
 
       // Hovered country should be the same
       const countryOriginIdx = countryTypeToIndex.get("origin").get(country);
-      sizeTargets[countryOriginIdx] = buffers.size.og[countryOriginIdx];
-
       const countryDestIdx = countryTypeToIndex.get("destination").get(country);
+
+      sizeTargets[countryOriginIdx] = buffers.size.og[countryOriginIdx];
       sizeTargets[countryDestIdx] = buffers.size.og[countryDestIdx];
 
-      // TODO: Animate color too
+      colorTargets[countryOriginIdx * 3] =
+        buffers.color.og[countryOriginIdx * 3];
+      colorTargets[countryOriginIdx * 3 + 1] =
+        buffers.color.og[countryOriginIdx * 3 + 1];
+      colorTargets[countryOriginIdx * 3 + 2] =
+        buffers.color.og[countryOriginIdx * 3 + 2];
+
+      colorTargets[countryDestIdx * 3] = buffers.color.og[countryDestIdx * 3];
+      colorTargets[countryDestIdx * 3 + 1] =
+        buffers.color.og[countryDestIdx * 3 + 1];
+      colorTargets[countryDestIdx * 3 + 2] =
+        buffers.color.og[countryDestIdx * 3 + 2];
     }
 
     sizeAnimRef.current = transitionBuffer(
@@ -59,8 +86,16 @@ export default function useInteractions({ buffers, u, countryTypeToIndex }) {
       sizeTargets,
     );
 
+    colorAnimRef.current = transitionBuffer(
+      buffers.color.from,
+      buffers.color.to,
+      u.colorT,
+      colorTargets,
+    );
+
     return () => {
       sizeAnimRef.current?.stop();
+      colorAnimRef.current?.stop();
     };
   }, [
     hoveredCountry,
