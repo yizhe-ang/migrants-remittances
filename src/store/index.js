@@ -60,7 +60,7 @@ export const { roomStore, useRoomStore } = createRoomStore(
 
     ...createMosaicSlice()(set, get, store),
 
-    // Data stores
+    // Data stores #############################################################
     countriesGeo: null,
     setCountriesGeo: (countriesGeo) => set({ countriesGeo }),
 
@@ -85,7 +85,7 @@ export const { roomStore, useRoomStore } = createRoomStore(
     flowsByDestination: null,
     setFlowsByDestination: (flowsByDestination) => set({ flowsByDestination }),
 
-    // Scales
+    // Scales ##################################################################
     remRadiusScale: null,
     setRemRadiusScale: (scale) => set({ remRadiusScale: scale }),
 
@@ -98,7 +98,7 @@ export const { roomStore, useRoomStore } = createRoomStore(
     flowRadiusScale: null,
     setFlowRadiusScale: (scale) => set({ flowRadiusScale: scale }),
 
-    // Controls / Interactions
+    // Controls / Interactions #################################################
     selectedYear: 2019,
     setSelectedYear: (selectedYear) => set({ selectedYear }),
 
@@ -110,6 +110,8 @@ export const { roomStore, useRoomStore } = createRoomStore(
 
     mousePosition: { x: 0, y: 0 },
     setMousePosition: (mousePosition) => set({ mousePosition }),
+
+    // Scene objects ###########################################################
   }),
   // ),
 );

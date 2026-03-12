@@ -51,12 +51,9 @@ export default function useInteractions({ buffers, u, countryTypeToIndex }) {
         } else {
           colorDummy.setStyle(remFromColorScale(d.flow.sim_remittances_with));
         }
-        // colorTargets[idx * 3] = colorDummy.r;
-        // colorTargets[idx * 3 + 1] = colorDummy.g;
-        // colorTargets[idx * 3 + 2] = colorDummy.b;
-        colorTargets[idx * 3] = 0
-        colorTargets[idx * 3 + 1] = 0
-        colorTargets[idx * 3 + 2] = 0
+        colorTargets[idx * 3] = colorDummy.r;
+        colorTargets[idx * 3 + 1] = colorDummy.g;
+        colorTargets[idx * 3 + 2] = colorDummy.b;
       });
 
       // Hovered country should be the same

@@ -145,7 +145,6 @@ const Points = ({ ...props }) => {
       positions.push(c.longitude, mercatorY, 0);
 
       sizesTo.push(0);
-      colorsTo.push(0, 0, 0);
 
       const d = dataIndex.get(c.type).get(c.country);
       if (d) {
@@ -157,11 +156,13 @@ const Points = ({ ...props }) => {
           colorDummy.setStyle(remFromColorScale(d.sim_remittances_with));
         }
         colorsFrom.push(colorDummy.r, colorDummy.g, colorDummy.b);
+        colorsTo.push(colorDummy.r, colorDummy.g, colorDummy.b);
       } else {
         // If doesn't exist, don't render at all
         sizesFrom.push(0);
 
         colorsFrom.push(0, 0, 0);
+        colorsTo.push(0, 0, 0);
       }
     }
 
