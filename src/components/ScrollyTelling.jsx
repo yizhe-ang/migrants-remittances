@@ -3,10 +3,14 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 gsap.registerPlugin(useGSAP);
 
-export default function useScrollyTelling() {
+const ScrollyTelling = () => {
   const cameraControls = useRoomStore((s) => s.cameraControls);
 
   useGSAP(() => {
     if (!cameraControls) return;
   }, [cameraControls]);
-}
+
+  return <div></div>;
+};
+
+export default ScrollyTelling;

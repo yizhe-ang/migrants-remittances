@@ -197,6 +197,15 @@ const Arcs = ({ ...props }) => {
   }, [flows, countriesGeoMap, flowRadiusScale]);
 
   useEffect(() => {
+    if (!u || !buffers) return;
+
+    setArcs({
+      u,
+      buffers,
+    });
+  }, [u, buffers]);
+
+  useEffect(() => {
     if (!buffers || !u || !flowsMap) return;
 
     const targets = new Float32Array(buffers.progress.to.value.array.length);
