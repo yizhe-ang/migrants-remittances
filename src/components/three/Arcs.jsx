@@ -180,13 +180,20 @@ const Arcs = ({ ...props }) => {
       //   .add(randOffset)
       //   .mod(1);
 
-      const randOffset = hash(seed).mul(10)
-      const randSpeed = hash(seed.add(1)).mul(0.1);
+      // const baseSpeed = hash(seed.add(1)).mul(0.05).add(0.05);
 
-      const progress = progressBase
-        .add(time.mul(randSpeed))
-        .add(randOffset)
-        .mod(1);
+      // const noise = mx_noise_float(vec3(seed, time.mul(0.2), 0.0)).mul(0.5).add(0.5)
+      // const speed = baseSpeed.mul(0.5).add(noise.mul(baseSpeed))
+
+      const randOffset = hash(seed);
+      const baseSpeed = hash(seed.add(1)).mul(0.15).add(0.05);
+
+      const noise = mx_noise_float(vec3(seed, time.mul(0.2), 0.0))
+        .mul(0.5)
+        .add(0.5);
+      const speed = baseSpeed.mul(0.5).add(noise.mul(baseSpeed)).mul(0.03)
+
+      const progress = progressBase.add(time.mul(speed)).add(randOffset).mod(5);
 
       // Draw phase (0→0.5): high goes 0→1, low stays 0
       // Undraw phase (0.5→1): low goes 0→1, high stays 1
