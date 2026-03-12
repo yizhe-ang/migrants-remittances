@@ -99,6 +99,11 @@ const ScrollyTelling = () => {
         Some of them are driven by better economic opportunities abroad;
         traveling across the world to settle down in another country.
       </Step>
+
+      <Step id="step-3">
+        Billions of dollars flow back across borders, as these migrants also
+        regularly send back money to support their families and communities.
+      </Step>
     </div>
   );
 };
