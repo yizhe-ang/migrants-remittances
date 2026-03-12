@@ -5,7 +5,7 @@ import {
   PerspectiveCamera,
 } from "@react-three/drei";
 import WorldMap from "@/components/three/WorldMap";
-import Points from "@/components/three/Points";
+import Points from "@/components/three/Points/Points";
 import Arcs from "@/components/three/Arcs";
 import { CameraControlsImpl } from "@react-three/drei";
 

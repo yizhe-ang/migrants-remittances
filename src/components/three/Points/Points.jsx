@@ -17,9 +17,10 @@ import {
   float,
   cameraPosition,
   uniform,
+  mix,
 } from "three/tsl";
 import * as THREE from "three/webgpu";
-import { latToMercatorY } from "@/lib/utils";
+import { latToMercatorY, transitionBuffer } from "@/lib/utils";
 
 const colorDummy = new THREE.Color();
 
@@ -27,6 +28,8 @@ const Points = ({ ...props }) => {
   const pickedId = useRef(0);
   const prevPickedId = useRef(0);
   const countriesGeoSortedRef = useRef(null);
+
+  const sizeAnimRef = useRef(null);
 
   const flowsMap = useRoomStore((state) => state.flowsMap);
   const flowsByOrigin = useRoomStore((state) => state.flowsByOrigin);
@@ -52,6 +55,7 @@ const Points = ({ ...props }) => {
     ]);
   }, [flowsByOrigin, flowsByDestination]);
 
+  const hoveredCountry = useRoomStore((state) => state.hoveredCountry);
   const setHoveredCountry = useRoomStore((state) => state.setHoveredCountry);
   const setSelectedCountry = useRoomStore((state) => state.setSelectedCountry);
   const setMousePosition = useRoomStore((state) => state.setMousePosition);
@@ -87,10 +91,25 @@ const Points = ({ ...props }) => {
     return countriesGeoSorted;
   }, [countriesGeo, dataIndex]);
 
+  const countryTypeToIndex = useMemo(() => {
+    if (!countriesGeoSorted) return null;
+
+    const map = new Map([
+      ["origin", new Map()],
+      ["destination", new Map()],
+    ]);
+
+    countriesGeoSorted.forEach((d, i) => {
+      map.get(d.type).set(d.country, i);
+    });
+
+    return map;
+  }, [countriesGeoSorted]);
+
   // Keep ref in sync for use in useFrame/click handlers
   countriesGeoSortedRef.current = countriesGeoSorted;
 
-  const { mesh, pickingTexture, pickingScene, u } = useMemo(() => {
+  const { mesh, pickingTexture, pickingScene, u, buffers } = useMemo(() => {
     if (
       !countriesGeoSorted ||
       !dataIndex ||
@@ -101,6 +120,7 @@ const Points = ({ ...props }) => {
 
     const u = {
       hoveredId: uniform(0),
+      sizeT: uniform(0),
     };
 
     const geometry = new THREE.PlaneGeometry(1, 1);
@@ -164,6 +184,8 @@ const Points = ({ ...props }) => {
       pickingColors.push(colorDummy.r, colorDummy.g, colorDummy.b);
     }
 
+    const sizesOg = new Float32Array(sizesFrom);
+
     const positionsBuffer = instancedArray(new Float32Array(positions), "vec3");
     const sizesFromBuffer = instancedArray(
       new Float32Array(sizesFrom),
@@ -213,7 +235,7 @@ const Points = ({ ...props }) => {
 
       const sizeFrom = sizesFromBuffer.element(instanceIndex);
       const sizeTo = sizesToBuffer.element(instanceIndex);
-      const size = sizeFrom;
+      const size = mix(sizeFrom, sizeTo, u.sizeT);
 
       // Always same size
       const dist = cameraPosition.sub(offset).length();
@@ -245,7 +267,19 @@ const Points = ({ ...props }) => {
     const pickingTexture = new THREE.RenderTarget(1, 1);
     pickingScene.add(pickingMesh);
 
-    return { mesh, u, pickingTexture, pickingScene };
+    return {
+      mesh,
+      u,
+      pickingTexture,
+      pickingScene,
+      buffers: {
+        size: {
+          og: sizesOg,
+          from: sizesFromBuffer,
+          to: sizesToBuffer,
+        },
+      },
+    };
   }, [countriesGeoSorted, dataIndex, remRadiusScale, remToColorScale]);
 
   useFrame(({ gl, pointer, camera, size }) => {
@@ -323,6 +357,48 @@ const Points = ({ ...props }) => {
       canvas.removeEventListener("mousemove", handleMouseMove);
     };
   }, [gl, setSelectedCountry, setMousePosition]);
+
+  // Animate on hovered country change
+  useEffect(() => {
+    if (!flowsMap || !u || !buffers) return;
+
+    const targets = hoveredCountry
+      ? new Float32Array(buffers.size.from.value.array.length)
+      : buffers.size.og;
+
+    if (hoveredCountry) {
+      const { type, country } = hoveredCountry;
+      const highlightFlows = flowsMap.get(type).get(country);
+
+      highlightFlows.forEach((d) => {
+        const idx = countryTypeToIndex
+          .get(type === "origin" ? "destination" : "origin")
+          .get(type === "origin" ? d.flow.destination : d.flow.origin);
+
+        targets[idx] = remRadiusScale(d.flow.sim_remittances_with);
+      });
+
+      // Hovered country should be the same
+      const countryOriginIdx = countryTypeToIndex.get("origin").get(country);
+      targets[countryOriginIdx] = buffers.size.og[countryOriginIdx];
+
+      const countryDestIdx = countryTypeToIndex.get("destination").get(country);
+      targets[countryDestIdx] = buffers.size.og[countryDestIdx];
+
+      // TODO: Animate color too
+    }
+
+    sizeAnimRef.current = transitionBuffer(
+      buffers.size.from,
+      buffers.size.to,
+      u.sizeT,
+      targets,
+    );
+
+    return () => {
+      sizeAnimRef.current?.stop();
+    };
+  }, [hoveredCountry, flowsMap, buffers, u, countryTypeToIndex]);
 
   return <>{mesh && <primitive object={mesh} {...props} />}</>;
 };

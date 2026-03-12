@@ -191,7 +191,7 @@ const Arcs = ({ ...props }) => {
   }, [flows, countriesGeoMap, flowRadiusScale]);
 
   useEffect(() => {
-    if (!progressFromBuffer || !progressToBuffer || !u) return;
+    if (!progressFromBuffer || !progressToBuffer || !u || !flowsMap) return;
 
     const targets = new Float32Array(progressToBuffer.value.array.length);
     if (hoveredCountry) {
