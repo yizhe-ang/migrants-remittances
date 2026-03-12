@@ -133,8 +133,10 @@ const Points = ({ ...props }) => {
 
     // Init buffers / attributes
     const positions = [];
-    const sizesFrom = [];
+
+    const sizesOg = [];
     const sizesTo = [];
+
     const colorsFrom = [];
     const colorsTo = [];
 
@@ -150,7 +152,7 @@ const Points = ({ ...props }) => {
 
       const d = dataIndex.get(c.type).get(c.country);
       if (d) {
-        sizesFrom.push(remRadiusScale(d.sim_remittances_with));
+        sizesOg.push(remRadiusScale(d.sim_remittances_with));
 
         if (c.type === "origin") {
           colorDummy.setStyle(remToColorScale(d.sim_remittances_with));
@@ -161,15 +163,17 @@ const Points = ({ ...props }) => {
         colorsTo.push(colorDummy.r, colorDummy.g, colorDummy.b, 1);
       } else {
         // If doesn't exist, don't render at all
-        sizesFrom.push(0);
+        sizesOg.push(0);
 
         colorsFrom.push(0, 0, 0, 1);
         colorsTo.push(0, 0, 0, 1);
       }
     }
 
+    const sizesFrom = new Float32Array(countriesGeoSorted.length);
+    // const sizesFrom = sizesOg.slice()
+
     const colorsOg = new Float32Array(colorsFrom);
-    const sizesOg = new Float32Array(sizesFrom);
 
     const positionsBuffer = instancedArray(new Float32Array(positions), "vec3");
     const sizesFromBuffer = instancedArray(
