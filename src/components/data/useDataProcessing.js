@@ -101,103 +101,6 @@ export default function useDataProcessing() {
     );
   }, [flowsPerYearStore, selectedYear]);
 
-  const { data: migAndRemAvgYear } = useSql({
-    query: /* sql */ `
-      SELECT *
-      FROM mig_and_rem_avg_year
-    `,
-    enabled: Boolean(migAndRemAvgYearReady),
-  });
-
-  const { data: disasters } = useSql({
-    query: /* sql */ `
-      SELECT
-        a.*,
-        b.latitude,
-        b.longitude
-
-      FROM disasters a
-
-      LEFT JOIN countries_geo b
-        ON a.country = b.country
-    `,
-    enabled: Boolean(disastersReady) && Boolean(countriesGeoReady),
-  });
-
-  const { data: disastersByCountry } = useSql({
-    query: /* sql */ `
-      WITH step_1 AS (
-        SELECT
-          country,
-          disaster_type,
-          SUM(affected) AS affected,
-
-        FROM disasters
-
-        GROUP BY country, disaster_type
-      ),
-
-      step_2 AS (
-        PIVOT step_1
-        ON disaster_type
-        USING COALESCE(SUM(affected), 0)
-        GROUP BY country
-      )
-
-      SELECT
-        *,
-        (drought + earthquake + flood + storm) AS affected,
-
-      FROM step_2
-    `,
-    enabled: Boolean(disastersReady),
-  });
-
-  const { data: disastersImpactsByMonth } = useSql({
-    query: /* sql */ `
-      WITH step1 AS (
-        SELECT
-          date,
-          sum(floods) AS floods,
-          sum(storms) AS storms,
-          sum(droughts) AS droughts,
-          sum(earthquakes) AS earthquakes
-
-        FROM disasters_impacts
-
-        GROUP BY "date"
-      )
-
-      UNPIVOT step1
-      ON floods, storms, droughts, earthquakes
-      INTO
-        NAME disaster_type
-        VALUE remittance
-    `,
-    enabled: Boolean(disastersImpactsReady),
-  });
-
-  const { data: migAndRemByIncome } = useSql({
-    query: migAndRemByGroupQuery("group"),
-    enabled: Boolean(migAndRemAvgYearReady),
-  });
-
-  const { data: migAndRemByRegion } = useSql({
-    query: migAndRemByGroupQuery("region"),
-    enabled: Boolean(migAndRemAvgYearReady),
-  });
-
-  // FIXME: Is the computation correct?
-  const { data: migAndRemByDestination } = useSql({
-    query: migAndRemByCountryQuery("destination"),
-    enabled: Boolean(migAndRemAvgYearReady),
-  });
-
-  const { data: migAndRemByOrigin } = useSql({
-    query: migAndRemByCountryQuery("origin"),
-    enabled: Boolean(migAndRemAvgYearReady),
-  });
-
   const { data: flowsByOrigin } = useSql({
     query: flowsByCountryQuery("origin"),
     enabled: Boolean(flowsPerYearReady),
@@ -255,71 +158,6 @@ export default function useDataProcessing() {
 
     setCountriesAggStatsMap(countriesAggStatsMap);
   }, [countriesAggStats]);
-
-  return {
-    migAndRemAvgYear,
-    flowsPerYear,
-    disasters,
-    disastersImpactsByMonth,
-    disastersByCountry,
-    migAndRemByIncome,
-    migAndRemByRegion,
-    migAndRemByDestination,
-    migAndRemByOrigin,
-    flowsByOrigin,
-    countriesStats,
-  };
-}
-
-function migAndRemByCountryQuery(group) {
-  return /* sql */ `
-    WITH step1 AS (
-
-    SELECT
-      ${group},
-
-      sum(sim_remittances_with) AS sim_remittances_with,
-      sum(sim_remittances_without) AS sim_remittances_without,
-      sum(disaster_remittances) AS disaster_remittances,
-
-      avg(sim_remittances_with_per_capita) AS sim_remittances_with_per_capita,
-      avg(sim_remittances_without_per_capita) AS sim_remittances_without_per_capita,
-      avg(disaster_remittances_per_capita) AS disaster_remittances_per_capita,
-
-      first(${group}_group) AS group,
-
-      FROM mig_and_rem_avg_year
-
-      GROUP BY (${group})
-    )
-
-    SELECT
-      step1.*,
-      latitude,
-      longitude,
-
-    FROM step1
-
-    LEFT JOIN countries_geo
-    ON step1.${group} = countries_geo.country
-  `;
-}
-
-function migAndRemByGroupQuery(group) {
-  return /* sql */ `
-    SELECT
-      origin_${group},
-      destination_${group},
-
-      sum(n_migrants) AS n_migrants,
-      sum(sim_remittances_with) AS sim_remittances_with,
-      sum(sim_remittances_without) AS sim_remittances_without,
-      sum(disaster_remittances) AS disaster_remittances,
-
-    FROM mig_and_rem_avg_year
-
-    GROUP BY (origin_${group}, destination_${group})
-  `;
 }
 
 function flowsByCountryQuery(group) {
@@ -340,18 +178,13 @@ function flowsByCountryQuery(group) {
       -- (s.gdp * s.population) AS gdp,
       a.sim_remittances_with / (s.gdp * s.population) AS prop_of_gdp,
 
-      -- g.longitude,
-      -- g.latitude
-
     FROM step_1 a
 
     LEFT JOIN countries_stats s
     ON a.${group} = s.country
       AND a.year = s.year
 
-    -- LEFT JOIN countries_geo g
-      -- ON a.${group} = g.country
-
-    WHERE prop_of_gdp IS NOT NULL
+    -- FIXME: Why is Yemen missing?
+    -- WHERE prop_of_gdp IS NOT NULL
   `;
 }

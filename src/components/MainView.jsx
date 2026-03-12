@@ -13,21 +13,9 @@ import CountryTooltip from "@/components/interface/CountryTooltip";
 const MainView = () => {
   useDataPreparation();
 
-  const {
-    migAndRemAvgYear,
-    disasters,
-    disastersByCountry,
-    disastersImpactsByMonth,
-    migAndRemByIncome,
-    migAndRemByRegion,
-    migAndRemByDestination,
-    migAndRemByOrigin,
-    flowsByOrigin,
-    flowsPerYear,
-    countriesStats,
-  } = useDataProcessing();
+  useDataProcessing();
 
-  useScales()
+  useScales();
 
   return (
     <>
