@@ -15,15 +15,23 @@ export function latToMercatorY(lat) {
   );
 }
 
-export function transitionBuffer(fromBuffer, toBuffer, playhead, targetValues, opts?) {
+export function transitionBuffer(
+  fromBuffer,
+  toBuffer,
+  playhead,
+  targetValues,
+  opts?,
+) {
   const fromArr = fromBuffer.value.array;
   const toArr = toBuffer.value.array;
   const currentT = playhead.value;
 
+  // Set fromArr to current values
   for (let i = 0; i < fromArr.length; i++) {
     fromArr[i] = fromArr[i] + (toArr[i] - fromArr[i]) * currentT;
   }
 
+  // Set toArr to target values
   for (let i = 0; i < toArr.length; i++) {
     toArr[i] = targetValues[i] ?? 0;
   }
