@@ -99,6 +99,10 @@ export const { roomStore, useRoomStore } = createRoomStore(
     setFlowRadiusScale: (scale) => set({ flowRadiusScale: scale }),
 
     // Controls / Interactions #################################################
+    enableMapInteractions: false,
+    setEnableMapInteractions: (enableInteractions) =>
+      set({ enableInteractions }),
+
     selectedYear: 2019,
     setSelectedYear: (selectedYear) => set({ selectedYear }),
 

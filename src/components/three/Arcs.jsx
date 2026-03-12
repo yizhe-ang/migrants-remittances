@@ -16,6 +16,7 @@ import {
   mix,
   If,
   Discard,
+  time,
 } from "three/tsl";
 import * as THREE from "three/webgpu";
 import { latToMercatorY, transitionBuffer } from "@/lib/utils";
@@ -36,6 +37,9 @@ const Arcs = ({ ...props }) => {
   const flowsMap = useRoomStore((state) => state.flowsMap);
   const countriesGeoMap = useRoomStore((state) => state.countriesGeoMap);
   const flowRadiusScale = useRoomStore((state) => state.flowRadiusScale);
+  const enableMapInteractions = useRoomStore(
+    (state) => state.enableMapInteractions,
+  )
 
   const setArcs = useRoomStore((state) => state.setArcs);
 
@@ -46,6 +50,9 @@ const Arcs = ({ ...props }) => {
       srcColor: uniform(new THREE.Color(chroma(colors.blue["400"]).hex())),
       tgtColor: uniform(new THREE.Color(chroma(colors.orange["400"]).hex())),
       progressT: uniform(0),
+      widthT: uniform(0),
+      // Movement animation
+      movementT: uniform(0),
     };
 
     // Build per-instance data
@@ -63,7 +70,7 @@ const Arcs = ({ ...props }) => {
       sources.push(originGeo.longitude, latToMercatorY(originGeo.latitude), 0);
       targets.push(destGeo.longitude, latToMercatorY(destGeo.latitude), 0);
 
-      progressFrom.push(0);
+      progressFrom.push(0.5);
       progressTo.push(0);
 
       radii.push(flowRadiusScale(flow.sim_remittances_with));
@@ -159,7 +166,9 @@ const Arcs = ({ ...props }) => {
     material.colorNode = Fn(() => {
       const progressFrom = progressFromBuffer.element(instanceIndex);
       const progressTo = progressToBuffer.element(instanceIndex);
-      const progress = mix(progressFrom, progressTo, u.progressT);
+      const progress = mix(progressFrom, progressTo, u.progressT).toVar();
+
+      progress.addAssign(time).mod(1)
 
       // Draw phase (0→0.5): high goes 0→1, low stays 0
       // Undraw phase (0.5→1): low goes 0→1, high stays 1
@@ -206,6 +215,7 @@ const Arcs = ({ ...props }) => {
   }, [u, buffers]);
 
   useEffect(() => {
+    if (!enableMapInteractions) return
     if (!buffers || !u || !flowsMap) return;
 
     const targets = new Float32Array(buffers.progress.to.value.array.length);
@@ -229,7 +239,7 @@ const Arcs = ({ ...props }) => {
     );
 
     return () => progressAnimRef.current?.stop();
-  }, [hoveredCountry, buffers, u, flowsMap]);
+  }, [hoveredCountry, buffers, u, flowsMap, enableMapInteractions]);
 
   return <>{mesh && <primitive object={mesh} {...props} />}</>;
 };

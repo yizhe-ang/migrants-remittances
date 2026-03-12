@@ -7,6 +7,9 @@ const colorDummy = new THREE.Color();
 
 export default function useInteractions({ buffers, u, countryTypeToIndex }) {
   const hoveredCountry = useRoomStore((state) => state.hoveredCountry);
+  const enableMapInteractions = useRoomStore(
+    (state) => state.enableMapInteractions,
+  )
 
   const flowsMap = useRoomStore((state) => state.flowsMap);
   const remRadiusScale = useRoomStore((state) => state.remRadiusScale);
@@ -18,6 +21,8 @@ export default function useInteractions({ buffers, u, countryTypeToIndex }) {
 
   // Animate on hovered country change
   useEffect(() => {
+    if (!enableMapInteractions) return
+
     if (
       !flowsMap ||
       !u ||
@@ -104,5 +109,6 @@ export default function useInteractions({ buffers, u, countryTypeToIndex }) {
     remRadiusScale,
     remToColorScale,
     remFromColorScale,
+    enableMapInteractions
   ]);
 }
