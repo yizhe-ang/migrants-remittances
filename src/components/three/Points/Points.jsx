@@ -155,14 +155,14 @@ const Points = ({ ...props }) => {
         } else {
           colorDummy.setStyle(remFromColorScale(d.sim_remittances_with));
         }
-        colorsFrom.push(colorDummy.r, colorDummy.g, colorDummy.b);
-        colorsTo.push(colorDummy.r, colorDummy.g, colorDummy.b);
+        colorsFrom.push(colorDummy.r, colorDummy.g, colorDummy.b, 1);
+        colorsTo.push(colorDummy.r, colorDummy.g, colorDummy.b, 1);
       } else {
         // If doesn't exist, don't render at all
         sizesFrom.push(0);
 
-        colorsFrom.push(0, 0, 0);
-        colorsTo.push(0, 0, 0);
+        colorsFrom.push(0, 0, 0, 1);
+        colorsTo.push(0, 0, 0, 1);
       }
     }
 
