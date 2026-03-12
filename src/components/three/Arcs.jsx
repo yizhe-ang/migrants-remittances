@@ -1,6 +1,5 @@
 import { useRoomStore } from "@/store";
 import { useEffect, useMemo, useRef } from "react";
-import { animate } from "motion";
 import {
   Fn,
   instancedArray,
@@ -19,7 +18,7 @@ import {
   Discard,
 } from "three/tsl";
 import * as THREE from "three/webgpu";
-import { latToMercatorY } from "@/lib/utils";
+import { latToMercatorY, transitionBuffer } from "@/lib/utils";
 import colors from "tailwindcss/colors";
 import chroma from "chroma-js";
 
@@ -31,7 +30,7 @@ const TILT_FACTOR = 0.2;
 
 const Arcs = ({ ...props }) => {
   const hoveredCountry = useRoomStore((state) => state.hoveredCountry);
-  const animationRef = useRef(null);
+  const progressAnimRef = useRef(null);
 
   const flows = useRoomStore((state) => state.selectedFlows);
   const flowsMap = useRoomStore((state) => state.flowsMap);
@@ -194,47 +193,27 @@ const Arcs = ({ ...props }) => {
   useEffect(() => {
     if (!progressFromBuffer || !progressToBuffer || !u) return;
 
-    animationRef.current?.stop();
-
-    const fromArr = progressFromBuffer.value.array;
-    const toArr = progressToBuffer.value.array;
-    const currentT = u.progressT.value;
-
-    // Bake current interpolated state into progressFrom
-    for (let i = 0; i < fromArr.length; i++) {
-      fromArr[i] = fromArr[i] + (toArr[i] - fromArr[i]) * currentT;
-    }
-
-    // Default: all arcs target invisible
-    toArr.fill(0);
-
-    const flowsByOriginMap = flowsMap.get("origin");
-    const flowsByDestinationMap = flowsMap.get("destination");
-
-    // Matched arcs target fully drawn
+    const targets = new Float32Array(progressToBuffer.value.array.length);
     if (hoveredCountry) {
       const { country, type } = hoveredCountry;
       const indexMap =
-        type === "origin" ? flowsByOriginMap : flowsByDestinationMap;
+        type === "origin"
+          ? flowsMap.get("origin")
+          : flowsMap.get("destination");
       const indices = indexMap?.get(country).map((d) => d.idx) || [];
       for (const i of indices) {
-        toArr[i] = 0.5;
+        targets[i] = 0.5;
       }
     }
 
-    progressFromBuffer.value.needsUpdate = true;
-    progressToBuffer.value.needsUpdate = true;
-    u.progressT.value = 0;
+    progressAnimRef.current = transitionBuffer(
+      progressFromBuffer,
+      progressToBuffer,
+      u.progressT,
+      targets,
+    );
 
-    animationRef.current = animate(0, 1, {
-      duration: 0.5,
-      ease: "easeOut",
-      onUpdate: (v) => {
-        u.progressT.value = v;
-      },
-    });
-
-    return () => animationRef.current?.stop();
+    return () => progressAnimRef.current?.stop();
   }, [hoveredCountry, progressFromBuffer, progressToBuffer, u, flowsMap]);
 
   return <>{mesh && <primitive object={mesh} {...props} />}</>;
