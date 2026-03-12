@@ -1,7 +1,7 @@
 import { useRoomStore } from "@/store";
 import { useSql } from "@sqlrooms/duckdb";
 import { index } from "d3-array";
-import { useEffect, useMemo } from "react";
+import { use, useEffect, useMemo } from "react";
 
 export default function useDataProcessing() {
   const selectedYear = useRoomStore((state) => state.selectedYear);
@@ -17,6 +17,7 @@ export default function useDataProcessing() {
   const setFlowsByDestination = useRoomStore(
     (state) => state.setFlowsByDestination,
   );
+  const setFlowsMap = useRoomStore((state) => state.setFlowsMap);
 
   const flowsPerYearStore = useRoomStore((state) => state.flowsPerYear);
 
@@ -77,7 +78,8 @@ export default function useDataProcessing() {
     const flowsByDestinationMap = new Map();
 
     selectedFlows.forEach((flow, idx) => {
-      if (!flowsByOriginMap.has(flow.origin)) flowsByOriginMap.set(flow.origin, []);
+      if (!flowsByOriginMap.has(flow.origin))
+        flowsByOriginMap.set(flow.origin, []);
       flowsByOriginMap.get(flow.origin).push({
         ...flow,
         idx,
@@ -90,6 +92,13 @@ export default function useDataProcessing() {
         idx,
       });
     });
+
+    setFlowsMap(
+      new Map([
+        ["origin", flowsByOriginMap],
+        ["destination", flowsByDestinationMap],
+      ]),
+    );
   }, [flowsPerYearStore, selectedYear]);
 
   const { data: migAndRemAvgYear } = useSql({

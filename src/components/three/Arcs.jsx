@@ -14,7 +14,6 @@ import {
   uv,
   vec4,
   uniform,
-  color,
   mix,
   If,
   Discard,
@@ -34,28 +33,12 @@ const Arcs = ({ ...props }) => {
   const hoveredCountry = useRoomStore((state) => state.hoveredCountry);
   const animationRef = useRef(null);
 
-  // const flowsPerYear = useRoomStore((state) => state.flowsPerYear);
   const flows = useRoomStore((state) => state.selectedFlows);
+  const flowsMap = useRoomStore((state) => state.flowsMap);
   const countriesGeoMap = useRoomStore((state) => state.countriesGeoMap);
   const flowRadiusScale = useRoomStore((state) => state.flowRadiusScale);
 
-  // const flows = useMemo(() => {
-  //   if (!flowsPerYear) return null;
-
-  //   // DEBUG:
-  //   const flows = flowsPerYear.filter((d) => d.year === 2019)
-
-  //   return flows;
-  // }, [flowsPerYear]);
-
-  const {
-    mesh,
-    u,
-    progressFromBuffer,
-    progressToBuffer,
-    flowIndexByOrigin,
-    flowIndexByDestination,
-  } = useMemo(() => {
+  const { mesh, u, progressFromBuffer, progressToBuffer } = useMemo(() => {
     if (!flows || !countriesGeoMap || !flowRadiusScale) return {};
 
     const u = {
@@ -71,10 +54,6 @@ const Arcs = ({ ...props }) => {
     const progressTo = [];
     const radii = [];
 
-    const flowIndexByOrigin = new Map();
-    const flowIndexByDestination = new Map();
-
-    let idx = 0;
     for (const flow of flows) {
       const originGeo = countriesGeoMap.get(flow.origin);
       const destGeo = countriesGeoMap.get(flow.destination);
@@ -87,16 +66,6 @@ const Arcs = ({ ...props }) => {
       progressTo.push(0);
 
       radii.push(flowRadiusScale(flow.sim_remittances_with));
-
-      if (!flowIndexByOrigin.has(flow.origin))
-        flowIndexByOrigin.set(flow.origin, []);
-      flowIndexByOrigin.get(flow.origin).push(idx);
-
-      if (!flowIndexByDestination.has(flow.destination))
-        flowIndexByDestination.set(flow.destination, []);
-      flowIndexByDestination.get(flow.destination).push(idx);
-
-      idx++;
     }
 
     const count = flows.length;
@@ -219,8 +188,6 @@ const Arcs = ({ ...props }) => {
       u,
       progressFromBuffer,
       progressToBuffer,
-      flowIndexByOrigin,
-      flowIndexByDestination,
     };
   }, [flows, countriesGeoMap, flowRadiusScale]);
 
@@ -241,12 +208,15 @@ const Arcs = ({ ...props }) => {
     // Default: all arcs target invisible
     toArr.fill(0);
 
+    const flowsByOriginMap = flowsMap.get("origin");
+    const flowsByDestinationMap = flowsMap.get("destination");
+
     // Matched arcs target fully drawn
     if (hoveredCountry) {
       const { country, type } = hoveredCountry;
       const indexMap =
-        type === "origin" ? flowIndexByOrigin : flowIndexByDestination;
-      const indices = indexMap?.get(country) || [];
+        type === "origin" ? flowsByOriginMap : flowsByDestinationMap;
+      const indices = indexMap?.get(country).map((d) => d.idx) || [];
       for (const i of indices) {
         toArr[i] = 0.5;
       }
@@ -265,14 +235,7 @@ const Arcs = ({ ...props }) => {
     });
 
     return () => animationRef.current?.stop();
-  }, [
-    hoveredCountry,
-    progressFromBuffer,
-    progressToBuffer,
-    u,
-    flowIndexByOrigin,
-    flowIndexByDestination,
-  ]);
+  }, [hoveredCountry, progressFromBuffer, progressToBuffer, u, flowsMap]);
 
   return <>{mesh && <primitive object={mesh} {...props} />}</>;
 };
