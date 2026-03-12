@@ -14,7 +14,7 @@ const MainView = () => {
 
   return (
     <>
-      <div className="fixed inset-0 bg-stone-200">
+      <div className="fixed inset-0 bg-stone-200 z-10">
         <Three />
       </div>
 

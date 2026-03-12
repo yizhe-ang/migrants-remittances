@@ -174,7 +174,7 @@ const Arcs = ({ ...props }) => {
 
       // Draw randomly
       const randOffset = hash(seed)
-      const baseSpeed = hash(seed.add(1)).mul(0.15).add(0.05);
+      const baseSpeed = hash(seed.add(1)).mul(0.05).add(0.05);
 
       const noise = mx_noise_float(vec3(seed, time.mul(0.2), 0.0))
         .mul(0.5)
