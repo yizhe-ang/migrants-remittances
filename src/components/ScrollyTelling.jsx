@@ -3,11 +3,13 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { cn } from "@sqlrooms/ui";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import cameraPositions from "@/components/data/cameraPositions";
 
 gsap.registerPlugin(useGSAP);
 gsap.registerPlugin(ScrollTrigger);
 
 const ScrollyTelling = () => {
+  const flowsMap = useRoomStore((s) => s.flowsMap);
   const cameraControls = useRoomStore((s) => s.cameraControls);
   const arcs = useRoomStore((s) => s.arcs);
   const points = useRoomStore((s) => s.points);
@@ -15,10 +17,26 @@ const ScrollyTelling = () => {
   useGSAP(() => {
     if (!cameraControls || !arcs || !points) return;
 
-    const toUsFlowsTargets = arcs.getProgressTargetsFromTypeCountry({
-      country: "USA",
-      type: "destination",
-    });
+    const cameraLookAt = [...cameraPositions.init];
+
+    const fromUsaFlows = flowsMap.get("destination").get("USA");
+    const fromUsaFlowsIndices = fromUsaFlows.map((d) => d.idx);
+
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: "#step-1",
+          start: "top center",
+          end: "bottom bottom",
+          scrub: true,
+        },
+      })
+      .to(cameraLookAt, {
+        endArray: cameraPositions.usaStart,
+        onUpdate: () => {
+          cameraControls.setLookAt(...cameraLookAt, false);
+        },
+      });
 
     gsap
       .timeline({
@@ -30,17 +48,29 @@ const ScrollyTelling = () => {
           onEnter: () => {
             arcs.u.progressT = 0;
 
-            for (let i = 0; i < toUsFlowsTargets.length; i++) {
-              arcs.buffers.progress.to.value.array[i] = toUsFlowsTargets[i];
-            }
+            fromUsaFlowsIndices.forEach((idx) => {
+              arcs.buffers.progress.from.value.array[idx] = 1;
+              arcs.buffers.progress.to.value.array[idx] = 0.5;
+            });
+
+            arcs.buffers.progress.from.value.needsUpdate = true;
             arcs.buffers.progress.to.value.needsUpdate = true;
           },
         },
       })
       .to(arcs.u.progressT, {
         value: 1,
-      });
-    // show arcs towards US
+      })
+      .to(
+        cameraLookAt,
+        {
+          endArray: cameraPositions.usaEnd,
+          onUpdate: () => {
+            cameraControls.setLookAt(...cameraLookAt, false);
+          },
+        },
+        "<",
+      );
   }, [cameraControls, arcs, points]);
 
   return (
