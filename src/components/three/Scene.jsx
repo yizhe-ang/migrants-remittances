@@ -14,7 +14,7 @@ const Scene = () => {
 
       <PerspectiveCamera />
 
-      <Environment preset="city" />
+      {/* <Environment preset="city" /> */}
 
       <ambientLight intensity={2} />
 

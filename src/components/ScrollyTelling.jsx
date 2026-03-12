@@ -11,32 +11,36 @@ const ScrollyTelling = () => {
   const cameraControls = useRoomStore((s) => s.cameraControls);
   const arcs = useRoomStore((s) => s.arcs);
   const points = useRoomStore((s) => s.points);
-  const flowsMap = useRoomStore((s) => s.flowsMap);
 
   useGSAP(() => {
     if (!cameraControls || !arcs || !points) return;
 
     const toUsFlowsTargets = arcs.getProgressTargetsFromTypeCountry({
       country: "USA",
-      type: "origin",
+      type: "destination",
     });
 
-    gsap.timeline({
-      scrollTrigger: {
-        trigger: "#step-1",
-        start: "top bottom",
-        end: "bottom bottom",
-        onEnter: () => {
-          arcs.u.progressT = 0
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: "#step-2",
+          start: "top bottom",
+          end: "bottom bottom",
+          scrub: true,
+          onEnter: () => {
+            arcs.u.progressT = 0;
 
-        }
-      },
-    })
-      .to(arcs.u.progressT, {
-        value: 1
+            for (let i = 0; i < toUsFlowsTargets.length; i++) {
+              arcs.buffers.progress.to.value.array[i] = toUsFlowsTargets[i];
+            }
+            arcs.buffers.progress.to.value.needsUpdate = true;
+          },
+        },
       })
+      .to(arcs.u.progressT, {
+        value: 1,
+      });
     // show arcs towards US
-
   }, [cameraControls, arcs, points]);
 
   return (
