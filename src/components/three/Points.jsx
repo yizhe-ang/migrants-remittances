@@ -28,6 +28,7 @@ const Points = ({ ...props }) => {
   const prevPickedId = useRef(0);
   const countriesGeoSortedRef = useRef(null);
 
+  const flowsMap = useRoomStore((state) => state.flowsMap);
   const flowsByOrigin = useRoomStore((state) => state.flowsByOrigin);
   const flowsByDestination = useRoomStore((state) => state.flowsByDestination);
   const countriesGeo = useRoomStore((state) => state.countriesGeo);
@@ -90,7 +91,12 @@ const Points = ({ ...props }) => {
   countriesGeoSortedRef.current = countriesGeoSorted;
 
   const { mesh, pickingTexture, pickingScene, u } = useMemo(() => {
-    if (!countriesGeoSorted || !dataIndex || !remRadiusScale || !remToColorScale)
+    if (
+      !countriesGeoSorted ||
+      !dataIndex ||
+      !remRadiusScale ||
+      !remToColorScale
+    )
       return {};
 
     const u = {
@@ -120,8 +126,8 @@ const Points = ({ ...props }) => {
 
     // Init buffers / attributes
     const positions = [];
-    const sizes = [];
-    const sizesTo = []
+    const sizesFrom = [];
+    const sizesTo = [];
     const colors = [];
 
     const pickingColors = [];
@@ -134,11 +140,11 @@ const Points = ({ ...props }) => {
 
       positions.push(c.longitude, mercatorY, 0);
 
-      sizesTo.push(0)
+      sizesTo.push(0);
 
       const d = dataIndex.get(c.type).get(c.country);
       if (d) {
-        sizes.push(remRadiusScale(d.sim_remittances_with));
+        sizesFrom.push(remRadiusScale(d.sim_remittances_with));
 
         if (c.type === "origin") {
           colorDummy.setStyle(remToColorScale(d.sim_remittances_with));
@@ -148,7 +154,7 @@ const Points = ({ ...props }) => {
         colors.push(colorDummy.r, colorDummy.g, colorDummy.b);
       } else {
         // If doesn't exist, don't render at all
-        sizes.push(0);
+        sizesFrom.push(0);
 
         colors.push(0, 0, 0);
       }
@@ -159,7 +165,10 @@ const Points = ({ ...props }) => {
     }
 
     const positionsBuffer = instancedArray(new Float32Array(positions), "vec3");
-    const sizesBuffer = instancedArray(new Float32Array(sizes), "float");
+    const sizesFromBuffer = instancedArray(
+      new Float32Array(sizesFrom),
+      "float",
+    );
     const sizesToBuffer = instancedArray(new Float32Array(sizesTo), "float");
     const colorsBuffer = instancedArray(new Float32Array(colors), "vec3");
 
@@ -201,7 +210,10 @@ const Points = ({ ...props }) => {
 
     material.positionNode = Fn(() => {
       const offset = positionsBuffer.element(instanceIndex);
-      const size = sizesBuffer.element(instanceIndex);
+
+      const sizeFrom = sizesFromBuffer.element(instanceIndex);
+      const sizeTo = sizesToBuffer.element(instanceIndex);
+      const size = sizeFrom;
 
       // Always same size
       const dist = cameraPosition.sub(offset).length();
@@ -293,7 +305,7 @@ const Points = ({ ...props }) => {
         if (entry) {
           setSelectedCountry({ country: entry.country, type: entry.type });
 
-          console.log(entry)
+          console.log(entry);
           return;
         }
       }
