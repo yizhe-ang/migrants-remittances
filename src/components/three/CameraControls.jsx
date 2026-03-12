@@ -1,11 +1,21 @@
-import { CameraControls as CameraControlsDrei } from "@react-three/drei";
+import {
+  CameraControls as CameraControlsDrei,
+  CameraControlsImpl,
+} from "@react-three/drei";
 import { useControls, button, folder } from "leva";
-import { forwardRef } from "react";
-import { CameraControlsImpl } from "@react-three/drei";
+import { useRef, useEffect } from "react";
+import { useRoomStore } from "@/store";
 
 const { ACTION } = CameraControlsImpl;
 
-const CameraControls = forwardRef(({ ...props }, ref) => {
+const CameraControls = (props) => {
+  const ref = useRef();
+  const setCameraControls = useRoomStore((s) => s.setCameraControls);
+
+  useEffect(() => {
+    if (ref.current) setCameraControls(ref.current);
+  }, [setCameraControls]);
+
   useControls({
     Camera: folder(
       {
@@ -21,24 +31,6 @@ const CameraControls = forwardRef(({ ...props }, ref) => {
       },
     ),
   });
-
-  // Init camera position
-  // useEffect(() => {
-  //   ref.current.setLookAt(...cameraPositions.islandFront, false);
-  //   // ref.current.setLookAt(...cameraPositions.takeoffStart, false);
-
-  //   ref.autoRotate = false;
-  // }, []);
-
-  // useFrame((_, delta) => {
-  //   // Auto-rotate
-  //   if (ref.autoRotate) {
-  //     ref.current.azimuthAngle += 0.5 * delta * THREE.MathUtils.DEG2RAD;
-
-  //     // Normalize
-  //     ref.current.azimuthAngle = ref.current.azimuthAngle % (2 * Math.PI);
-  //   }
-  // });
 
   return (
     <CameraControlsDrei
@@ -56,6 +48,6 @@ const CameraControls = forwardRef(({ ...props }, ref) => {
       }}
     ></CameraControlsDrei>
   );
-});
+};
 
 export default CameraControls;

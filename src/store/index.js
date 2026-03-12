@@ -114,6 +114,8 @@ export const { roomStore, useRoomStore } = createRoomStore(
     // Scene objects ###########################################################
     cameraControls: null,
     setCameraControls: (cameraControls) => set({ cameraControls }),
+
+
   }),
   // ),
 );

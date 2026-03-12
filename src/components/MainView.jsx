@@ -9,6 +9,7 @@ import DeckGLMap from "@/components/deckgl/DeckGLMap";
 import Three from "@/components/three/Three";
 import useScales from "@/components/data/useScales";
 import CountryTooltip from "@/components/interface/CountryTooltip";
+import useScrollyTelling from "@/components/useScrollyTelling";
 
 const MainView = () => {
   useDataPreparation();
@@ -16,6 +17,8 @@ const MainView = () => {
   useDataProcessing();
 
   useScales();
+
+  useScrollyTelling();
 
   return (
     <>
