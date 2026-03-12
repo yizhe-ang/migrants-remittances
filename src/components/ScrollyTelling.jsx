@@ -2,21 +2,46 @@ import { useRoomStore } from "@/store";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { cn } from "@sqlrooms/ui";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
 gsap.registerPlugin(useGSAP);
+gsap.registerPlugin(ScrollTrigger);
 
 const ScrollyTelling = () => {
   const cameraControls = useRoomStore((s) => s.cameraControls);
+  const arcs = useRoomStore((s) => s.arcs);
+  const points = useRoomStore((s) => s.points);
+  const flowsMap = useRoomStore((s) => s.flowsMap);
 
   useGSAP(() => {
-    if (!cameraControls) return;
-  }, [cameraControls]);
+    if (!cameraControls || !arcs || !points) return;
+
+    const toUsFlows = flowsMap.get("origin").get("USA");
+    const toUsFlowsTargets = arcs.buffers.progress.to.value.array.length
+
+    gsap.timeline({
+      scrollTrigger: {
+        trigger: "#step-1",
+        start: "top bottom",
+        end: "bottom bottom",
+      },
+    });
+    // show arcs towards US
+  }, [cameraControls, arcs, points]);
 
   return (
     <div className="w-full">
-      <Step className="mt-screen"></Step>
+      <div className="h-screen" />
 
-      <Step></Step>
+      <Step id="step-1">
+        As of 2024, an estimated 304 million, or 1 in 27 people around the world
+        are international migrants[1].
+      </Step>
 
+      <Step id="step-2">
+        Some of them are driven by better economic opportunities abroad;
+        traveling across the world to settle down in another country.
+      </Step>
     </div>
   );
 };
@@ -30,7 +55,7 @@ const Step = ({ className, children, ...props }) => {
       )}
       {...props}
     >
-      {children}
+      <div className="px-4 py-4 bg-white rounded shadow-xl">{children}</div>
     </div>
   );
 };

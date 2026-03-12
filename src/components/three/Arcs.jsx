@@ -1,5 +1,5 @@
 import { useRoomStore } from "@/store";
-import { useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import {
   Fn,
   instancedArray,
@@ -54,7 +54,7 @@ const Arcs = ({ ...props }) => {
       progressT: uniform(0),
       widthT: uniform(0),
       // Movement animation
-      movementT: uniform(1),
+      movementT: uniform(0),
     };
 
     // Build per-instance data
@@ -72,7 +72,7 @@ const Arcs = ({ ...props }) => {
       sources.push(originGeo.longitude, latToMercatorY(originGeo.latitude), 0);
       targets.push(destGeo.longitude, latToMercatorY(destGeo.latitude), 0);
 
-      progressFrom.push(0.5);
+      progressFrom.push(0);
       progressTo.push(0);
 
       radii.push(flowRadiusScale(flow.sim_remittances_with));
@@ -173,17 +173,17 @@ const Arcs = ({ ...props }) => {
       const progressBase = mix(progressFrom, progressTo, u.progressT);
 
       // Draw randomly
-      const randOffset = hash(seed)
-      const baseSpeed = hash(seed.add(1)).mul(0.05).add(0.05);
+      const randOffset = hash(seed);
+      const baseSpeed = hash(seed.add(1)).mul(0.05).add(0.05).mul(5);
 
       const noise = mx_noise_float(vec3(seed, time.mul(0.2), 0.0))
         .mul(0.5)
         .add(0.5);
-      const speed = baseSpeed.mul(0.5).add(noise.mul(baseSpeed)).mul(5);
+      const wobble = noise.mul(0.5);
 
       const randomProgress = mix(
         0,
-        time.mul(speed).add(randOffset),
+        time.mul(baseSpeed).add(randOffset).add(wobble),
         u.movementT,
       );
 
@@ -229,13 +229,24 @@ const Arcs = ({ ...props }) => {
   }, [flows, countriesGeoMap, flowRadiusScale]);
 
   useEffect(() => {
-    if (!u || !buffers) return;
+    if (!u || !buffers || !flowsMap) return;
 
     setArcs({
       u,
       buffers,
+      getProgressTargetsFromTypeCountry: ({ country, type }) => {
+        const targets = new Float32Array(
+          buffers.progress.to.value.array.length,
+        );
+
+        const flows = flowsMap.get(type).get(country);
+
+        flows.forEach((d) => {
+          targets[d.idx] = 0.5;
+        });
+      },
     });
-  }, [u, buffers]);
+  }, [u, buffers, flowsMap]);
 
   useEffect(() => {
     if (!enableMapInteractions) return;

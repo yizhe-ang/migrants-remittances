@@ -19,7 +19,6 @@ const CameraControls = (props) => {
 
   // Init camera position
   useEffect(() => {
-    console.log('wot')
     ref.current.setLookAt(...cameraPositions.init, false);
     // ref.current.setLookAt(...cameraPositions.takeoffStart, false);
 
