@@ -16,17 +16,27 @@ const ScrollyTelling = () => {
   useGSAP(() => {
     if (!cameraControls || !arcs || !points) return;
 
-    const toUsFlows = flowsMap.get("origin").get("USA");
-    const toUsFlowsTargets = arcs.buffers.progress.to.value.array.length
+    const toUsFlowsTargets = arcs.getProgressTargetsFromTypeCountry({
+      country: "USA",
+      type: "origin",
+    });
 
     gsap.timeline({
       scrollTrigger: {
         trigger: "#step-1",
         start: "top bottom",
         end: "bottom bottom",
+        onEnter: () => {
+          arcs.u.progressT = 0
+
+        }
       },
-    });
+    })
+      .to(arcs.u.progressT, {
+        value: 1
+      })
     // show arcs towards US
+
   }, [cameraControls, arcs, points]);
 
   return (

@@ -31,7 +31,7 @@ const TUBE_RADIAL_SEGMENTS = 6;
 const HEIGHT_FACTOR = 0.5;
 const TILT_FACTOR = 0.2;
 
-const Arcs = ({ ...props }) => {
+const Arcs = (props) => {
   const hoveredCountry = useRoomStore((state) => state.hoveredCountry);
   const progressAnimRef = useRef(null);
 
@@ -244,6 +244,8 @@ const Arcs = ({ ...props }) => {
         flows.forEach((d) => {
           targets[d.idx] = 0.5;
         });
+
+        return targets;
       },
     });
   }, [u, buffers, flowsMap]);
