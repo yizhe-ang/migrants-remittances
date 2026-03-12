@@ -112,6 +112,8 @@ export const { roomStore, useRoomStore } = createRoomStore(
     setMousePosition: (mousePosition) => set({ mousePosition }),
 
     // Scene objects ###########################################################
+    cameraControls: null,
+    setCameraControls: (cameraControls) => set({ cameraControls }),
   }),
   // ),
 );

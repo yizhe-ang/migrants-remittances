@@ -1,9 +1,7 @@
 import { CameraControls as CameraControlsDrei } from "@react-three/drei";
 import { useControls, button, folder } from "leva";
-import { forwardRef, useEffect } from "react";
+import { forwardRef } from "react";
 import { CameraControlsImpl } from "@react-three/drei";
-import { useFrame } from "@react-three/fiber";
-import * as THREE from "three";
 
 const { ACTION } = CameraControlsImpl;
 
