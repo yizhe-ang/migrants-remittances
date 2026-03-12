@@ -34,18 +34,19 @@ const Arcs = ({ ...props }) => {
   const hoveredCountry = useRoomStore((state) => state.hoveredCountry);
   const animationRef = useRef(null);
 
-  const flowsPerYear = useRoomStore((state) => state.flowsPerYear);
+  // const flowsPerYear = useRoomStore((state) => state.flowsPerYear);
+  const flows = useRoomStore((state) => state.selectedFlows);
   const countriesGeoMap = useRoomStore((state) => state.countriesGeoMap);
   const flowRadiusScale = useRoomStore((state) => state.flowRadiusScale);
 
-  const flows = useMemo(() => {
-    if (!flowsPerYear) return null;
+  // const flows = useMemo(() => {
+  //   if (!flowsPerYear) return null;
 
-    // DEBUG:
-    const flows = flowsPerYear.filter((d) => d.year === 2019)
+  //   // DEBUG:
+  //   const flows = flowsPerYear.filter((d) => d.year === 2019)
 
-    return flows;
-  }, [flowsPerYear]);
+  //   return flows;
+  // }, [flowsPerYear]);
 
   const {
     mesh,
@@ -116,7 +117,7 @@ const Arcs = ({ ...props }) => {
     );
 
     const material = new THREE.MeshBasicNodeMaterial({
-    // const material = new THREE.MeshPhysicalNodeMaterial({
+      // const material = new THREE.MeshPhysicalNodeMaterial({
       side: THREE.DoubleSide,
       roughness: 0.5,
       transparent: true,

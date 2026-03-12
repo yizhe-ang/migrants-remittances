@@ -4,16 +4,21 @@ import { index } from "d3-array";
 import { useEffect, useMemo } from "react";
 
 export default function useDataProcessing() {
+  const selectedYear = useRoomStore((state) => state.selectedYear);
+
   const setCountriesGeo = useRoomStore((state) => state.setCountriesGeo);
   const setCountriesGeoMap = useRoomStore((state) => state.setCountriesGeoMap);
   const setCountriesAggStatsMap = useRoomStore(
     (state) => state.setCountriesAggStatsMap,
   );
   const setFlowsPerYear = useRoomStore((state) => state.setFlowsPerYear);
+  const setSelectedFlows = useRoomStore((state) => state.setSelectedFlows);
   const setFlowsByOrigin = useRoomStore((state) => state.setFlowsByOrigin);
   const setFlowsByDestination = useRoomStore(
     (state) => state.setFlowsByDestination,
   );
+
+  const flowsPerYearStore = useRoomStore((state) => state.flowsPerYear);
 
   const migAndRemAvgYearReady = useRoomStore((state) =>
     state.db.findTableByName("mig_and_rem_avg_year"),
@@ -59,6 +64,33 @@ export default function useDataProcessing() {
 
     setFlowsPerYear(flowsPerYear.toArray());
   }, [flowsPerYear]);
+
+  useEffect(() => {
+    if (!flowsPerYearStore) return;
+
+    const selectedFlows = flowsPerYearStore.filter(
+      (d) => d.year === selectedYear,
+    );
+    setSelectedFlows(selectedFlows);
+
+    const flowsByOriginMap = new Map();
+    const flowsByDestinationMap = new Map();
+
+    selectedFlows.forEach((flow, idx) => {
+      if (!flowsByOriginMap.has(flow.origin)) flowsByOriginMap.set(flow.origin, []);
+      flowsByOriginMap.get(flow.origin).push({
+        ...flow,
+        idx,
+      });
+
+      if (!flowsByDestinationMap.has(flow.destination))
+        flowsByDestinationMap.set(flow.destination, []);
+      flowsByDestinationMap.get(flow.destination).push({
+        ...flow,
+        idx,
+      });
+    });
+  }, [flowsPerYearStore, selectedYear]);
 
   const { data: migAndRemAvgYear } = useSql({
     query: /* sql */ `
