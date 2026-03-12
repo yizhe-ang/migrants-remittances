@@ -33,9 +33,7 @@ export default function useInteractions({ buffers, u, countryTypeToIndex }) {
       ? new Float32Array(buffers.size.from.value.array.length)
       : buffers.size.og;
 
-    const colorTargets = hoveredCountry
-      ? new Float32Array(buffers.color.from.value.array.length)
-      : buffers.color.og;
+    const colorTargets = buffers.color.og.slice()
 
     if (hoveredCountry) {
       const { type, country } = hoveredCountry;
@@ -65,18 +63,18 @@ export default function useInteractions({ buffers, u, countryTypeToIndex }) {
       sizeTargets[countryOriginIdx] = buffers.size.og[countryOriginIdx];
       sizeTargets[countryDestIdx] = buffers.size.og[countryDestIdx];
 
-      colorTargets[countryOriginIdx * 3] =
-        buffers.color.og[countryOriginIdx * 3];
-      colorTargets[countryOriginIdx * 3 + 1] =
-        buffers.color.og[countryOriginIdx * 3 + 1];
-      colorTargets[countryOriginIdx * 3 + 2] =
-        buffers.color.og[countryOriginIdx * 3 + 2];
+      // colorTargets[countryOriginIdx * 3] =
+      //   buffers.color.og[countryOriginIdx * 3];
+      // colorTargets[countryOriginIdx * 3 + 1] =
+      //   buffers.color.og[countryOriginIdx * 3 + 1];
+      // colorTargets[countryOriginIdx * 3 + 2] =
+      //   buffers.color.og[countryOriginIdx * 3 + 2];
 
-      colorTargets[countryDestIdx * 3] = buffers.color.og[countryDestIdx * 3];
-      colorTargets[countryDestIdx * 3 + 1] =
-        buffers.color.og[countryDestIdx * 3 + 1];
-      colorTargets[countryDestIdx * 3 + 2] =
-        buffers.color.og[countryDestIdx * 3 + 2];
+      // colorTargets[countryDestIdx * 3] = buffers.color.og[countryDestIdx * 3];
+      // colorTargets[countryDestIdx * 3 + 1] =
+      //   buffers.color.og[countryDestIdx * 3 + 1];
+      // colorTargets[countryDestIdx * 3 + 2] =
+      //   buffers.color.og[countryDestIdx * 3 + 2];
     }
 
     sizeAnimRef.current = transitionBuffer(
