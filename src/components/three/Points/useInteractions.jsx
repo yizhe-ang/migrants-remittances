@@ -9,7 +9,7 @@ export default function useInteractions({ buffers, u, countryTypeToIndex }) {
   const hoveredCountry = useRoomStore((state) => state.hoveredCountry);
   const enableMapInteractions = useRoomStore(
     (state) => state.enableMapInteractions,
-  )
+  );
 
   const flowsMap = useRoomStore((state) => state.flowsMap);
   const remRadiusScale = useRoomStore((state) => state.remRadiusScale);
@@ -21,7 +21,7 @@ export default function useInteractions({ buffers, u, countryTypeToIndex }) {
 
   // Animate on hovered country change
   useEffect(() => {
-    if (!enableMapInteractions) return
+    if (!enableMapInteractions) return;
 
     if (
       !flowsMap ||
@@ -38,7 +38,7 @@ export default function useInteractions({ buffers, u, countryTypeToIndex }) {
       ? new Float32Array(buffers.size.from.value.array.length)
       : buffers.size.og;
 
-    const colorTargets = buffers.color.og.slice()
+    const colorTargets = buffers.color.og.slice();
 
     if (hoveredCountry) {
       const { type, country } = hoveredCountry;
@@ -67,19 +67,6 @@ export default function useInteractions({ buffers, u, countryTypeToIndex }) {
 
       sizeTargets[countryOriginIdx] = buffers.size.og[countryOriginIdx];
       sizeTargets[countryDestIdx] = buffers.size.og[countryDestIdx];
-
-      // colorTargets[countryOriginIdx * 4] =
-      //   buffers.color.og[countryOriginIdx * 4];
-      // colorTargets[countryOriginIdx * 4 + 1] =
-      //   buffers.color.og[countryOriginIdx * 4 + 1];
-      // colorTargets[countryOriginIdx * 4 + 2] =
-      //   buffers.color.og[countryOriginIdx * 4 + 2];
-
-      // colorTargets[countryDestIdx * 4] = buffers.color.og[countryDestIdx * 4];
-      // colorTargets[countryDestIdx * 4 + 1] =
-      //   buffers.color.og[countryDestIdx * 4 + 1];
-      // colorTargets[countryDestIdx * 4 + 2] =
-      //   buffers.color.og[countryDestIdx * 4 + 2];
     }
 
     sizeAnimRef.current = transitionBuffer(
@@ -109,6 +96,6 @@ export default function useInteractions({ buffers, u, countryTypeToIndex }) {
     remRadiusScale,
     remToColorScale,
     remFromColorScale,
-    enableMapInteractions
+    enableMapInteractions,
   ]);
 }
