@@ -202,7 +202,7 @@ const Arcs = (props) => {
       mesh,
       u,
       buffers: {
-        progress: progressBuffer,
+        progress: progressBuffer.value,
       },
     };
   }, [flows, countriesGeoMap, flowRadiusScale]);
@@ -215,7 +215,7 @@ const Arcs = (props) => {
       buffers,
       getProgressTargetsFromTypeCountry: ({ country, type }) => {
         const targets = new Float32Array(
-          buffers.progress.value.array.length,
+          buffers.progress.array.length,
         );
 
         const flows = flowsMap.get(type).get(country);
@@ -233,7 +233,7 @@ const Arcs = (props) => {
     if (!enableMapInteractions) return;
     if (!buffers || !flowsMap) return;
 
-    const arr = buffers.progress.value.array;
+    const arr = buffers.progress.array;
     const snapshot = arr.slice();
     const targets = new Float32Array(arr.length);
 
@@ -253,7 +253,7 @@ const Arcs = (props) => {
         for (let i = 0; i < arr.length; i++) {
           arr[i] = snapshot[i] + (targets[i] - snapshot[i]) * t;
         }
-        buffers.progress.value.needsUpdate = true;
+        buffers.progress.needsUpdate = true;
       },
     });
 

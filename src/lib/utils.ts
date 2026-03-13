@@ -22,8 +22,8 @@ export function transitionBuffer(
   targetValues,
   opts?,
 ) {
-  const fromArr = fromBuffer.value.array;
-  const toArr = toBuffer.value.array;
+  const fromArr = fromBuffer.array;
+  const toArr = toBuffer.array;
   const currentT = playhead.value;
 
   // Set fromArr to current values
@@ -36,8 +36,8 @@ export function transitionBuffer(
     toArr[i] = targetValues[i] ?? 0;
   }
 
-  fromBuffer.value.needsUpdate = true;
-  toBuffer.value.needsUpdate = true;
+  fromBuffer.needsUpdate = true;
+  toBuffer.needsUpdate = true;
   playhead.value = 0;
 
   return animate(0, 1, {

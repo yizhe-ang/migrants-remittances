@@ -38,7 +38,7 @@ const ScrollyTelling = () => {
         },
       });
 
-    const progressArr = arcs.buffers.progress.value.array;
+    const progressArr = arcs.buffers.progress.array;
     const arcProgress = { value: 0 };
 
     gsap
@@ -61,7 +61,7 @@ const ScrollyTelling = () => {
             fromUsaFlowsIndices.forEach((idx) => {
               progressArr[idx] = arcProgress.value;
             });
-            arcs.buffers.progress.value.needsUpdate = true;
+            arcs.buffers.progress.needsUpdate = true;
           },
         },
       )

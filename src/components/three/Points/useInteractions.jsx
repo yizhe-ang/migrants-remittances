@@ -32,8 +32,8 @@ export default function useInteractions({ buffers, countryTypeToIndex }) {
     )
       return;
 
-    const sizeArr = buffers.size.buffer.value.array;
-    const colorArr = buffers.color.buffer.value.array;
+    const sizeArr = buffers.size.buffer.array;
+    const colorArr = buffers.color.buffer.array;
     const sizeSnapshot = sizeArr.slice();
     const colorSnapshot = colorArr.slice();
 
@@ -82,8 +82,8 @@ export default function useInteractions({ buffers, countryTypeToIndex }) {
         for (let i = 0; i < colorArr.length; i++) {
           colorArr[i] = colorSnapshot[i] + (colorTargets[i] - colorSnapshot[i]) * t;
         }
-        buffers.size.buffer.value.needsUpdate = true;
-        buffers.color.buffer.value.needsUpdate = true;
+        buffers.size.buffer.needsUpdate = true;
+        buffers.color.buffer.needsUpdate = true;
       },
     });
 

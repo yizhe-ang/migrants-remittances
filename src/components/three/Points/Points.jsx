@@ -222,8 +222,8 @@ const Points = ({ ...props }) => {
       mesh,
       u,
       buffers: {
-        size: { og: sizesOg, buffer: sizeBuffer },
-        color: { og: colorsOg, buffer: colorBuffer },
+        size: { og: sizesOg, buffer: sizeBuffer.value },
+        color: { og: colorsOg, buffer: colorBuffer.value },
       },
     };
   }, [countriesGeoSorted, dataIndex, remRadiusScale, remToColorScale]);
