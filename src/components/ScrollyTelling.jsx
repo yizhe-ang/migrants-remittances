@@ -199,6 +199,8 @@ const ScrollyTelling = () => {
         },
         0.6,
       );
+    // Fade out arcs opacity before step-4
+    // .to(arcs.u.opacity, { value: 0, duration: 0.01 }, 0.99);
     // TODO: Show tooltips for all of the shown points
     // i.e. country + remittance amount for USA
 
@@ -242,21 +244,28 @@ const ScrollyTelling = () => {
         0,
       )
       .to(
+        arcs.u.opacity,
+        {
+          value: 0,
+          duration: 0.1,
+        },
+        0.1,
+      )
+      .to(
         arcs.u.movementT,
         {
           value: 1,
           duration: 0.1,
         },
-        0,
+        0.2,
       )
-      .fromTo(
+      .to(
         arcs.u.opacity,
-        { value: 0 },
         {
           value: 1,
-          duration: 0.2,
+          duration: 0.6,
         },
-        0,
+        0.4,
       );
 
     // Random arcs go!
