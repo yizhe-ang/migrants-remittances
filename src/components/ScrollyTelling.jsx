@@ -43,7 +43,7 @@ const ScrollyTelling = () => {
         scrollTrigger: {
           trigger: "#step-2",
           start: "top bottom",
-          end: "bottom bottom",
+          end: "66% bottom",
           scrub: true,
           onEnter: () => {
             arcs.u.progressT = 0;
@@ -55,6 +55,14 @@ const ScrollyTelling = () => {
 
             arcs.buffers.progress.from.value.needsUpdate = true;
             arcs.buffers.progress.to.value.needsUpdate = true;
+          },
+          onEnterBack: () => {
+            console.log("yo");
+            fromUsaFlowsIndices.forEach((idx) => {
+              arcs.buffers.progress.from.value.array[idx] = 1;
+            });
+
+            arcs.buffers.progress.from.value.needsUpdate = true;
           },
         },
       })
@@ -85,6 +93,37 @@ const ScrollyTelling = () => {
         },
         0.4,
       );
+
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: "#step-2",
+          start: "66% bottom",
+          end: "bottom bottom",
+          markers: true,
+          scrub: true,
+          onEnter: () => {
+            fromUsaFlowsIndices.forEach((idx) => {
+              arcs.buffers.progress.from.value.array[idx] = 0;
+            });
+
+            arcs.buffers.progress.from.value.needsUpdate = true;
+          },
+          onEnterBack: () => {},
+        },
+      })
+      .to(arcs.u.progressT, {
+        value: 0,
+      });
+
+    // gsap.timeline({
+    //   scrollTrigger: {
+    //     trigger: "#step-3",
+    //     start: "top bottom",
+    //     end: "bottom bottom",
+    //     scrub: true,
+    //   },
+    // });
   }, [cameraControls, arcs, points]);
 
   return (
@@ -96,7 +135,7 @@ const ScrollyTelling = () => {
         are international migrants[1].
       </Step>
 
-      <Step id="step-2">
+      <Step id="step-2" className="h-[150vh]">
         Some of them are driven by better economic opportunities abroad;
         traveling across the world to settle down in another country.
       </Step>
@@ -104,6 +143,12 @@ const ScrollyTelling = () => {
       <Step id="step-3">
         Billions of dollars flow back across borders, as these migrants also
         regularly send back money to support their families and communities.
+      </Step>
+
+      <Step id="step-4">
+        These remittances - estimated in 2023 to total about $857 billion,
+        equivalent to the GDP of Belgium[2] – now dwarf official development aid
+        and represent a lifeline for many economies.
       </Step>
     </div>
   );
