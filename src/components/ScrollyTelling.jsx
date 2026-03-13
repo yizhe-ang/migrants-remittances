@@ -309,7 +309,7 @@ const ScrollyTelling = () => {
         usaArcs,
         {
           progress: 0,
-          duration: 0.1,
+          duration: 0.05,
           onUpdate: () => {
             fromUsaFlowsIndices.forEach((idx, i) => {
               arcProgressArr[idx] = usaArcs[i].progress;
@@ -323,9 +323,9 @@ const ScrollyTelling = () => {
         arcs.u.opacity,
         {
           value: 1,
-          duration: 0.1,
+          duration: 0.05,
         },
-        0,
+        0.05,
       )
       .to(
         cameraLookAt,
