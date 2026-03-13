@@ -20,7 +20,6 @@ const CameraControls = (props) => {
   // Init camera position
   useEffect(() => {
     ref.current.setLookAt(...cameraPositions.init, false);
-    // ref.current.setLookAt(...cameraPositions.takeoffStart, false);
 
     // ref.autoRotate = false;
   }, []);

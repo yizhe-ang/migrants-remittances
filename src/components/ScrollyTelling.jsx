@@ -212,7 +212,6 @@ const ScrollyTelling = () => {
           end: "bottom bottom",
           scrub: true,
         },
-        duration: 1,
       })
       // Hide all points
       .to(
@@ -228,7 +227,7 @@ const ScrollyTelling = () => {
             points.buffers.size.buffer.needsUpdate = true;
           },
         },
-        0,
+        0.2,
       )
       .to(
         usaPoint,
@@ -241,7 +240,7 @@ const ScrollyTelling = () => {
             points.buffers.size.buffer.needsUpdate = true;
           },
         },
-        0,
+        0.2,
       )
       .to(
         arcs.u.opacity,
@@ -268,6 +267,55 @@ const ScrollyTelling = () => {
         0.4,
       );
 
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: "#step-5",
+          start: "top bottom",
+          end: "bottom bottom",
+          scrub: true,
+        },
+        duration: 1,
+      })
+      .to(
+        arcs.u.opacity,
+        {
+          value: 0,
+          duration: 0.4,
+        },
+        0.4,
+      )
+      .to(
+        arcs.u.movementT,
+        {
+          value: 0,
+          duration: 0.1,
+        },
+        0.9,
+      );
+
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: "#step-6",
+          start: "top bottom",
+          end: "bottom bottom",
+          scrub: true,
+        },
+        duration: 1,
+      })
+      .to(
+        cameraLookAt,
+        {
+          endArray: cameraPositions.zoomOutFlat,
+          duration: 0.5,
+          onUpdate: () => {
+            cameraControls.setLookAt(...cameraLookAt, false);
+          },
+        },
+        0,
+      )
+
     // Random arcs go!
   }, [cameraControls, arcs, points]);
 
@@ -276,24 +324,53 @@ const ScrollyTelling = () => {
       <div className="h-screen" />
 
       <Step id="step-1">
-        As of 2024, an estimated 304 million, or 1 in 27 people around the world
-        are international migrants[1].
+        <P>
+          As of 2024, an estimated 304 million, or 1 in 27 people around the
+          world are international migrants[1].
+        </P>
       </Step>
 
       <Step id="step-2" className="h-[150vh]">
-        Some of them are driven by better economic opportunities abroad;
-        traveling across the world to settle down in another country.
+        <P>
+          Some of them are driven by better economic opportunities abroad;
+          traveling across the world to settle down in another country.
+        </P>
       </Step>
 
       <Step id="step-3">
-        Billions of dollars flow back across borders, as these migrants also
-        regularly send back money to support their families and communities.
+        <P>
+          Billions of dollars flow back across borders, as these migrants also
+          regularly send back money to support their families and communities.
+        </P>
       </Step>
 
       <Step id="step-4">
-        These remittances - estimated in 2023 to total about $857 billion,
-        equivalent to the GDP of Belgium[2] – now dwarf official development aid
-        and represent a lifeline for many economies.
+        <P>
+          These remittances - estimated in 2023 to total about $857 billion,
+          equivalent to the GDP of Belgium[2] – now dwarf official development
+          aid and represent a lifeline for many economies.
+        </P>
+      </Step>
+
+      <Step id="step-5">
+        <P>
+          But where do these transfers actually end up in? Do they flow to
+          countries in need, such as low-income and middle-income countries?
+        </P>
+        <P>
+          Despite the importance of remittances, there is a lack of a
+          comprehensive dataset of bilateral remittance flows at a high temporal
+          resolution.
+        </P>
+      </Step>
+
+      <Step id="step-6">
+        <P>
+          To answer these questions and more, researchers from CSH built a novel
+          model to better understand the dynamics and structure of remittance
+          flows, simulating and providing new estimates of remittance flows
+          between countries from 2010 to 2019 at a monthly level.
+        </P>
       </Step>
     </div>
   );
@@ -311,6 +388,10 @@ const Step = ({ className, children, ...props }) => {
       <div className="px-4 py-4 bg-white rounded shadow-xl">{children}</div>
     </div>
   );
+};
+
+const P = ({ className, ...props }) => {
+  return <p className={cn("", className)} {...props} />;
 };
 
 export default ScrollyTelling;
