@@ -111,6 +111,7 @@ const Points = ({ ...props }) => {
 
     const u = {
       hoveredId: uniform(0),
+      staggeredT: uniform(0),
     };
 
     const geometry = new THREE.PlaneGeometry(1, 1);
@@ -163,10 +164,7 @@ const Points = ({ ...props }) => {
     const colorsOg = new Float32Array(colors);
 
     const positionsBuffer = instancedArray(new Float32Array(positions), "vec3");
-    // const sizeBuffer = instancedArray(
-    //   new Float32Array(sizesOg),
-    //   "float",
-    // );
+    const sizeOgBuffer = instancedArray(new Float32Array(sizesOg), "float");
     const sizeBuffer = instancedArray(countriesGeoSorted.length, "float");
     const colorBuffer = instancedArray(new Float32Array(colors), "vec4");
 
