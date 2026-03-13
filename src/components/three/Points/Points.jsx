@@ -15,6 +15,7 @@ import {
   float,
   cameraPosition,
   uniform,
+  mix,
 } from "three/tsl";
 import * as THREE from "three/webgpu";
 import { latToMercatorY } from "@/lib/utils";
@@ -204,7 +205,10 @@ const Points = ({ ...props }) => {
     material.positionNode = Fn(() => {
       const offset = positionsBuffer.element(instanceIndex);
 
-      const size = sizeBuffer.element(instanceIndex);
+      const threshold = float(instanceIndex).div(float(countriesGeoSorted.length));
+      const overlap = float(0.05);
+      const instanceT = smoothstep(threshold.sub(overlap), threshold.add(overlap), u.staggeredT);
+      const size = mix(sizeBuffer.element(instanceIndex), sizeOgBuffer.element(instanceIndex), instanceT);
 
       // Always same size
       const dist = cameraPosition.sub(offset).length();

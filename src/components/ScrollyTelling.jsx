@@ -315,6 +315,14 @@ const ScrollyTelling = () => {
         },
         0,
       )
+      .to(
+        points.u.staggeredT,
+        {
+          value: 1,
+          duration: 0.9,
+        },
+        0.1,
+      );
 
     // Random arcs go!
   }, [cameraControls, arcs, points]);
