@@ -304,6 +304,29 @@ const ScrollyTelling = () => {
         },
         duration: 1,
       })
+      // Reset arcs
+      .to(
+        usaArcs,
+        {
+          progress: 0,
+          duration: 0.1,
+          onUpdate: () => {
+            fromUsaFlowsIndices.forEach((idx, i) => {
+              arcProgressArr[idx] = usaArcs[i].progress;
+            });
+            arcs.buffers.progress.needsUpdate = true;
+          },
+        },
+        0,
+      )
+      .to(
+        arcs.u.opacity,
+        {
+          value: 1,
+          duration: 0.1,
+        },
+        0,
+      )
       .to(
         cameraLookAt,
         {
