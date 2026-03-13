@@ -99,7 +99,7 @@ export const { roomStore, useRoomStore } = createRoomStore(
     setFlowRadiusScale: (scale) => set({ flowRadiusScale: scale }),
 
     // Controls / Interactions #################################################
-    enableMapInteractions: true,
+    enableMapInteractions: false,
     setEnableMapInteractions: (enableInteractions) =>
       set({ enableInteractions }),
 

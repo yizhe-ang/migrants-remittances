@@ -163,8 +163,12 @@ const Points = ({ ...props }) => {
     const colorsOg = new Float32Array(colors);
 
     const positionsBuffer = instancedArray(new Float32Array(positions), "vec3");
+    // const sizeBuffer = instancedArray(
+    //   new Float32Array(sizesOg),
+    //   "float",
+    // );
     const sizeBuffer = instancedArray(
-      new Float32Array(sizesOg),
+      countriesGeoSorted.length,
       "float",
     );
     const colorBuffer = instancedArray(new Float32Array(colors), "vec4");
