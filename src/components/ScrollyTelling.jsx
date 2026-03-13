@@ -57,7 +57,6 @@ const ScrollyTelling = () => {
             arcs.buffers.progress.to.value.needsUpdate = true;
           },
           onEnterBack: () => {
-            console.log("yo");
             fromUsaFlowsIndices.forEach((idx) => {
               arcs.buffers.progress.from.value.array[idx] = 1;
             });
@@ -116,14 +115,15 @@ const ScrollyTelling = () => {
         value: 0,
       });
 
-    // gsap.timeline({
-    //   scrollTrigger: {
-    //     trigger: "#step-3",
-    //     start: "top bottom",
-    //     end: "bottom bottom",
-    //     scrub: true,
-    //   },
-    // });
+    // Show USA orange
+    gsap.timeline({
+      scrollTrigger: {
+        trigger: "#step-3",
+        start: "top bottom",
+        end: "30% bottom",
+        scrub: true,
+      },
+    });
   }, [cameraControls, arcs, points]);
 
   return (

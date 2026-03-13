@@ -241,7 +241,6 @@ const Points = ({ ...props }) => {
     })();
 
     return {
-      mesh,
       u,
       buffers: {
         size: {
