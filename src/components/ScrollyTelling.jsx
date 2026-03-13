@@ -241,10 +241,23 @@ const ScrollyTelling = () => {
         },
         0,
       )
-      .to(arcs.u.movementT, {
-        value: 1,
-        duration: 0.2,
-      }, 0);
+      .to(
+        arcs.u.movementT,
+        {
+          value: 1,
+          duration: 0.1,
+        },
+        0,
+      )
+      .fromTo(
+        arcs.u.opacity,
+        { value: 0 },
+        {
+          value: 1,
+          duration: 0.2,
+        },
+        0,
+      );
 
     // Random arcs go!
   }, [cameraControls, arcs, points]);

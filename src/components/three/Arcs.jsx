@@ -54,6 +54,7 @@ const Arcs = (props) => {
       tgtColor: uniform(new THREE.Color(chroma(colors.orange["400"]).hex())),
       // Movement animation
       movementT: uniform(0),
+      opacity: uniform(1)
     };
 
     // Build per-instance data
@@ -108,10 +109,7 @@ const Arcs = (props) => {
     // Instance buffers
     const srcBuffer = instancedArray(new Float32Array(sources), "vec3");
     const tgtBuffer = instancedArray(new Float32Array(targets), "vec3");
-    const progressBuffer = instancedArray(
-      new Float32Array(progress),
-      "float",
-    );
+    const progressBuffer = instancedArray(new Float32Array(progress), "float");
     const radiusBuffer = instancedArray(new Float32Array(radii), "float");
 
     material.positionNode = Fn(() => {
@@ -195,7 +193,8 @@ const Arcs = (props) => {
       });
 
       const c = mix(u.tgtColor, u.srcColor, t);
-      return vec4(c, 1);
+
+      return vec4(c, u.opacity);
     })();
 
     return {
@@ -214,9 +213,7 @@ const Arcs = (props) => {
       u,
       buffers,
       getProgressTargetsFromTypeCountry: ({ country, type }) => {
-        const targets = new Float32Array(
-          buffers.progress.array.length,
-        );
+        const targets = new Float32Array(buffers.progress.array.length);
 
         const flows = flowsMap.get(type).get(country);
 
