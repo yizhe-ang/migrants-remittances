@@ -26,6 +26,10 @@ const ScrollyTelling = () => {
     const destinationUsaPointIdx = points.countryTypeToIdx
       .get("destination")
       .get("USA");
+    const fromUsaPointsIndices = fromUsaFlows.map((d) => {
+      const idx = points.countryTypeToIdx.get("origin").get(d.flow.origin);
+      return idx;
+    });
 
     const usaArcs = fromUsaFlowsIndices.map(() => ({
       progress: 1,
@@ -33,6 +37,9 @@ const ScrollyTelling = () => {
     const usaPoint = {
       size: 0,
     };
+    const fromUsaPoints = fromUsaPointsIndices.map(() => ({
+      size: 0,
+    }));
 
     gsap
       .timeline({
@@ -160,7 +167,21 @@ const ScrollyTelling = () => {
         0.2,
       )
       // Show receiving points
-
+      .to(
+        fromUsaPoints,
+        {
+          size: 0.5,
+          duration: 0.3,
+          stagger: 0.007,
+          onUpdate: () => {
+            fromUsaPointsIndices.forEach((idx, i) => {
+              points.buffers.size.buffer.array[idx] = fromUsaPoints[i].size;
+            });
+            points.buffers.size.buffer.needsUpdate = true;
+          },
+        },
+        0.4,
+      );
     // TODO: Show tooltips for all of the shown points
     // i.e. country + remittance amount for USA
   }, [cameraControls, arcs, points]);
