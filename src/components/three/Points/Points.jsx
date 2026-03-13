@@ -82,7 +82,7 @@ const Points = ({ ...props }) => {
     return countriesGeoSorted;
   }, [countriesGeo, dataIndex]);
 
-  const countryTypeToIndex = useMemo(() => {
+  const countryTypeToIdx = useMemo(() => {
     if (!countriesGeoSorted) return null;
 
     const map = new Map([
@@ -167,10 +167,7 @@ const Points = ({ ...props }) => {
     //   new Float32Array(sizesOg),
     //   "float",
     // );
-    const sizeBuffer = instancedArray(
-      countriesGeoSorted.length,
-      "float",
-    );
+    const sizeBuffer = instancedArray(countriesGeoSorted.length, "float");
     const colorBuffer = instancedArray(new Float32Array(colors), "vec4");
 
     material.colorNode = Fn(() => {
@@ -233,11 +230,12 @@ const Points = ({ ...props }) => {
   }, [countriesGeoSorted, dataIndex, remRadiusScale, remToColorScale]);
 
   useEffect(() => {
-    if (!u || !buffers) return;
+    if (!u || !buffers || !countryTypeToIdx) return;
 
     setPoints({
       u,
       buffers,
+      countryTypeToIdx,
     });
   }, [u, buffers]);
 
@@ -251,7 +249,7 @@ const Points = ({ ...props }) => {
 
   useInteractions({
     buffers,
-    countryTypeToIndex,
+    countryTypeToIndex: countryTypeToIdx,
   });
 
   return <>{mesh && <primitive object={mesh} {...props} />}</>;

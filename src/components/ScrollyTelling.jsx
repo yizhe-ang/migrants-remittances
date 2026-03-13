@@ -18,15 +18,21 @@ const ScrollyTelling = () => {
     if (!cameraControls || !arcs || !points) return;
 
     const fromUsaFlows = flowsMap.get("destination").get("USA");
-    const fromUsaFlowsIndices = fromUsaFlows.map((d) => d.idx);
 
     const cameraLookAt = [...cameraPositions.init];
-
     const arcProgressArr = arcs.buffers.progress.array;
+
+    const fromUsaFlowsIndices = fromUsaFlows.map((d) => d.idx);
+    const destinationUsaPointIdx = points.countryTypeToIdx
+      .get("destination")
+      .get("USA");
 
     const usaArcs = fromUsaFlowsIndices.map(() => ({
       progress: 1,
     }));
+    const usaPoint = {
+      size: 0,
+    };
 
     gsap
       .timeline({
@@ -106,26 +112,57 @@ const ScrollyTelling = () => {
         0.5,
       );
 
-    // gsap
-    //   .timeline({
-    //     scrollTrigger: {
-    //       trigger: "#step-2",
-    //       start: "66% bottom",
-    //       end: "bottom bottom",
-    //       markers: true,
-    //       scrub: true,
-    //     },
-    //   })
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: "#step-3",
+          start: "top bottom",
+          end: "bottom bottom",
+          scrub: true,
+        },
+      })
+      // Show USA destination point
+      .to(usaPoint, {
+        size: points.buffers.size.og[destinationUsaPointIdx],
+        duration: 0.2,
+        onUpdate: () => {
+          points.buffers.size.buffer.array[destinationUsaPointIdx] =
+            usaPoint.size;
+          points.buffers.size.buffer.needsUpdate = true;
+        },
+      })
+      // Show usa arcs again, flying to remit
+      .to(
+        usaArcs,
+        {
+          progress: 0.5,
+          duration: 0.5,
+          stagger: 0.007,
+          onUpdate: () => {
+            fromUsaFlowsIndices.forEach((idx, i) => {
+              arcProgressArr[idx] = usaArcs[i].progress;
+            });
+            arcs.buffers.progress.needsUpdate = true;
+          },
+        },
+        0.2,
+      )
+      // Zoom out to show world map
+      .to(
+        cameraLookAt,
+        {
+          endArray: cameraPositions.usaZoomOut,
+          duration: 0.5,
+          onUpdate: () => {
+            cameraControls.setLookAt(...cameraLookAt, false);
+          },
+        },
+        0.2,
+      )
+      // Show receiving points
 
-    // Show USA orange
-    gsap.timeline({
-      scrollTrigger: {
-        trigger: "#step-3",
-        start: "top bottom",
-        end: "30% bottom",
-        scrub: true,
-      },
-    });
+    // TODO: Show tooltips for all of the shown points
+    // i.e. country + remittance amount for USA
   }, [cameraControls, arcs, points]);
 
   return (

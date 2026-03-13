@@ -5,7 +5,7 @@ import * as THREE from "three/webgpu";
 
 const colorDummy = new THREE.Color();
 
-export default function useInteractions({ buffers, countryTypeToIndex }) {
+export default function useInteractions({ buffers, countryTypeToIdx }) {
   const hoveredCountry = useRoomStore((state) => state.hoveredCountry);
   const enableMapInteractions = useRoomStore(
     (state) => state.enableMapInteractions,
@@ -25,7 +25,7 @@ export default function useInteractions({ buffers, countryTypeToIndex }) {
     if (
       !flowsMap ||
       !buffers ||
-      !countryTypeToIndex ||
+      !countryTypeToIdx ||
       !remRadiusScale ||
       !remToColorScale ||
       !remFromColorScale
@@ -50,7 +50,7 @@ export default function useInteractions({ buffers, countryTypeToIndex }) {
       highlightFlows.forEach((d) => {
         const flowType = type === "origin" ? "destination" : "origin";
 
-        const idx = countryTypeToIndex.get(flowType).get(d.flow[flowType]);
+        const idx = countryTypeToIdx.get(flowType).get(d.flow[flowType]);
 
         sizeTargets[idx] = remRadiusScale(d.flow.sim_remittances_with);
 
@@ -65,8 +65,8 @@ export default function useInteractions({ buffers, countryTypeToIndex }) {
       });
 
       // Hovered country should be the same
-      const countryOriginIdx = countryTypeToIndex.get("origin").get(country);
-      const countryDestIdx = countryTypeToIndex.get("destination").get(country);
+      const countryOriginIdx = countryTypeToIdx.get("origin").get(country);
+      const countryDestIdx = countryTypeToIdx.get("destination").get(country);
 
       sizeTargets[countryOriginIdx] = buffers.size.og[countryOriginIdx];
       sizeTargets[countryDestIdx] = buffers.size.og[countryDestIdx];
@@ -80,7 +80,8 @@ export default function useInteractions({ buffers, countryTypeToIndex }) {
           sizeArr[i] = sizeSnapshot[i] + (sizeTargets[i] - sizeSnapshot[i]) * t;
         }
         for (let i = 0; i < colorArr.length; i++) {
-          colorArr[i] = colorSnapshot[i] + (colorTargets[i] - colorSnapshot[i]) * t;
+          colorArr[i] =
+            colorSnapshot[i] + (colorTargets[i] - colorSnapshot[i]) * t;
         }
         buffers.size.buffer.needsUpdate = true;
         buffers.color.buffer.needsUpdate = true;
@@ -92,7 +93,7 @@ export default function useInteractions({ buffers, countryTypeToIndex }) {
     hoveredCountry,
     flowsMap,
     buffers,
-    countryTypeToIndex,
+    countryTypeToIdx,
     remRadiusScale,
     remToColorScale,
     remFromColorScale,
