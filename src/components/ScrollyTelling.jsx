@@ -17,10 +17,16 @@ const ScrollyTelling = () => {
   useGSAP(() => {
     if (!cameraControls || !arcs || !points) return;
 
-    const cameraLookAt = [...cameraPositions.init];
-
     const fromUsaFlows = flowsMap.get("destination").get("USA");
     const fromUsaFlowsIndices = fromUsaFlows.map((d) => d.idx);
+
+    const cameraLookAt = [...cameraPositions.init];
+
+    const arcProgressArr = arcs.buffers.progress.array;
+
+    const usaArcs = fromUsaFlowsIndices.map(() => ({
+      progress: 1,
+    }));
 
     gsap
       .timeline({
@@ -38,32 +44,44 @@ const ScrollyTelling = () => {
         },
       });
 
-    const progressArr = arcs.buffers.progress.array;
-    const arcProgress = { value: 0 };
-
     gsap
       .timeline({
         scrollTrigger: {
           trigger: "#step-2",
           start: "top bottom",
-          end: "66% bottom",
+          end: "bottom bottom",
           scrub: true,
         },
       })
-      // TODO: Make them staggered
-      .fromTo(
-        arcProgress,
-        { value: 0 },
+      .to(
+        usaArcs,
         {
-          value: 0.5,
-          duration: 1,
+          progress: 0.5,
+          duration: 0.7,
+          stagger: 0.01,
           onUpdate: () => {
-            fromUsaFlowsIndices.forEach((idx) => {
-              progressArr[idx] = arcProgress.value;
+            fromUsaFlowsIndices.forEach((idx, i) => {
+              arcProgressArr[idx] = usaArcs[i].progress;
             });
             arcs.buffers.progress.needsUpdate = true;
           },
         },
+        0,
+      )
+      .to(
+        usaArcs,
+        {
+          progress: 0,
+          duration: 0.3,
+          stagger: 0.007,
+          onUpdate: () => {
+            fromUsaFlowsIndices.forEach((idx, i) => {
+              arcProgressArr[idx] = usaArcs[i].progress;
+            });
+            arcs.buffers.progress.needsUpdate = true;
+          },
+        },
+        0.7,
       )
       .to(
         cameraLookAt,
@@ -80,33 +98,24 @@ const ScrollyTelling = () => {
         cameraLookAt,
         {
           endArray: cameraPositions.usaEnd,
-          duration: 0.6,
+          duration: 0.5,
           onUpdate: () => {
             cameraControls.setLookAt(...cameraLookAt, false);
           },
         },
-        0.4,
+        0.5,
       );
 
-    gsap
-      .timeline({
-        scrollTrigger: {
-          trigger: "#step-2",
-          start: "66% bottom",
-          end: "bottom bottom",
-          markers: true,
-          scrub: true,
-        },
-      })
-      .to(arcProgress, {
-        value: 0,
-        onUpdate: () => {
-          fromUsaFlowsIndices.forEach((idx) => {
-            progressArr[idx] = arcProgress.value;
-          });
-          arcs.buffers.progress.value.needsUpdate = true;
-        },
-      });
+    // gsap
+    //   .timeline({
+    //     scrollTrigger: {
+    //       trigger: "#step-2",
+    //       start: "66% bottom",
+    //       end: "bottom bottom",
+    //       markers: true,
+    //       scrub: true,
+    //     },
+    //   })
 
     // Show USA orange
     gsap.timeline({
