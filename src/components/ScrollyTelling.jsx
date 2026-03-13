@@ -58,6 +58,7 @@ const ScrollyTelling = () => {
           },
         },
       })
+      // TODO: Make them staggered
       .to(arcs.u.progressT, {
         value: 1,
         duration: 1,
