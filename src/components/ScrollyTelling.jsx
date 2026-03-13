@@ -38,7 +38,7 @@ const ScrollyTelling = () => {
       size: 0,
     };
     const fromUsaPoints = fromUsaPointsIndices.map(() => ({
-      size: 0,
+      sizeT: 0,
     }));
 
     gsap
@@ -170,20 +170,83 @@ const ScrollyTelling = () => {
       .to(
         fromUsaPoints,
         {
-          size: 0.5,
+          sizeT: 0.5,
           duration: 0.3,
           stagger: 0.007,
           onUpdate: () => {
             fromUsaPointsIndices.forEach((idx, i) => {
-              points.buffers.size.buffer.array[idx] = fromUsaPoints[i].size;
+              points.buffers.size.buffer.array[idx] =
+                fromUsaPoints[i].sizeT * points.buffers.size.og[idx];
             });
             points.buffers.size.buffer.needsUpdate = true;
           },
         },
         0.4,
+      )
+      // Undraw arcs
+      .to(
+        usaArcs,
+        {
+          progress: 1,
+          duration: 0.3,
+          stagger: 0.007,
+          onUpdate: () => {
+            fromUsaFlowsIndices.forEach((idx, i) => {
+              arcProgressArr[idx] = usaArcs[i].progress;
+            });
+            arcs.buffers.progress.needsUpdate = true;
+          },
+        },
+        0.6,
       );
     // TODO: Show tooltips for all of the shown points
     // i.e. country + remittance amount for USA
+
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: "#step-4",
+          start: "top bottom",
+          end: "bottom bottom",
+          scrub: true,
+        },
+        duration: 1,
+      })
+      // Hide all points
+      .to(
+        fromUsaPoints,
+        {
+          sizeT: 0,
+          duration: 0.2,
+          onUpdate: () => {
+            fromUsaPointsIndices.forEach((idx, i) => {
+              points.buffers.size.buffer.array[idx] =
+                fromUsaPoints[i].sizeT * points.buffers.size.og[idx];
+            });
+            points.buffers.size.buffer.needsUpdate = true;
+          },
+        },
+        0,
+      )
+      .to(
+        usaPoint,
+        {
+          size: 0,
+          duration: 0.2,
+          onUpdate: () => {
+            points.buffers.size.buffer.array[destinationUsaPointIdx] =
+              usaPoint.size;
+            points.buffers.size.buffer.needsUpdate = true;
+          },
+        },
+        0,
+      )
+      .to(arcs.u.movementT, {
+        value: 1,
+        duration: 0.2,
+      }, 0);
+
+    // Random arcs go!
   }, [cameraControls, arcs, points]);
 
   return (

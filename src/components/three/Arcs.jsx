@@ -180,7 +180,7 @@ const Arcs = (props) => {
 
       const progress = progressBase
         .add(randomProgress)
-        .mod(mix(1, 5, u.movementT));
+        .mod(mix(1, 7, u.movementT));
 
       // const progress = progressBase.add(time.mul(speed)).add(randOffset).mod(5);
 
