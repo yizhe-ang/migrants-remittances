@@ -1,11 +1,11 @@
 import { useRoomStore } from "@/store";
-import { transitionBuffer } from "@/lib/utils";
+import { animate } from "motion";
 import { useEffect, useRef } from "react";
 import * as THREE from "three/webgpu";
 
 const colorDummy = new THREE.Color();
 
-export default function useInteractions({ buffers, u, countryTypeToIndex }) {
+export default function useInteractions({ buffers, countryTypeToIndex }) {
   const hoveredCountry = useRoomStore((state) => state.hoveredCountry);
   const enableMapInteractions = useRoomStore(
     (state) => state.enableMapInteractions,
@@ -16,8 +16,7 @@ export default function useInteractions({ buffers, u, countryTypeToIndex }) {
   const remToColorScale = useRoomStore((state) => state.remToColorScale);
   const remFromColorScale = useRoomStore((state) => state.remFromColorScale);
 
-  const sizeAnimRef = useRef(null);
-  const colorAnimRef = useRef(null);
+  const animRef = useRef(null);
 
   // Animate on hovered country change
   useEffect(() => {
@@ -25,7 +24,6 @@ export default function useInteractions({ buffers, u, countryTypeToIndex }) {
 
     if (
       !flowsMap ||
-      !u ||
       !buffers ||
       !countryTypeToIndex ||
       !remRadiusScale ||
@@ -34,9 +32,14 @@ export default function useInteractions({ buffers, u, countryTypeToIndex }) {
     )
       return;
 
+    const sizeArr = buffers.size.buffer.value.array;
+    const colorArr = buffers.color.buffer.value.array;
+    const sizeSnapshot = sizeArr.slice();
+    const colorSnapshot = colorArr.slice();
+
     const sizeTargets = hoveredCountry
-      ? new Float32Array(buffers.size.from.value.array.length)
-      : buffers.size.og;
+      ? new Float32Array(sizeArr.length)
+      : new Float32Array(buffers.size.og);
 
     const colorTargets = buffers.color.og.slice();
 
@@ -69,29 +72,26 @@ export default function useInteractions({ buffers, u, countryTypeToIndex }) {
       sizeTargets[countryDestIdx] = buffers.size.og[countryDestIdx];
     }
 
-    sizeAnimRef.current = transitionBuffer(
-      buffers.size.from,
-      buffers.size.to,
-      u.sizeT,
-      sizeTargets,
-    );
+    animRef.current = animate(0, 1, {
+      duration: 0.5,
+      ease: "easeOut",
+      onUpdate: (t) => {
+        for (let i = 0; i < sizeArr.length; i++) {
+          sizeArr[i] = sizeSnapshot[i] + (sizeTargets[i] - sizeSnapshot[i]) * t;
+        }
+        for (let i = 0; i < colorArr.length; i++) {
+          colorArr[i] = colorSnapshot[i] + (colorTargets[i] - colorSnapshot[i]) * t;
+        }
+        buffers.size.buffer.value.needsUpdate = true;
+        buffers.color.buffer.value.needsUpdate = true;
+      },
+    });
 
-    colorAnimRef.current = transitionBuffer(
-      buffers.color.from,
-      buffers.color.to,
-      u.colorT,
-      colorTargets,
-    );
-
-    return () => {
-      sizeAnimRef.current?.stop();
-      colorAnimRef.current?.stop();
-    };
+    return () => animRef.current?.stop();
   }, [
     hoveredCountry,
     flowsMap,
     buffers,
-    u,
     countryTypeToIndex,
     remRadiusScale,
     remToColorScale,

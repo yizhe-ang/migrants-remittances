@@ -38,6 +38,9 @@ const ScrollyTelling = () => {
         },
       });
 
+    const progressArr = arcs.buffers.progress.value.array;
+    const arcProgress = { value: 0 };
+
     gsap
       .timeline({
         scrollTrigger: {
@@ -45,31 +48,23 @@ const ScrollyTelling = () => {
           start: "top bottom",
           end: "66% bottom",
           scrub: true,
-          onEnter: () => {
-            arcs.u.progressT = 0;
-
-            fromUsaFlowsIndices.forEach((idx) => {
-              arcs.buffers.progress.from.value.array[idx] = 1;
-              arcs.buffers.progress.to.value.array[idx] = 0.5;
-            });
-
-            arcs.buffers.progress.from.value.needsUpdate = true;
-            arcs.buffers.progress.to.value.needsUpdate = true;
-          },
-          onEnterBack: () => {
-            fromUsaFlowsIndices.forEach((idx) => {
-              arcs.buffers.progress.from.value.array[idx] = 1;
-            });
-
-            arcs.buffers.progress.from.value.needsUpdate = true;
-          },
         },
       })
       // TODO: Make them staggered
-      .to(arcs.u.progressT, {
-        value: 1,
-        duration: 1,
-      })
+      .fromTo(
+        arcProgress,
+        { value: 0 },
+        {
+          value: 0.5,
+          duration: 1,
+          onUpdate: () => {
+            fromUsaFlowsIndices.forEach((idx) => {
+              progressArr[idx] = arcProgress.value;
+            });
+            arcs.buffers.progress.value.needsUpdate = true;
+          },
+        },
+      )
       .to(
         cameraLookAt,
         {
@@ -101,18 +96,16 @@ const ScrollyTelling = () => {
           end: "bottom bottom",
           markers: true,
           scrub: true,
-          onEnter: () => {
-            fromUsaFlowsIndices.forEach((idx) => {
-              arcs.buffers.progress.from.value.array[idx] = 0;
-            });
-
-            arcs.buffers.progress.from.value.needsUpdate = true;
-          },
-          onEnterBack: () => {},
         },
       })
-      .to(arcs.u.progressT, {
+      .to(arcProgress, {
         value: 0,
+        onUpdate: () => {
+          fromUsaFlowsIndices.forEach((idx) => {
+            progressArr[idx] = arcProgress.value;
+          });
+          arcs.buffers.progress.value.needsUpdate = true;
+        },
       });
 
     // Show USA orange

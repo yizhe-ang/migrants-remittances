@@ -1,5 +1,5 @@
 import { useRoomStore } from "@/store";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import {
   Fn,
   instancedArray,
@@ -20,7 +20,8 @@ import {
   mx_noise_float,
 } from "three/tsl";
 import * as THREE from "three/webgpu";
-import { latToMercatorY, transitionBuffer } from "@/lib/utils";
+import { latToMercatorY } from "@/lib/utils";
+import { animate } from "motion";
 import colors from "tailwindcss/colors";
 import chroma from "chroma-js";
 import { hash } from "@/lib/tsl";
@@ -51,8 +52,6 @@ const Arcs = (props) => {
     const u = {
       srcColor: uniform(new THREE.Color(chroma(colors.blue["400"]).hex())),
       tgtColor: uniform(new THREE.Color(chroma(colors.orange["400"]).hex())),
-      progressT: uniform(0),
-      widthT: uniform(0),
       // Movement animation
       movementT: uniform(0),
     };
@@ -60,8 +59,7 @@ const Arcs = (props) => {
     // Build per-instance data
     const sources = [];
     const targets = [];
-    const progressFrom = [];
-    const progressTo = [];
+    const progress = [];
     const radii = [];
 
     for (const flow of flows) {
@@ -72,8 +70,7 @@ const Arcs = (props) => {
       sources.push(originGeo.longitude, latToMercatorY(originGeo.latitude), 0);
       targets.push(destGeo.longitude, latToMercatorY(destGeo.latitude), 0);
 
-      progressFrom.push(0);
-      progressTo.push(0);
+      progress.push(0);
 
       radii.push(flowRadiusScale(flow.sim_remittances_with));
     }
@@ -111,12 +108,8 @@ const Arcs = (props) => {
     // Instance buffers
     const srcBuffer = instancedArray(new Float32Array(sources), "vec3");
     const tgtBuffer = instancedArray(new Float32Array(targets), "vec3");
-    const progressFromBuffer = instancedArray(
-      new Float32Array(progressFrom),
-      "float",
-    );
-    const progressToBuffer = instancedArray(
-      new Float32Array(progressTo),
+    const progressBuffer = instancedArray(
+      new Float32Array(progress),
       "float",
     );
     const radiusBuffer = instancedArray(new Float32Array(radii), "float");
@@ -168,9 +161,7 @@ const Arcs = (props) => {
     material.colorNode = Fn(() => {
       const seed = instanceIndex.toFloat();
 
-      const progressFrom = progressFromBuffer.element(instanceIndex);
-      const progressTo = progressToBuffer.element(instanceIndex);
-      const progressBase = mix(progressFrom, progressTo, u.progressT);
+      const progressBase = progressBuffer.element(instanceIndex);
 
       // Draw randomly
       const randOffset = hash(seed);
@@ -207,23 +198,11 @@ const Arcs = (props) => {
       return vec4(c, 1);
     })();
 
-    // const computeUpdate = Fn(() => {
-    //   const currentProgress = progressFromBuffer.element(instanceIndex);
-    //   const targetProgress = progressFromBuffer.element(instanceIndex);
-
-    //   currentProgress.addAssign(
-    //     targetProgress.sub(currentProgress).mul(1.0).mul(deltaTime),
-    //   );
-    // })().compute(count);
-
     return {
       mesh,
       u,
       buffers: {
-        progress: {
-          from: progressFromBuffer,
-          to: progressToBuffer,
-        },
+        progress: progressBuffer,
       },
     };
   }, [flows, countriesGeoMap, flowRadiusScale]);
@@ -236,7 +215,7 @@ const Arcs = (props) => {
       buffers,
       getProgressTargetsFromTypeCountry: ({ country, type }) => {
         const targets = new Float32Array(
-          buffers.progress.to.value.array.length,
+          buffers.progress.value.array.length,
         );
 
         const flows = flowsMap.get(type).get(country);
@@ -252,9 +231,11 @@ const Arcs = (props) => {
 
   useEffect(() => {
     if (!enableMapInteractions) return;
-    if (!buffers || !u || !flowsMap) return;
+    if (!buffers || !flowsMap) return;
 
-    const targets = new Float32Array(buffers.progress.to.value.array.length);
+    const arr = buffers.progress.value.array;
+    const snapshot = arr.slice();
+    const targets = new Float32Array(arr.length);
 
     if (hoveredCountry) {
       const { country, type } = hoveredCountry;
@@ -265,15 +246,19 @@ const Arcs = (props) => {
       });
     }
 
-    progressAnimRef.current = transitionBuffer(
-      buffers.progress.from,
-      buffers.progress.to,
-      u.progressT,
-      targets,
-    );
+    progressAnimRef.current = animate(0, 1, {
+      duration: 0.5,
+      ease: "easeOut",
+      onUpdate: (t) => {
+        for (let i = 0; i < arr.length; i++) {
+          arr[i] = snapshot[i] + (targets[i] - snapshot[i]) * t;
+        }
+        buffers.progress.value.needsUpdate = true;
+      },
+    });
 
     return () => progressAnimRef.current?.stop();
-  }, [hoveredCountry, buffers, u, flowsMap, enableMapInteractions]);
+  }, [hoveredCountry, buffers, flowsMap, enableMapInteractions]);
 
   return <>{mesh && <primitive object={mesh} {...props} />}</>;
 };

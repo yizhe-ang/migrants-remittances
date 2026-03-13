@@ -15,7 +15,6 @@ import {
   float,
   cameraPosition,
   uniform,
-  mix,
 } from "three/tsl";
 import * as THREE from "three/webgpu";
 import { latToMercatorY } from "@/lib/utils";
@@ -112,8 +111,6 @@ const Points = ({ ...props }) => {
 
     const u = {
       hoveredId: uniform(0),
-      sizeT: uniform(0),
-      colorT: uniform(0),
     };
 
     const geometry = new THREE.PlaneGeometry(1, 1);
@@ -135,10 +132,7 @@ const Points = ({ ...props }) => {
     const positions = [];
 
     const sizesOg = [];
-    const sizesTo = [];
-
-    const colorsFrom = [];
-    const colorsTo = [];
+    const colors = [];
 
     for (let i = 0; i < countriesGeoSorted.length; i++) {
       const c = countriesGeoSorted[i];
@@ -147,8 +141,6 @@ const Points = ({ ...props }) => {
       const mercatorY = latToMercatorY(c.latitude);
 
       positions.push(c.longitude, mercatorY, 0);
-
-      sizesTo.push(0);
 
       const d = dataIndex.get(c.type).get(c.country);
       if (d) {
@@ -159,33 +151,23 @@ const Points = ({ ...props }) => {
         } else {
           colorDummy.setStyle(remFromColorScale(d.sim_remittances_with));
         }
-        colorsFrom.push(colorDummy.r, colorDummy.g, colorDummy.b, 1);
-        colorsTo.push(colorDummy.r, colorDummy.g, colorDummy.b, 1);
+        colors.push(colorDummy.r, colorDummy.g, colorDummy.b, 1);
       } else {
         // If doesn't exist, don't render at all
         sizesOg.push(0);
 
-        colorsFrom.push(0, 0, 0, 1);
-        colorsTo.push(0, 0, 0, 1);
+        colors.push(0, 0, 0, 1);
       }
     }
 
-    const sizesFrom = new Float32Array(countriesGeoSorted.length);
-    // const sizesFrom = sizesOg.slice()
-
-    const colorsOg = new Float32Array(colorsFrom);
+    const colorsOg = new Float32Array(colors);
 
     const positionsBuffer = instancedArray(new Float32Array(positions), "vec3");
-    const sizesFromBuffer = instancedArray(
-      new Float32Array(sizesFrom),
+    const sizeBuffer = instancedArray(
+      new Float32Array(sizesOg),
       "float",
     );
-    const sizesToBuffer = instancedArray(new Float32Array(sizesTo), "float");
-    const colorsFromBuffer = instancedArray(
-      new Float32Array(colorsFrom),
-      "vec4",
-    );
-    const colorsToBuffer = instancedArray(new Float32Array(colorsTo), "vec4");
+    const colorBuffer = instancedArray(new Float32Array(colors), "vec4");
 
     material.colorNode = Fn(() => {
       const distUV = uv().sub(vec2(0.5, 0.5)).length();
@@ -205,9 +187,7 @@ const Points = ({ ...props }) => {
 
       const isHovered = instanceIndex.add(1).equal(u.hoveredId).toFloat();
 
-      const colorFrom = colorsFromBuffer.element(instanceIndex).xyz;
-      const colorTo = colorsToBuffer.element(instanceIndex).xyz;
-      const dataColor = mix(colorFrom, colorTo, u.colorT);
+      const dataColor = colorBuffer.element(instanceIndex).xyz;
 
       const hoveredColor = vec3(0, 0, 0);
 
@@ -225,9 +205,7 @@ const Points = ({ ...props }) => {
     material.positionNode = Fn(() => {
       const offset = positionsBuffer.element(instanceIndex);
 
-      const sizeFrom = sizesFromBuffer.element(instanceIndex);
-      const sizeTo = sizesToBuffer.element(instanceIndex);
-      const size = mix(sizeFrom, sizeTo, u.sizeT);
+      const size = sizeBuffer.element(instanceIndex);
 
       // Always same size
       const dist = cameraPosition.sub(offset).length();
@@ -241,18 +219,11 @@ const Points = ({ ...props }) => {
     })();
 
     return {
+      mesh,
       u,
       buffers: {
-        size: {
-          og: sizesOg,
-          from: sizesFromBuffer,
-          to: sizesToBuffer,
-        },
-        color: {
-          og: colorsOg,
-          from: colorsFromBuffer,
-          to: colorsToBuffer,
-        },
+        size: { og: sizesOg, buffer: sizeBuffer },
+        color: { og: colorsOg, buffer: colorBuffer },
       },
     };
   }, [countriesGeoSorted, dataIndex, remRadiusScale, remToColorScale]);
@@ -263,7 +234,6 @@ const Points = ({ ...props }) => {
     setPoints({
       u,
       buffers,
-      // TODO: Other data processing stuff
     });
   }, [u, buffers]);
 
@@ -277,7 +247,6 @@ const Points = ({ ...props }) => {
 
   useInteractions({
     buffers,
-    u,
     countryTypeToIndex,
   });
 
