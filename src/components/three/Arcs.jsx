@@ -177,8 +177,12 @@ const Arcs = (props) => {
         u.movementT,
       );
 
+      // Staggered draw-in: each arc draws at a different time as staggeredT goes 0→1
+      const instanceStagger = u.staggeredT.mul(2).sub(randOffset).clamp(0, 1);
+
       const progress = progressBase
         .add(randomProgress)
+        .add(instanceStagger)
         .mod(mix(1, 7, u.movementT));
 
       // const progress = progressBase.add(time.mul(speed)).add(randOffset).mod(5);

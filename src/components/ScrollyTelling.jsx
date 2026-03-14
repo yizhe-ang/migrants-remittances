@@ -345,6 +345,14 @@ const ScrollyTelling = () => {
           duration: 0.9,
         },
         0.1,
+      )
+      .to(
+        arcs.u.staggeredT,
+        {
+          value: 1,
+          duration: 0.9,
+        },
+        0.3,
       );
 
     // Random arcs go!
