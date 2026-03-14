@@ -30,6 +30,7 @@ const Sankey = ({
   nodeSort,
   nodeAlign = sankeyJustify,
   margin = defaultMargin,
+  ...props
 }) => {
   const {
     tooltipData,
@@ -76,6 +77,7 @@ const Sankey = ({
       style={{
         padding: `${margin.top}px ${margin.right}px ${margin.bottom}px ${margin.left}px`,
       }}
+      {...props}
     >
       <svg width={xMax} height={yMax}>
         <SankeyImpl
