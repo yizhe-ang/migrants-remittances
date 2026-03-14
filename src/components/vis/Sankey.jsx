@@ -7,9 +7,9 @@ import {
   sankeyJustify,
 } from "@visx/sankey";
 import { Group } from "@visx/group";
-import { BarRounded, LinkHorizontal } from "@visx/shape";
 import { useTooltip, TooltipWithBounds } from "@visx/tooltip";
 import { localPoint } from "@visx/event";
+import { motion } from "motion/react";
 
 const defaultMargin = { top: 10, left: 10, right: 10, bottom: 10 };
 
@@ -95,49 +95,52 @@ const Sankey = ({
             <>
               <Group>
                 {graph.links.map((link, i) => (
-                  <>
-                    <LinkHorizontal
-                      key={i}
-                      data={link}
-                      path={createPath}
-                      fill="transparent"
-                      stroke={colorScale(link.source.id.slice(0, -1))}
-                      // TODO: Give min width?
-                      strokeWidth={link.width}
-                      strokeOpacity={0.5}
-                      onPointerMove={(event) => {
-                        const coords = localPoint(
-                          event.target.ownerSVGElement,
-                          event,
-                        );
-                        showTooltip({
-                          tooltipData: `${
-                            link.source.id
-                          } > ${link.target.id} = ${link.value}`,
-                          tooltipTop: (coords?.y ?? 0) + 10,
-                          tooltipLeft: (coords?.x ?? 0) + 10,
-                        });
-                      }}
-                      onMouseOut={hideTooltip}
-                    />
-                  </>
+                  <motion.path
+                    key={i}
+                    d={createPath(link)}
+                    fill="transparent"
+                    stroke={colorScale(link.source.id.slice(0, -1))}
+                    strokeWidth={link.width}
+                    opacity={0.4}
+                    // initial={{ pathLength: 0, opacity: 0 }}
+                    // animate={{ pathLength: 1, opacity: 0.5 }}
+                    // transition={{ duration: 0.8, ease: "easeOut" }}
+                    // whileHover={{ opacity: 0.8 }}
+                    onPointerMove={(event) => {
+                      const coords = localPoint(
+                        event.target.ownerSVGElement,
+                        event,
+                      );
+                      showTooltip({
+                        tooltipData: `${
+                          link.source.id
+                        } > ${link.target.id} = ${link.value}`,
+                        tooltipTop: (coords?.y ?? 0) + 10,
+                        tooltipLeft: (coords?.x ?? 0) + 10,
+                      });
+                    }}
+                    onMouseOut={hideTooltip}
+                  />
                 ))}
               </Group>
               <Group>
                 {graph.nodes.map(({ y0, y1, x0, x1, id }, i) => (
-                  <BarRounded
+                  <motion.rect
                     key={i}
                     width={x1 - x0}
                     height={y1 - y0}
                     x={x0}
                     y={y0}
-                    radius={3}
-                    all
+                    rx={3}
                     fill={
                       id.at(-1) === "-"
                         ? colorScale(id.slice(0, -1))
                         : colorScale(id)
                     }
+                    // initial={{ opacity: 0 }}
+                    // animate={{ opacity: 1 }}
+                    // transition={{ delay: i * 0.05 }}
+                    // whileHover={{ opacity: 0.8 }}
                     onPointerMove={(event) => {
                       const coords = localPoint(
                         event.target.ownerSVGElement,
