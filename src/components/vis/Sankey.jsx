@@ -13,11 +13,10 @@ import { motion } from "motion/react";
 
 const defaultMargin = { top: 10, left: 10, right: 10, bottom: 10 };
 
-export const color = "#392f5a";
+// TODO: Use patterns
 
 const Sankey = ({
   data,
-  nodes,
   width,
   height,
   linkSource,
@@ -67,7 +66,7 @@ const Sankey = ({
       links,
       nodes: [...nodesSet].map((id) => ({ id })),
     };
-  }, [data, nodes, linkSource, linkTarget, linkValue]);
+  }, [data, linkSource, linkTarget, linkValue]);
 
   if (width < 10) return null;
 

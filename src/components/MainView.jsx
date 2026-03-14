@@ -23,11 +23,13 @@ const MainView = () => {
       <ScrollyTelling /> */}
 
       <div className="fixed inset-0 z-10 grid place-items-center">
-        <ParentSize className="max-w-2xl h-full">
-          {({ width, height }) => (
-            <SankeyIncome width={width} height={height} />
-          )}
-        </ParentSize>
+        <div className="max-w-2xl w-full h-[90vh]">
+          <ParentSize>
+            {({ width, height }) => (
+              <SankeyIncome width={width} height={height} />
+            )}
+          </ParentSize>
+        </div>
       </div>
 
       <CountryTooltip />
