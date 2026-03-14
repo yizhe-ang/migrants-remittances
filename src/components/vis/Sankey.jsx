@@ -25,7 +25,7 @@ const Sankey = ({
   linkValue,
   linkSort,
   colorScale,
-  nodeWidth = 10,
+  nodeWidth = 20,
   nodePadding = 10,
   nodeSort,
   nodeAlign = sankeyJustify,
@@ -93,29 +93,32 @@ const Sankey = ({
             <>
               <Group>
                 {graph.links.map((link, i) => (
-                  <LinkHorizontal
-                    key={i}
-                    data={link}
-                    path={createPath}
-                    fill="transparent"
-                    stroke={color}
-                    strokeWidth={link.width}
-                    strokeOpacity={0.5}
-                    onPointerMove={(event) => {
-                      const coords = localPoint(
-                        event.target.ownerSVGElement,
-                        event,
-                      );
-                      showTooltip({
-                        tooltipData: `${
-                          link.source.id
-                        } > ${link.target.id} = ${link.value}`,
-                        tooltipTop: (coords?.y ?? 0) + 10,
-                        tooltipLeft: (coords?.x ?? 0) + 10,
-                      });
-                    }}
-                    onMouseOut={hideTooltip}
-                  />
+                  <>
+                    <LinkHorizontal
+                      key={i}
+                      data={link}
+                      path={createPath}
+                      fill="transparent"
+                      stroke={colorScale(link.source.id.slice(0, -1))}
+                      // TODO: Give min width?
+                      strokeWidth={link.width}
+                      strokeOpacity={0.5}
+                      onPointerMove={(event) => {
+                        const coords = localPoint(
+                          event.target.ownerSVGElement,
+                          event,
+                        );
+                        showTooltip({
+                          tooltipData: `${
+                            link.source.id
+                          } > ${link.target.id} = ${link.value}`,
+                          tooltipTop: (coords?.y ?? 0) + 10,
+                          tooltipLeft: (coords?.x ?? 0) + 10,
+                        });
+                      }}
+                      onMouseOut={hideTooltip}
+                    />
+                  </>
                 ))}
               </Group>
               <Group>
@@ -128,7 +131,11 @@ const Sankey = ({
                     y={y0}
                     radius={3}
                     all
-                    fill={color}
+                    fill={
+                      id.at(-1) === "-"
+                        ? colorScale(id.slice(0, -1))
+                        : colorScale(id)
+                    }
                     onPointerMove={(event) => {
                       const coords = localPoint(
                         event.target.ownerSVGElement,
