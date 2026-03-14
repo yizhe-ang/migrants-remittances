@@ -17,6 +17,7 @@ const defaultMargin = { top: 10, left: 10, right: 10, bottom: 10 };
 
 // TODO: Use patterns
 // TODO: Apply textures !!!!!!!!!!!!!!!!
+// TODO: Add gradient to the flow too?
 
 const Sankey = ({
   data,
