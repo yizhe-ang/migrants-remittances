@@ -14,18 +14,40 @@ const SankeyIncome = ({ width, height }) => {
     return filtered;
   }, [flowsByIncome]);
 
+  const nodeOrder = useMemo(() => {
+    if (!incomeColorScale) return null;
+
+    const groups = incomeColorScale.domain();
+
+    const nodeOrder = [];
+
+    groups.forEach((d) => {
+      nodeOrder.push(d);
+      nodeOrder.push(`${d}-`);
+    });
+
+    return nodeOrder
+  }, [incomeColorScale]);
+
   return (
     <>
-      {data && (
+      {data && nodeOrder && (
         <Sankey
           data={data}
-          nodes={incomeColorScale?.domain().map((d) => ({ id: d }))}
           width={width}
           height={height}
-          linkSource={(d) => d.destination_group}
-          linkTarget={(d) => d.origin_group}
+          linkSource={(d) => d.destination_income}
+          linkTarget={(d) => d.origin_income}
           linkValue={(d) => d.sim_remittances_with}
           colorScale={incomeColorScale}
+          nodeSort={(a, b) => {
+            return nodeOrder.indexOf(a.id) - nodeOrder.indexOf(b.id);
+          }}
+          linkSort={(a, b) => {
+            return (
+              nodeOrder.indexOf(a.target.id) - nodeOrder.indexOf(b.target.id)
+            );
+          }}
         />
       )}
     </>

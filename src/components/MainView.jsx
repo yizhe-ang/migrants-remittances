@@ -23,7 +23,7 @@ const MainView = () => {
       <ScrollyTelling /> */}
 
       <div className="fixed inset-0 z-10 grid place-items-center">
-        <ParentSize className="max-w-2xl">
+        <ParentSize className="max-w-2xl h-full">
           {({ width, height }) => (
             <SankeyIncome width={width} height={height} />
           )}

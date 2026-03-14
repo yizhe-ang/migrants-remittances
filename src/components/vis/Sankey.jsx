@@ -13,6 +13,8 @@ import { localPoint } from "@visx/event";
 
 const defaultMargin = { top: 10, left: 10, right: 10, bottom: 10 };
 
+export const color = "#392f5a";
+
 const Sankey = ({
   data,
   nodes,
@@ -21,7 +23,12 @@ const Sankey = ({
   linkSource,
   linkTarget,
   linkValue,
+  linkSort,
   colorScale,
+  nodeWidth = 10,
+  nodePadding = 10,
+  nodeSort,
+  nodeAlign = sankeyJustify,
   margin = defaultMargin,
 }) => {
   const {
@@ -36,15 +43,121 @@ const Sankey = ({
   const yMax = height - margin.top - margin.bottom;
 
   const root = useMemo(() => {
+    const nodesSet = new Set();
 
+    const links = [];
+
+    data.forEach((l) => {
+      // const s = sourceRename ? `${source(l)} ${sourceRename}` : source(l);
+      const s = `${linkSource(l)}-`;
+      const t = linkTarget(l);
+
+      nodesSet.add(s);
+      nodesSet.add(t);
+
+      links.push({
+        source: s,
+        target: t,
+        value: linkValue(l),
+      });
+    });
+
+    return {
+      links,
+      nodes: [...nodesSet].map((id) => ({ id })),
+    };
   }, [data, nodes, linkSource, linkTarget, linkValue]);
 
-  if (!root || width < 10) return null;
+  if (width < 10) return null;
 
   return (
-    <svg width={xMax} height={yMax}>
-      <SankeyImpl></SankeyImpl>
-    </svg>
+    <div
+      className="relative"
+      style={{
+        padding: `${margin.top}px ${margin.right}px ${margin.bottom}px ${margin.left}px`,
+      }}
+    >
+      <svg width={xMax} height={yMax}>
+        <SankeyImpl
+          root={root}
+          nodeId={(d) => d.id}
+          nodeWidth={nodeWidth}
+          size={[xMax, yMax]}
+          nodePadding={nodePadding}
+          nodeAlign={nodeAlign}
+          nodeSort={nodeSort}
+          linkSort={linkSort}
+          iterations={10}
+        >
+          {({ graph, createPath }) => (
+            <>
+              <Group>
+                {graph.links.map((link, i) => (
+                  <LinkHorizontal
+                    key={i}
+                    data={link}
+                    path={createPath}
+                    fill="transparent"
+                    stroke={color}
+                    strokeWidth={link.width}
+                    strokeOpacity={0.5}
+                    onPointerMove={(event) => {
+                      const coords = localPoint(
+                        event.target.ownerSVGElement,
+                        event,
+                      );
+                      showTooltip({
+                        tooltipData: `${
+                          link.source.id
+                        } > ${link.target.id} = ${link.value}`,
+                        tooltipTop: (coords?.y ?? 0) + 10,
+                        tooltipLeft: (coords?.x ?? 0) + 10,
+                      });
+                    }}
+                    onMouseOut={hideTooltip}
+                  />
+                ))}
+              </Group>
+              <Group>
+                {graph.nodes.map(({ y0, y1, x0, x1, id }, i) => (
+                  <BarRounded
+                    key={i}
+                    width={x1 - x0}
+                    height={y1 - y0}
+                    x={x0}
+                    y={y0}
+                    radius={3}
+                    all
+                    fill={color}
+                    onPointerMove={(event) => {
+                      const coords = localPoint(
+                        event.target.ownerSVGElement,
+                        event,
+                      );
+                      showTooltip({
+                        tooltipData: id,
+                        tooltipTop: (coords?.y ?? 0) + 10,
+                        tooltipLeft: (coords?.x ?? 0) + 10,
+                      });
+                    }}
+                    onMouseOut={hideTooltip}
+                  />
+                ))}
+              </Group>
+            </>
+          )}
+        </SankeyImpl>
+      </svg>
+      {tooltipOpen && (
+        <TooltipWithBounds
+          key={Math.random()}
+          top={tooltipTop}
+          left={tooltipLeft}
+        >
+          {tooltipData}
+        </TooltipWithBounds>
+      )}
+    </div>
   );
 };
 
