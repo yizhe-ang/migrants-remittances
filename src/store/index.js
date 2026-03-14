@@ -79,6 +79,9 @@ export const { roomStore, useRoomStore } = createRoomStore(
     flowsMap: null,
     setFlowsMap: (flowsMap) => set({ flowsMap }),
 
+    flowsByIncome: null,
+    setFlowsByIncome: (flowsByIncome) => set({ flowsByIncome }),
+
     flowsByOrigin: null,
     setFlowsByOrigin: (flowsByOrigin) => set({ flowsByOrigin }),
 
@@ -97,6 +100,9 @@ export const { roomStore, useRoomStore } = createRoomStore(
 
     flowRadiusScale: null,
     setFlowRadiusScale: (scale) => set({ flowRadiusScale: scale }),
+
+    incomeColorScale: null,
+    setIncomeColorScale: (scale) => set({ incomeColorScale: scale }),
 
     // Controls / Interactions #################################################
     enableMapInteractions: false,

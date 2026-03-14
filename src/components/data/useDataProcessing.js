@@ -13,6 +13,7 @@ export default function useDataProcessing() {
   );
   const setFlowsPerYear = useRoomStore((state) => state.setFlowsPerYear);
   const setSelectedFlows = useRoomStore((state) => state.setSelectedFlows);
+  const setFlowsByIncome = useRoomStore((state) => state.setFlowsByIncome);
   const setFlowsByOrigin = useRoomStore((state) => state.setFlowsByOrigin);
   const setFlowsByDestination = useRoomStore(
     (state) => state.setFlowsByDestination,
@@ -21,17 +22,8 @@ export default function useDataProcessing() {
 
   const flowsPerYearStore = useRoomStore((state) => state.flowsPerYear);
 
-  const migAndRemAvgYearReady = useRoomStore((state) =>
-    state.db.findTableByName("mig_and_rem_avg_year"),
-  );
   const flowsPerYearReady = useRoomStore((state) =>
     state.db.findTableByName("flows_per_year"),
-  );
-  const disastersReady = useRoomStore((state) =>
-    state.db.findTableByName("disasters"),
-  );
-  const disastersImpactsReady = useRoomStore((state) =>
-    state.db.findTableByName("disasters_impacts"),
   );
   const countriesGeoReady = useRoomStore((state) =>
     state.db.findTableByName("countries_geo"),
@@ -100,6 +92,45 @@ export default function useDataProcessing() {
       ]),
     );
   }, [flowsPerYearStore, selectedYear]);
+
+  const { data: flowsByIncome } = useSql({
+    query: /* sql */ `
+      WITH step_1 AS (
+        SELECT
+          a.*,
+          b.group AS origin_income,
+          c.group AS destination_income
+
+        FROM flows_per_year a
+
+        LEFT JOIN countries_stats b
+          ON a.origin = b.country
+            AND a.year = b.year
+
+        LEFT JOIN countries_stats c
+          ON a.destination = c.country
+            AND a.year = c.year
+      )
+
+      SELECT
+        year,
+        origin_income,
+        destination_income,
+
+        sum(sim_remittances_with) AS sim_remittances_with
+
+      FROM step_1
+
+      GROUP BY (year, origin_income, destination_income)
+    `,
+    enabled: Boolean(flowsPerYearReady),
+  });
+
+  useEffect(() => {
+    if (!flowsByIncome) return;
+
+    setFlowsByIncome(flowsByIncome.toArray());
+  }, [flowsByIncome]);
 
   const { data: flowsByOrigin } = useSql({
     query: flowsByCountryQuery("origin"),

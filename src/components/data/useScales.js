@@ -1,7 +1,11 @@
 import { useRoomStore } from "@/store";
 import { extent, max } from "d3-array";
-import { scaleSequentialPow, scaleSqrt } from "d3-scale";
-import { interpolatePuBuGn, interpolateYlOrBr } from "d3-scale-chromatic";
+import { scaleOrdinal, scaleSequentialPow, scaleSqrt } from "d3-scale";
+import {
+  interpolatePuBuGn,
+  interpolateYlOrBr,
+  schemeObservable10,
+} from "d3-scale-chromatic";
 import { useEffect } from "react";
 
 export default function useScales() {
@@ -15,6 +19,9 @@ export default function useScales() {
     (state) => state.setRemFromColorScale,
   );
   const setFlowRadiusScale = useRoomStore((state) => state.setFlowRadiusScale);
+  const setIncomeColorScale = useRoomStore(
+    (state) => state.setIncomeColorScale,
+  );
 
   // rem radius scale
   useEffect(() => {
@@ -67,4 +74,18 @@ export default function useScales() {
 
     setFlowRadiusScale(flowRadiusScale);
   }, [flowsPerYear]);
+
+  // Income color scale
+  useEffect(() => {
+    const incomeColorScale = scaleOrdinal()
+      .domain([
+        "High income",
+        "Upper middle income",
+        "Lower middle income",
+        "Low income",
+      ])
+      .range(schemeObservable10);
+
+    setIncomeColorScale(incomeColorScale);
+  }, []);
 }

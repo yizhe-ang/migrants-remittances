@@ -4,6 +4,8 @@ import Three from "@/components/three/Three";
 import useScales from "@/components/data/useScales";
 import CountryTooltip from "@/components/interface/CountryTooltip";
 import ScrollyTelling from "@/components/ScrollyTelling";
+import { ParentSize } from "@visx/responsive";
+import SankeyIncome from "@/components/vis/SankeyIncome";
 
 const MainView = () => {
   useDataPreparation();
@@ -14,11 +16,19 @@ const MainView = () => {
 
   return (
     <>
-      <div className="fixed inset-0 bg-stone-200 -z-10">
+      {/* <div className="fixed inset-0 bg-stone-200 -z-10">
         <Three />
       </div>
 
-      <ScrollyTelling />
+      <ScrollyTelling /> */}
+
+      <div className="fixed inset-0 z-10 grid place-items-center">
+        <ParentSize className="max-w-2xl">
+          {({ width, height }) => (
+            <SankeyIncome width={width} height={height} />
+          )}
+        </ParentSize>
+      </div>
 
       <CountryTooltip />
     </>
