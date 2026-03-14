@@ -54,7 +54,8 @@ const Arcs = (props) => {
       tgtColor: uniform(new THREE.Color(chroma(colors.orange["400"]).hex())),
       // Movement animation
       movementT: uniform(0),
-      opacity: uniform(1)
+      opacity: uniform(1),
+      staggeredT: uniform(0),
     };
 
     // Build per-instance data
