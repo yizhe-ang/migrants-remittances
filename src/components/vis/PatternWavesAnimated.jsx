@@ -2,15 +2,18 @@ import { Pattern as CustomPattern } from "@visx/pattern";
 
 const PatternWavesAnimated = ({
   id,
-  width = 10,
-  height = 10,
-  fill = "none",
-  stroke = "black",
+  width = 20,
+  height = 20,
+  stroke = "white",
   strokeWidth = 1,
-  prefersReducedMotion = false,
+  background = "none",
+  prefersReducedMotion = true,
 }) => {
   return (
     <CustomPattern id={id} width={width} height={height}>
+      {background && background !== "none" && (
+        <rect width={width} height={height} fill={background} />
+      )}
       {!prefersReducedMotion && (
         <animateTransform
           attributeType="xml"
@@ -35,7 +38,7 @@ const PatternWavesAnimated = ({
                c ${height / 8} ${-height / 4} , ${(height * 3) / 8} ${-height / 4} , ${
                  height / 2
                } 0`}
-        fill={fill}
+        fill="none"
         stroke={stroke}
         strokeWidth={strokeWidth}
       />
