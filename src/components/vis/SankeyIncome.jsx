@@ -126,7 +126,7 @@ const SankeyIncome = ({ width, height, margin = defaultMargin }) => {
 
   useEffect(() => {
     if (graphs) {
-      setSankeyIncome({ graphs });
+      setSankeyIncome({ graphs, width });
     }
   }, [graphs, setSankeyIncome]);
 
@@ -137,8 +137,8 @@ const SankeyIncome = ({ width, height, margin = defaultMargin }) => {
           className="flex gap-10"
           style={{
             transform: `translate(calc(50vw - ${width / 2}px), ${0}px)`,
-            opacity: 0,
-            visibility: "hidden",
+            // opacity: 0,
+            // visibility: "hidden",
           }}
           id="sankey-income"
         >

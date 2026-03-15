@@ -26,7 +26,10 @@ const Sankey = ({ graph, width, height, colorScale, margin, ...props }) => {
   if (width < 10) return null;
 
   return (
-    <div className="relative" {...props}>
+    <div className="relative" style={{
+      opacity: 0,
+      visibility: "hidden"
+    }} {...props}>
       <svg width={width} height={height}>
         {/* Patterns */}
         {colorScale.domain().map((d, i) => {

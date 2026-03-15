@@ -4,9 +4,12 @@ import { useGSAP } from "@gsap/react";
 import { cn } from "@sqlrooms/ui";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import cameraPositions from "@/components/data/cameraPositions";
+import { sankeyLinkHorizontal } from "@visx/sankey";
 
 gsap.registerPlugin(useGSAP);
 gsap.registerPlugin(ScrollTrigger);
+
+const linkHorizontal = sankeyLinkHorizontal();
 
 const ScrollyTelling = () => {
   const flowsMap = useRoomStore((s) => s.flowsMap);
@@ -356,8 +359,7 @@ const ScrollyTelling = () => {
         0.3,
       );
 
-    // Random arcs go!
-
+    // Transition to sankey
     gsap
       .timeline({
         scrollTrigger: {
@@ -365,12 +367,11 @@ const ScrollyTelling = () => {
           start: "top bottom",
           end: "bottom bottom",
           scrub: true,
-          markers: true,
         },
         duration: 1,
       })
       .to(
-        "#sankey-income",
+        "#sankey-income-all",
         {
           autoAlpha: 1,
           duration: 0.5,
@@ -378,50 +379,76 @@ const ScrollyTelling = () => {
         0.5,
       );
 
-    // Sankey income
-    // gsap
-    //   .timeline()
-    //   .to(
-    //     "#sankey-income-links path",
-    //     {
-    //       attr: {
-    //         d: (i) => {
-    //           const path = linkHorizontal(graphs.upperMiddle.links[i]);
-    //           return path;
-    //         },
-    //         "stroke-width": (i) => {
-    //           return graphs.upperMiddle.links[i].width;
-    //         },
-    //       },
-    //       duration: 3,
-    //     },
-    //     0,
-    //   )
-    //   .to(
-    //     "#sankey-income-nodes rect",
-    //     {
-    //       attr: {
-    //         width: (i) => {
-    //           const { x1, x0 } = graphs.upperMiddle.nodes[i];
-    //           return x1 - x0;
-    //         },
-    //         height: (i) => {
-    //           const { y1, y0 } = graphs.upperMiddle.nodes[i];
-    //           return y1 - y0;
-    //         },
-    //         x: (i) => {
-    //           const { x0 } = graphs.upperMiddle.nodes[i];
-    //           return x0;
-    //         },
-    //         y: (i) => {
-    //           const { y0 } = graphs.upperMiddle.nodes[i];
-    //           return y0;
-    //         },
-    //       },
-    //       duration: 3,
-    //     },
-    //     0,
-    //   );
+    // Show upper-middle income sankey
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: "#step-9",
+          start: "top bottom",
+          end: "bottom bottom",
+          scrub: true,
+        },
+        duration: 1,
+      })
+      .to(
+        "#sankey-income-all .sankey-links path",
+        {
+          attr: {
+            d: (i) => {
+              const path = linkHorizontal(
+                sankeyIncome.graphs.upperMiddle.links[i],
+              );
+              return path;
+            },
+            "stroke-width": (i) => {
+              return sankeyIncome.graphs.upperMiddle.links[i].width;
+            },
+          },
+          duration: 0.3,
+        },
+        0,
+      )
+      .to(
+        "#sankey-income-all .sankey-nodes rect",
+        {
+          attr: {
+            width: (i) => {
+              const { x1, x0 } = sankeyIncome.graphs.upperMiddle.nodes[i];
+              return x1 - x0;
+            },
+            height: (i) => {
+              const { y1, y0 } = sankeyIncome.graphs.upperMiddle.nodes[i];
+              return y1 - y0;
+            },
+            x: (i) => {
+              const { x0 } = sankeyIncome.graphs.upperMiddle.nodes[i];
+              return x0;
+            },
+            y: (i) => {
+              const { y0 } = sankeyIncome.graphs.upperMiddle.nodes[i];
+              return y0;
+            },
+          },
+          duration: 0.4,
+        },
+        0,
+      )
+      .to(
+        "#sankey-income",
+        {
+          x: `-=${(sankeyIncome.width + 10) * 2}`,
+          duration: 0.6,
+        },
+        0.4,
+      )
+      .to(
+        "#sankey-income-lower-middle, #sankey-income-low",
+        {
+          autoAlpha: 1,
+          duration: 0.2,
+        },
+        0.35,
+      );
   }, [cameraControls, arcs, points]);
 
   return (
@@ -494,7 +521,7 @@ const ScrollyTelling = () => {
         </P>
       </Step>
 
-      <Step id="step-9">
+      <Step id="step-9" className="h-[300vh]">
         <P>
           Looking at the other income groups individually, we can also see that
           the flows tend to be clustered among the same income-group countries,
