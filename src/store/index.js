@@ -105,7 +105,7 @@ export const { roomStore, useRoomStore } = createRoomStore(
     setIncomeColorScale: (scale) => set({ incomeColorScale: scale }),
 
     // Controls / Interactions #################################################
-    enableMapInteractions: false,
+    enableMapInteractions: true,
     setEnableMapInteractions: (enableInteractions) =>
       set({ enableInteractions }),
 

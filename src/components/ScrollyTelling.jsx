@@ -419,7 +419,7 @@ const Step = ({ className, children, ...props }) => {
   return (
     <div
       className={cn(
-        "border border-red-300 h-[100vh] max-w-xl mx-auto",
+        "border border-red-300 border-0 h-[100vh] max-w-xl mx-auto",
         className,
       )}
       {...props}
