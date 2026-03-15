@@ -94,11 +94,20 @@ const Steps = () => {
         </P>
       </Step>
 
-      <Step id="step-11" className="h-[300vh]">
+      <Step id="step-11" className="">
         <P>
           These numbers, however, hide the contribution that remittances have
           relative to the wealth of countries. For example, for low-income
           countries, they contribute about 9.8% of their combined GDP.
+        </P>
+      </Step>
+
+      <Step id="step-12" className="">
+        <P>
+          Many countries receive remittances in amounts that are large relative
+          to their gross domestic product (GDP). In over thirty countries,
+          remittances account for more than 10% of the value of their entire
+          economies.
         </P>
       </Step>
     </div>

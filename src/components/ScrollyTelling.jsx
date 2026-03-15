@@ -369,11 +369,28 @@ const ScrollyTelling = () => {
         },
         duration: 1,
       })
+      // TODO: staggered?
+      .to(
+        points.u.incomeColorT,
+        {
+          value: 1,
+          duration: 0.5,
+        },
+        0,
+      )
       .to(
         "#sankey-income-all",
         {
           autoAlpha: 1,
           duration: 0.5,
+        },
+        0.5,
+      )
+      .to(
+        points.u.staggeredT,
+        {
+          value: 0,
+          duration: 1,
         },
         0.5,
       );
@@ -507,6 +524,41 @@ const ScrollyTelling = () => {
           duration: 0.6,
         },
         0,
+      );
+
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: "#step-12",
+          start: "top bottom",
+          end: "bottom bottom",
+          scrub: true,
+        },
+        duration: 1,
+      })
+      .to(
+        points.u.sizePropGdpT,
+        {
+          value: 1,
+          duration: 0.1,
+        },
+        0,
+      )
+      .to(
+        "#sankey-income-low",
+        {
+          autoAlpha: 0,
+          duration: 0.3,
+        },
+        0,
+      )
+      .to(
+        points.u.staggeredT,
+        {
+          value: 1,
+          duration: 0.8,
+        },
+        0.2,
       );
   }, [cameraControls, arcs, points]);
 

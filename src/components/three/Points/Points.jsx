@@ -115,6 +115,8 @@ const Points = ({ ...props }) => {
     const u = {
       hoveredId: uniform(0),
       staggeredT: uniform(0),
+      incomeColorT: uniform(0),
+      sizePropGdpT: uniform(0),
     };
 
     const geometry = new THREE.PlaneGeometry(1, 1);
@@ -182,7 +184,15 @@ const Points = ({ ...props }) => {
     const positionsBuffer = instancedArray(new Float32Array(positions), "vec3");
     const sizeOgBuffer = instancedArray(new Float32Array(sizesOg), "float");
     const sizeBuffer = instancedArray(countriesGeoSorted.length, "float");
+    const sizePropGdpBuffer = instancedArray(
+      new Float32Array(sizesPropGdp),
+      "float",
+    );
     const colorBuffer = instancedArray(new Float32Array(colors), "vec4");
+    const colorIncomeBuffer = instancedArray(
+      new Float32Array(colorsIncome),
+      "vec4",
+    );
 
     material.colorNode = Fn(() => {
       const distUV = uv().sub(vec2(0.5, 0.5)).length();
@@ -202,7 +212,12 @@ const Points = ({ ...props }) => {
 
       const isHovered = instanceIndex.add(1).equal(u.hoveredId).toFloat();
 
-      const dataColor = colorBuffer.element(instanceIndex).xyz;
+      // const dataColor = colorBuffer.element(instanceIndex).xyz;
+      const dataColor = mix(
+        colorBuffer.element(instanceIndex).xyz,
+        colorIncomeBuffer.element(instanceIndex).xyz,
+        u.incomeColorT,
+      );
 
       const hoveredColor = vec3(0, 0, 0);
 
@@ -234,15 +249,16 @@ const Points = ({ ...props }) => {
         sizeOgBuffer.element(instanceIndex),
         instanceT,
       );
+      const sizeFinal = mix(
+        size,
+        sizePropGdpBuffer.element(instanceIndex),
+        u.sizePropGdpT,
+      );
 
       // Always same size
       const dist = cameraPosition.sub(offset).length();
-      const scale = size.mul(dist).mul(0.01);
+      const scale = sizeFinal.mul(dist).mul(0.01);
 
-      // Push smaller points forward so they render on top of larger ones
-      // const zOffset = size.negate().mul(0.7).add(float(instanceIndex).mul(-0.0001));
-
-      // return positionLocal.mul(scale).add(offset).add(vec3(0, 0, zOffset));
       return positionLocal.mul(scale).add(offset);
     })();
 
