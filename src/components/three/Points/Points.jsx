@@ -17,6 +17,7 @@ import {
   uniform,
   mix,
   fract,
+  screenCoordinate,
 } from "three/tsl";
 import * as THREE from "three/webgpu";
 import { latToMercatorY } from "@/lib/utils";
@@ -25,8 +26,8 @@ import useGpuPicking from "./useGpuPicking";
 
 const colorDummy = new THREE.Color();
 
-const STRIPE_FREQUENCY = 10;
-const STRIPE_THRESHOLD = 0.5;
+const STRIPE_FREQUENCY = 0.08;
+const STRIPE_THRESHOLD = 0.8;
 
 const Points = ({ ...props }) => {
   const countriesGeoSortedRef = useRef(null);
@@ -231,8 +232,9 @@ const Points = ({ ...props }) => {
 
       const strokeColor = vec3(0.1, 0.1, 0.1);
 
-      // Diagonal stripe pattern
-      const diag = uv().x.sub(uv().y).mul(float(STRIPE_FREQUENCY));
+      // Diagonal stripe pattern (screen-space for uniform sizing)
+      const sc = screenCoordinate;
+      const diag = sc.x.add(sc.y).mul(float(STRIPE_FREQUENCY));
       const fw2 = fwidth(diag);
       const stripe = smoothstep(float(STRIPE_THRESHOLD).sub(fw2), float(STRIPE_THRESHOLD).add(fw2), fract(diag));
       const stripeColor = mix(fillColor, vec3(1, 1, 1), stripe);
