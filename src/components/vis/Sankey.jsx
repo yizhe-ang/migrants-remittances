@@ -14,6 +14,10 @@ import { localPoint } from "@visx/event";
 import { motion } from "motion/react";
 import PatternWavesAnimated from "@/components/vis/PatternWavesAnimated";
 import { PatternLines, PatternCircles } from "@visx/pattern";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
+
+gsap.registerPlugin(useGSAP);
 
 const defaultMargin = { top: 10, left: 10, right: 10, bottom: 10 };
 
@@ -31,7 +35,7 @@ const Sankey = ({
   linkTarget,
   linkValue,
   linkSort,
-  linkFilter = (d) => d,
+  linkFilter = (d) => true,
   colorScale,
   nodeWidth = 25,
   nodePadding = 20,
@@ -78,14 +82,7 @@ const Sankey = ({
     };
   }, [data, linkSource, linkTarget, linkValue, linkFilter]);
 
-  if (width < 10) return null;
-
-  const test = useMemo(() => {
-    const nodesCopy = root.nodes.map((d) => ({ ...d }));
-    const linksCopy = root.links
-      // .filter((d) => d.source === "Upper middle income-")
-      .map((d) => ({ ...d }));
-
+  const graphs = useMemo(() => {
     const generator = sankey()
       .nodeId((d) => d.id)
       .nodeWidth(nodeWidth)
@@ -95,21 +92,90 @@ const Sankey = ({
       .nodeSort(nodeSort)
       .linkSort(linkSort);
 
-    const graph = generator(root);
+    function genGraph(filter) {
+      const nodesCopy = root.nodes.map((d) => ({ ...d }));
 
-    console.log(graph);
+      const linksCopy = root.links.map((d) => {
+        const newD = { ...d };
+        if (filter) {
+          if (!filter(d)) {
+            newD.value = 0;
+          }
+        }
+
+        return newD;
+      });
+
+      const graph = generator({
+        nodes: nodesCopy,
+        links: linksCopy,
+      });
+
+      return graph;
+    }
+
+    return {
+      all: genGraph(),
+      upperMiddle: genGraph((d) => d.source === "Upper middle income-"),
+    };
   }, [root]);
 
-  return (
-    <div
-      className="relative"
-      style={
+  if (width < 10) return null;
+
+  useGSAP(() => {
+    if (!graphs) return;
+
+    // console.log(gsap.utils.toArray("#sankey-income-links path"));
+
+    console.log(graphs.upperMiddle);
+
+    gsap
+      .timeline()
+      .to(
+        "#sankey-income-links path",
         {
-          // padding: `${margin.top}px ${margin.right}px ${margin.bottom}px ${margin.left}px`,
-        }
-      }
-      {...props}
-    >
+          attr: {
+            d: (i) => {
+              const path = linkHorizontal(graphs.upperMiddle.links[i]);
+              return path;
+            },
+            "stroke-width": (i) => {
+              return graphs.upperMiddle.links[i].width;
+            },
+          },
+          duration: 3,
+        },
+        0,
+      )
+      .to(
+        "#sankey-income-nodes rect",
+        {
+          attr: {
+            width: (i) => {
+              const { x1, x0 } = graphs.upperMiddle.nodes[i];
+              return x1 - x0;
+            },
+            height: (i) => {
+              const { y1, y0 } = graphs.upperMiddle.nodes[i];
+              return y1 - y0;
+            },
+            x: (i) => {
+              const { x0 } = graphs.upperMiddle.nodes[i];
+              return x0;
+            },
+            y: (i) => {
+              const { y0 } = graphs.upperMiddle.nodes[i];
+              return y0;
+            },
+          },
+          duration: 3,
+        },
+        0,
+      );
+  }, [graphs]);
+
+  return (
+    <div className="relative" {...props}>
       <svg width={width} height={height}>
         {/* Patterns */}
         {colorScale.domain().map((d, i) => {
@@ -144,88 +210,73 @@ const Sankey = ({
         })}
 
         <g transform={`translate(${margin.left}, ${margin.top})`}>
-          <SankeyImpl
-            root={root}
-            nodeId={(d) => d.id}
-            nodeWidth={nodeWidth}
-            size={[xMax, yMax]}
-            nodePadding={nodePadding}
-            nodeAlign={nodeAlign}
-            nodeSort={nodeSort}
-            linkSort={linkSort}
-          >
-            {({ graph, createPath }) => (
-              <>
-                <Group>
-                  {graph.links.map((link, i) => (
-                    <motion.path
-                      key={i}
-                      d={createPath(link)}
-                      fill="transparent"
-                      // stroke={colorScale(link.source.id.slice(0, -1))}
-                      stroke={`url(#flow-pattern-${link.source.id.slice(0, -1).replace(/ /g, "-")})`}
-                      strokeWidth={link.width}
-                      opacity={0.4}
-                      // initial={{ pathLength: 0, opacity: 0 }}
-                      // animate={{ pathLength: 1, opacity: 0.5 }}
-                      // transition={{ duration: 0.8, ease: "easeOut" }}
-                      // whileHover={{ opacity: 0.8 }}
-                      onPointerMove={(event) => {
-                        const coords = localPoint(
-                          event.target.ownerSVGElement,
-                          event,
-                        );
-                        showTooltip({
-                          tooltipData: `${
-                            link.source.id
-                          } > ${link.target.id} = ${link.value}`,
-                          tooltipTop: (coords?.y ?? 0) + 10,
-                          tooltipLeft: (coords?.x ?? 0) + 10,
-                        });
-                      }}
-                      onMouseOut={hideTooltip}
-                    />
-                  ))}
-                </Group>
-                <Group>
-                  {graph.nodes.map(({ y0, y1, x0, x1, id }, i) => (
-                    <motion.rect
-                      key={i}
-                      width={x1 - x0}
-                      height={y1 - y0}
-                      x={x0}
-                      y={y0}
-                      rx={3}
-                      // fill={
-                      //   id.at(-1) === "-"
-                      //     ? colorScale(id.slice(0, -1))
-                      //     : colorScale(id)
-                      // }
-                      fill={`url(#node-pattern-${id.replace(/ /g, "-")})`}
-                      stroke="black"
-                      strokeWidth={2}
-                      // initial={{ opacity: 0 }}
-                      // animate={{ opacity: 1 }}
-                      // transition={{ delay: i * 0.05 }}
-                      // whileHover={{ opacity: 0.8 }}
-                      onPointerMove={(event) => {
-                        const coords = localPoint(
-                          event.target.ownerSVGElement,
-                          event,
-                        );
-                        showTooltip({
-                          tooltipData: id,
-                          tooltipTop: (coords?.y ?? 0) + 10,
-                          tooltipLeft: (coords?.x ?? 0) + 10,
-                        });
-                      }}
-                      onMouseOut={hideTooltip}
-                    />
-                  ))}
-                </Group>
-              </>
-            )}
-          </SankeyImpl>
+          <g id="sankey-income-links">
+            {graphs?.all.links.map((link, i) => (
+              <motion.path
+                key={i}
+                d={linkHorizontal(link)}
+                fill="transparent"
+                // stroke={colorScale(link.source.id.slice(0, -1))}
+                stroke={`url(#flow-pattern-${link.source.id.slice(0, -1).replace(/ /g, "-")})`}
+                strokeWidth={link.width}
+                opacity={0.4}
+                // initial={{ pathLength: 0, opacity: 0 }}
+                // animate={{ pathLength: 1, opacity: 0.5 }}
+                // transition={{ duration: 0.8, ease: "easeOut" }}
+                // whileHover={{ opacity: 0.8 }}
+                onPointerMove={(event) => {
+                  const coords = localPoint(
+                    event.target.ownerSVGElement,
+                    event,
+                  );
+                  showTooltip({
+                    tooltipData: `${
+                      link.source.id
+                    } > ${link.target.id} = ${link.value}`,
+                    tooltipTop: (coords?.y ?? 0) + 10,
+                    tooltipLeft: (coords?.x ?? 0) + 10,
+                  });
+                }}
+                onMouseOut={hideTooltip}
+              />
+            ))}
+          </g>
+          <g id="sankey-income-nodes">
+            {graphs?.all.nodes.map(({ y0, y1, x0, x1, id }, i) => (
+              <motion.rect
+                key={i}
+                width={x1 - x0}
+                height={y1 - y0}
+                x={x0}
+                y={y0}
+                rx={3}
+                // fill={
+                //   id.at(-1) === "-"
+                //     ? colorScale(id.slice(0, -1))
+                //     : colorScale(id)
+                // }
+                fill={`url(#node-pattern-${id.replace(/ /g, "-")})`}
+                stroke="black"
+                strokeWidth={2}
+                // initial={{ opacity: 0 }}
+                // animate={{ opacity: 1 }}
+                // transition={{ delay: i * 0.05 }}
+                // whileHover={{ opacity: 0.8 }}
+                onPointerMove={(event) => {
+                  const coords = localPoint(
+                    event.target.ownerSVGElement,
+                    event,
+                  );
+                  showTooltip({
+                    tooltipData: id,
+                    tooltipTop: (coords?.y ?? 0) + 10,
+                    tooltipLeft: (coords?.x ?? 0) + 10,
+                  });
+                }}
+                onMouseOut={hideTooltip}
+              />
+            ))}
+          </g>
         </g>
       </svg>
       {tooltipOpen && (
