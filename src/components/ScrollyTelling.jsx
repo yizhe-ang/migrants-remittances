@@ -356,6 +356,51 @@ const ScrollyTelling = () => {
       );
 
     // Random arcs go!
+
+    // Sankey income
+    // gsap
+    //   .timeline()
+    //   .to(
+    //     "#sankey-income-links path",
+    //     {
+    //       attr: {
+    //         d: (i) => {
+    //           const path = linkHorizontal(graphs.upperMiddle.links[i]);
+    //           return path;
+    //         },
+    //         "stroke-width": (i) => {
+    //           return graphs.upperMiddle.links[i].width;
+    //         },
+    //       },
+    //       duration: 3,
+    //     },
+    //     0,
+    //   )
+    //   .to(
+    //     "#sankey-income-nodes rect",
+    //     {
+    //       attr: {
+    //         width: (i) => {
+    //           const { x1, x0 } = graphs.upperMiddle.nodes[i];
+    //           return x1 - x0;
+    //         },
+    //         height: (i) => {
+    //           const { y1, y0 } = graphs.upperMiddle.nodes[i];
+    //           return y1 - y0;
+    //         },
+    //         x: (i) => {
+    //           const { x0 } = graphs.upperMiddle.nodes[i];
+    //           return x0;
+    //         },
+    //         y: (i) => {
+    //           const { y0 } = graphs.upperMiddle.nodes[i];
+    //           return y0;
+    //         },
+    //       },
+    //       duration: 3,
+    //     },
+    //     0,
+    //   );
   }, [cameraControls, arcs, points]);
 
   return (

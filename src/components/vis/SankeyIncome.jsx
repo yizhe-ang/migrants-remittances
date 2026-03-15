@@ -1,8 +1,18 @@
 import Sankey from "@/components/vis/Sankey";
 import { useMemo } from "react";
 import { useRoomStore } from "@/store";
+import { sankey } from "@visx/sankey";
 
-const SankeyIncome = ({ width, height }) => {
+const linkSource = (d) => d.destination_income;
+const linkTarget = (d) => d.origin_income;
+const linkValue = (d) => d.sim_remittances_with;
+
+const nodeWidth = 25;
+const nodePadding = 20;
+
+const defaultMargin = { top: 10, left: 10, right: 10, bottom: 10 };
+
+const SankeyIncome = ({ width, height, margin = defaultMargin }) => {
   const incomeColorScale = useRoomStore((s) => s.incomeColorScale);
   const flowsByIncome = useRoomStore((s) => s.flowsByIncome);
 
@@ -14,8 +24,8 @@ const SankeyIncome = ({ width, height }) => {
     return filtered;
   }, [flowsByIncome]);
 
-  const nodeOrder = useMemo(() => {
-    if (!incomeColorScale) return null;
+  const { nodeSort, linkSort } = useMemo(() => {
+    if (!incomeColorScale) return {};
 
     const groups = incomeColorScale.domain();
 
@@ -26,29 +36,99 @@ const SankeyIncome = ({ width, height }) => {
       nodeOrder.push(`${d}-`);
     });
 
-    return nodeOrder;
+    const nodeSort = (a, b) => {
+      return nodeOrder.indexOf(a.id) - nodeOrder.indexOf(b.id);
+    };
+    const linkSort = (a, b) => {
+      return nodeOrder.indexOf(a.target.id) - nodeOrder.indexOf(b.target.id);
+    };
+
+    return { nodeSort, linkSort };
   }, [incomeColorScale]);
+
+  const root = useMemo(() => {
+    if (!data) return null;
+
+    const nodesSet = new Set();
+
+    const links = [];
+
+    data.forEach((l) => {
+      // const s = sourceRename ? `${source(l)} ${sourceRename}` : source(l);
+      const s = `${linkSource(l)}-`;
+      const t = linkTarget(l);
+
+      nodesSet.add(s);
+      nodesSet.add(t);
+
+      links.push({
+        source: s,
+        target: t,
+        value: linkValue(l),
+      });
+    });
+
+    return {
+      links: links,
+      // links: links.filter((d) => d.source === "Upper middle income-"),
+      nodes: [...nodesSet].map((id) => ({ id })),
+    };
+  }, [data]);
+
+  const graphs = useMemo(() => {
+    if (!root) return null;
+
+    const xMax = width - margin.left - margin.right;
+    const yMax = height - margin.top - margin.bottom;
+
+    const generator = sankey()
+      .nodeId((d) => d.id)
+      .nodeWidth(nodeWidth)
+      .size([xMax, yMax])
+      .nodePadding(nodePadding)
+      .nodeSort(nodeSort)
+      .linkSort(linkSort);
+
+    function genGraph(filter) {
+      const nodesCopy = root.nodes.map((d) => ({ ...d }));
+
+      const linksCopy = root.links.map((d) => {
+        const newD = { ...d };
+        if (filter) {
+          if (!filter(d)) {
+            newD.value = 0;
+          }
+        }
+
+        return newD;
+      });
+
+      const graph = generator({
+        nodes: nodesCopy,
+        links: linksCopy,
+      });
+
+      return graph;
+    }
+
+    return {
+      all: genGraph(),
+      upperMiddle: genGraph((d) => d.source === "Upper middle income-"),
+    };
+  }, [root, nodeSort, linkSort]);
 
   return (
     <>
-      {data && nodeOrder && (
-        <Sankey
-          data={data}
-          width={width}
-          height={height}
-          linkSource={(d) => d.destination_income}
-          linkTarget={(d) => d.origin_income}
-          linkValue={(d) => d.sim_remittances_with}
-          colorScale={incomeColorScale}
-          nodeSort={(a, b) => {
-            return nodeOrder.indexOf(a.id) - nodeOrder.indexOf(b.id);
-          }}
-          linkSort={(a, b) => {
-            return (
-              nodeOrder.indexOf(a.target.id) - nodeOrder.indexOf(b.target.id)
-            );
-          }}
-        />
+      {graphs && incomeColorScale && (
+        <div>
+          <Sankey
+            graph={graphs.all}
+            width={width}
+            height={height}
+            colorScale={incomeColorScale}
+            margin={margin}
+          />
+        </div>
       )}
     </>
   );

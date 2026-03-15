@@ -19,8 +19,6 @@ import gsap from "gsap";
 
 gsap.registerPlugin(useGSAP);
 
-const defaultMargin = { top: 10, left: 10, right: 10, bottom: 10 };
-
 // TODO: Use patterns
 // TODO: Apply textures !!!!!!!!!!!!!!!!
 // TODO: Add gradient to the flow too?
@@ -28,20 +26,11 @@ const defaultMargin = { top: 10, left: 10, right: 10, bottom: 10 };
 const linkHorizontal = sankeyLinkHorizontal();
 
 const Sankey = ({
-  data,
+  graph,
   width,
   height,
-  linkSource,
-  linkTarget,
-  linkValue,
-  linkSort,
-  linkFilter = (d) => true,
   colorScale,
-  nodeWidth = 25,
-  nodePadding = 20,
-  nodeSort,
-  nodeAlign = sankeyJustify,
-  margin = defaultMargin,
+  margin,
   ...props
 }) => {
   const {
@@ -52,127 +41,11 @@ const Sankey = ({
     showTooltip,
     hideTooltip,
   } = useTooltip();
+
   const xMax = width - margin.left - margin.right;
   const yMax = height - margin.top - margin.bottom;
 
-  const root = useMemo(() => {
-    const nodesSet = new Set();
-
-    const links = [];
-
-    data.forEach((l) => {
-      // const s = sourceRename ? `${source(l)} ${sourceRename}` : source(l);
-      const s = `${linkSource(l)}-`;
-      const t = linkTarget(l);
-
-      nodesSet.add(s);
-      nodesSet.add(t);
-
-      links.push({
-        source: s,
-        target: t,
-        value: linkValue(l),
-      });
-    });
-
-    return {
-      links: links.filter(linkFilter),
-      // links: links.filter((d) => d.source === "Upper middle income-"),
-      nodes: [...nodesSet].map((id) => ({ id })),
-    };
-  }, [data, linkSource, linkTarget, linkValue, linkFilter]);
-
-  const graphs = useMemo(() => {
-    const generator = sankey()
-      .nodeId((d) => d.id)
-      .nodeWidth(nodeWidth)
-      .size([xMax, yMax])
-      .nodePadding(nodePadding)
-      .nodeAlign(nodeAlign)
-      .nodeSort(nodeSort)
-      .linkSort(linkSort);
-
-    function genGraph(filter) {
-      const nodesCopy = root.nodes.map((d) => ({ ...d }));
-
-      const linksCopy = root.links.map((d) => {
-        const newD = { ...d };
-        if (filter) {
-          if (!filter(d)) {
-            newD.value = 0;
-          }
-        }
-
-        return newD;
-      });
-
-      const graph = generator({
-        nodes: nodesCopy,
-        links: linksCopy,
-      });
-
-      return graph;
-    }
-
-    return {
-      all: genGraph(),
-      upperMiddle: genGraph((d) => d.source === "Upper middle income-"),
-    };
-  }, [root]);
-
   if (width < 10) return null;
-
-  useGSAP(() => {
-    if (!graphs) return;
-
-    // console.log(gsap.utils.toArray("#sankey-income-links path"));
-
-    console.log(graphs.upperMiddle);
-
-    gsap
-      .timeline()
-      .to(
-        "#sankey-income-links path",
-        {
-          attr: {
-            d: (i) => {
-              const path = linkHorizontal(graphs.upperMiddle.links[i]);
-              return path;
-            },
-            "stroke-width": (i) => {
-              return graphs.upperMiddle.links[i].width;
-            },
-          },
-          duration: 3,
-        },
-        0,
-      )
-      .to(
-        "#sankey-income-nodes rect",
-        {
-          attr: {
-            width: (i) => {
-              const { x1, x0 } = graphs.upperMiddle.nodes[i];
-              return x1 - x0;
-            },
-            height: (i) => {
-              const { y1, y0 } = graphs.upperMiddle.nodes[i];
-              return y1 - y0;
-            },
-            x: (i) => {
-              const { x0 } = graphs.upperMiddle.nodes[i];
-              return x0;
-            },
-            y: (i) => {
-              const { y0 } = graphs.upperMiddle.nodes[i];
-              return y0;
-            },
-          },
-          duration: 3,
-        },
-        0,
-      );
-  }, [graphs]);
 
   return (
     <div className="relative" {...props}>
@@ -211,7 +84,7 @@ const Sankey = ({
 
         <g transform={`translate(${margin.left}, ${margin.top})`}>
           <g id="sankey-income-links">
-            {graphs?.all.links.map((link, i) => (
+            {graph.links.map((link, i) => (
               <motion.path
                 key={i}
                 d={linkHorizontal(link)}
@@ -242,7 +115,7 @@ const Sankey = ({
             ))}
           </g>
           <g id="sankey-income-nodes">
-            {graphs?.all.nodes.map(({ y0, y1, x0, x1, id }, i) => (
+            {graph.nodes.map(({ y0, y1, x0, x1, id }, i) => (
               <motion.rect
                 key={i}
                 width={x1 - x0}
