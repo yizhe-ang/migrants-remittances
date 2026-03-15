@@ -23,10 +23,10 @@ const MainView = () => {
       <ScrollyTelling /> */}
 
       <div className="fixed inset-0 z-10 grid place-items-center">
-        <div className="h-[90vh]">
+        <div className="h-[80vh]">
           <ParentSize>
             {({ height }) => (
-              <SankeyIncome width={600} height={height} />
+              <SankeyIncome width={500} height={height} />
             )}
           </ParentSize>
         </div>

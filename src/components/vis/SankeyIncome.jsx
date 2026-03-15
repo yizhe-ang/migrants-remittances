@@ -116,6 +116,9 @@ const SankeyIncome = ({ width, height, margin = defaultMargin }) => {
     const graphs = {
       all: genGraph(),
       upperMiddle: genGraph((d) => d.source === "Upper middle income-"),
+      lowerMiddle: genGraph((d) => d.source === "Lower middle income-"),
+      low: genGraph((d) => d.source === "Low income-"),
+      // TODO: Compute % of gdp
     };
 
     return graphs;
@@ -130,9 +133,28 @@ const SankeyIncome = ({ width, height, margin = defaultMargin }) => {
   return (
     <>
       {graphs && incomeColorScale && (
-        <div>
+        <div
+          className="flex gap-10"
+          style={{
+            transform: `translate(calc(50vw - ${width / 2}px), ${0}px)`,
+          }}
+        >
           <Sankey
             graph={graphs.all}
+            width={width}
+            height={height}
+            colorScale={incomeColorScale}
+            margin={margin}
+          />
+          <Sankey
+            graph={graphs.lowerMiddle}
+            width={width}
+            height={height}
+            colorScale={incomeColorScale}
+            margin={margin}
+          />
+          <Sankey
+            graph={graphs.low}
             width={width}
             height={height}
             colorScale={incomeColorScale}

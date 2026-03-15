@@ -11,6 +11,8 @@ import { PatternLines, PatternCircles } from "@visx/pattern";
 
 const linkHorizontal = sankeyLinkHorizontal();
 
+const linkOpacity = 0.3
+
 const Sankey = ({ graph, width, height, colorScale, margin, ...props }) => {
   const {
     tooltipData,
@@ -68,7 +70,7 @@ const Sankey = ({ graph, width, height, colorScale, margin, ...props }) => {
                 // stroke={colorScale(link.source.id.slice(0, -1))}
                 stroke={`url(#flow-pattern-${link.source.id.slice(0, -1).replace(/ /g, "-")})`}
                 strokeWidth={link.width}
-                opacity={0.4}
+                opacity={linkOpacity}
                 // initial={{ pathLength: 0, opacity: 0 }}
                 // animate={{ pathLength: 1, opacity: 0.5 }}
                 // transition={{ duration: 0.8, ease: "easeOut" }}
