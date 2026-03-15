@@ -1,5 +1,5 @@
 import Sankey from "@/components/vis/Sankey";
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 import { useRoomStore } from "@/store";
 import { sankey } from "@visx/sankey";
 
@@ -118,10 +118,14 @@ const SankeyIncome = ({ width, height, margin = defaultMargin }) => {
       upperMiddle: genGraph((d) => d.source === "Upper middle income-"),
     };
 
-    setSankeyIncomeGraphs(graphs);
-
     return graphs;
   }, [root, nodeSort, linkSort]);
+
+  useEffect(() => {
+    if (graphs) {
+      setSankeyIncomeGraphs(graphs);
+    }
+  }, [graphs, setSankeyIncomeGraphs]);
 
   return (
     <>
