@@ -25,6 +25,9 @@ import useGpuPicking from "./useGpuPicking";
 
 const colorDummy = new THREE.Color();
 
+const STRIPE_FREQUENCY = 10;
+const STRIPE_THRESHOLD = 0.5;
+
 const Points = ({ ...props }) => {
   const countriesGeoSortedRef = useRef(null);
 
@@ -229,9 +232,9 @@ const Points = ({ ...props }) => {
       const strokeColor = vec3(0.1, 0.1, 0.1);
 
       // Diagonal stripe pattern
-      const diag = uv().x.sub(uv().y).mul(float(10));
+      const diag = uv().x.sub(uv().y).mul(float(STRIPE_FREQUENCY));
       const fw2 = fwidth(diag);
-      const stripe = smoothstep(float(0.5).sub(fw2), float(0.5).add(fw2), fract(diag));
+      const stripe = smoothstep(float(STRIPE_THRESHOLD).sub(fw2), float(STRIPE_THRESHOLD).add(fw2), fract(diag));
       const stripeColor = mix(fillColor, vec3(1, 1, 1), stripe);
       const color = stripeColor.mul(fill).add(strokeColor.mul(stroke));
 
