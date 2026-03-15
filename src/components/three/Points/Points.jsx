@@ -18,6 +18,7 @@ import {
   mix,
   fract,
   screenCoordinate,
+  mod,
 } from "three/tsl";
 import * as THREE from "three/webgpu";
 import { latToMercatorY } from "@/lib/utils";
@@ -28,6 +29,8 @@ const colorDummy = new THREE.Color();
 
 const STRIPE_FREQUENCY = 0.08;
 const STRIPE_THRESHOLD = 0.8;
+const DOTS_SPACING = 12;
+const DOTS_RADIUS = 0.35;
 
 const Points = ({ ...props }) => {
   const countriesGeoSortedRef = useRef(null);
@@ -122,6 +125,7 @@ const Points = ({ ...props }) => {
       staggeredT: uniform(0),
       incomeColorT: uniform(0),
       sizePropGdpT: uniform(0),
+      patternT: uniform(0), // 0 = stripes, 1 = polka dots
     };
 
     const geometry = new THREE.PlaneGeometry(1, 1);
@@ -238,7 +242,18 @@ const Points = ({ ...props }) => {
       const fw2 = fwidth(diag);
       const stripe = smoothstep(float(STRIPE_THRESHOLD).sub(fw2), float(STRIPE_THRESHOLD).add(fw2), fract(diag));
       const stripeColor = mix(fillColor, vec3(1, 1, 1), stripe);
-      const color = stripeColor.mul(fill).add(strokeColor.mul(stroke));
+
+      // Polka dot pattern (screen-space)
+      const cell = vec2(float(DOTS_SPACING), float(DOTS_SPACING));
+      const cellPos = mod(sc.xy, cell).sub(cell.mul(0.5));
+      const dotDist = cellPos.length().div(float(DOTS_SPACING));
+      const fwDot = fwidth(dotDist);
+      const dotMask = smoothstep(float(DOTS_RADIUS).add(fwDot), float(DOTS_RADIUS).sub(fwDot), dotDist);
+      const dotsColor = mix(fillColor, vec3(1, 1, 1), dotMask);
+
+      // Mix between stripe and dots patterns
+      const patternColor = mix(stripeColor, dotsColor, u.patternT);
+      const color = patternColor.mul(fill).add(strokeColor.mul(stroke));
 
       return vec4(color, outer.mul(0.995));
     })();
