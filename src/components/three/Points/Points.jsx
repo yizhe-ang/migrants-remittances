@@ -1,6 +1,7 @@
 import { useRoomStore } from "@/store";
 import { index } from "d3-array";
 import { useEffect, useMemo, useRef } from "react";
+import { useFrame } from "@react-three/fiber";
 import {
   Fn,
   instancedArray,
@@ -111,7 +112,7 @@ const Points = ({ ...props }) => {
   // Keep ref in sync for use in useFrame/click handlers
   countriesGeoSortedRef.current = countriesGeoSorted;
 
-  const { mesh, u, buffers } = useMemo(() => {
+  const { mesh, u, sortBuffer, realCount, originalIndex, buffers } = useMemo(() => {
     if (
       !countriesGeoSorted ||
       !dataIndex ||
@@ -191,9 +192,11 @@ const Points = ({ ...props }) => {
 
     const colorsOg = new Float32Array(colors);
 
+    const realCount = countriesGeoSorted.length;
+
     const positionsBuffer = instancedArray(new Float32Array(positions), "vec3");
     const sizeOgBuffer = instancedArray(new Float32Array(sizesOg), "float");
-    const sizeBuffer = instancedArray(countriesGeoSorted.length, "float");
+    const sizeBuffer = instancedArray(realCount, "float");
     const sizePropGdpBuffer = instancedArray(
       new Float32Array(sizesPropGdp),
       "float",
@@ -203,6 +206,15 @@ const Points = ({ ...props }) => {
       new Float32Array(colorsIncome),
       "vec4",
     );
+
+    // Sort buffer: stores original data index for each draw position
+    // Initialize with identity mapping, CPU sort in useFrame reorders these
+    const sortKeys = new Uint32Array(realCount);
+    for (let i = 0; i < realCount; i++) sortKeys[i] = i;
+    const sortBuffer = instancedArray(sortKeys, "uint");
+
+    // Indirection: look up original data index from sorted draw order
+    const originalIndex = sortBuffer.element(instanceIndex);
 
     material.colorNode = Fn(() => {
       const distUV = uv().sub(vec2(0.5, 0.5)).length();
@@ -220,20 +232,17 @@ const Points = ({ ...props }) => {
       const stroke = outer.mul(inner);
       const fill = outer.mul(inner.oneMinus());
 
-      const isHovered = instanceIndex.add(1).equal(u.hoveredId).toFloat();
+      const isHovered = originalIndex.add(1).equal(u.hoveredId).toFloat();
 
-      // const dataColor = colorBuffer.element(instanceIndex).xyz;
       const dataColor = mix(
-        colorBuffer.element(instanceIndex).xyz,
-        colorIncomeBuffer.element(instanceIndex).xyz,
+        colorBuffer.element(originalIndex).xyz,
+        colorIncomeBuffer.element(originalIndex).xyz,
         u.incomeColorT,
       );
 
       const hoveredColor = vec3(0, 0, 0);
 
       const fillColor = dataColor;
-      // .mul(isHovered.oneMinus())
-      // .add(hoveredColor.mul(isHovered));
 
       const strokeColor = vec3(0.1, 0.1, 0.1);
 
@@ -260,10 +269,10 @@ const Points = ({ ...props }) => {
     })();
 
     material.positionNode = Fn(() => {
-      const offset = positionsBuffer.element(instanceIndex);
+      const offset = positionsBuffer.element(originalIndex);
 
-      const threshold = float(instanceIndex).div(
-        float(countriesGeoSorted.length),
+      const threshold = float(originalIndex).div(
+        float(realCount),
       );
       const overlap = float(0.05);
       const instanceT = smoothstep(
@@ -272,13 +281,13 @@ const Points = ({ ...props }) => {
         u.staggeredT,
       );
       const size = mix(
-        sizeBuffer.element(instanceIndex),
-        sizeOgBuffer.element(instanceIndex),
+        sizeBuffer.element(originalIndex),
+        sizeOgBuffer.element(originalIndex),
         instanceT,
       );
       const sizeFinal = mix(
         size,
-        sizePropGdpBuffer.element(instanceIndex),
+        sizePropGdpBuffer.element(originalIndex),
         u.sizePropGdpT,
       );
 
@@ -292,6 +301,9 @@ const Points = ({ ...props }) => {
     return {
       mesh,
       u,
+      sortBuffer,
+      realCount,
+      originalIndex,
       buffers: {
         size: { og: sizesOg, buffer: sizeBuffer.value, propGdp: sizesPropGdp },
         color: {
@@ -313,8 +325,42 @@ const Points = ({ ...props }) => {
     });
   }, [u, buffers]);
 
+  // Per-frame: compute effective sizes on CPU, sort indices, write to sort buffer
+  useFrame(() => {
+    if (!sortBuffer || !buffers || !u) return;
+
+    const sizeArr = buffers.size.buffer.array;
+    const sizeOgArr = buffers.size.og;
+    const sizePropGdpArr = buffers.size.propGdp;
+    const stT = u.staggeredT.value;
+    const gdpT = u.sizePropGdpT.value;
+
+    // Compute effective size for each point
+    const effectiveSizes = new Float32Array(realCount);
+    for (let i = 0; i < realCount; i++) {
+      const thr = i / realCount;
+      // CPU smoothstep
+      const t = Math.max(0, Math.min(1, (stT - thr + 0.05) / 0.1));
+      const instT = t * t * (3 - 2 * t);
+      const size = sizeArr[i] * (1 - instT) + sizeOgArr[i] * instT;
+      effectiveSizes[i] = size * (1 - gdpT) + sizePropGdpArr[i] * gdpT;
+    }
+
+    // Sort indices by size descending (largest first = drawn behind)
+    const indices = Array.from({ length: realCount }, (_, i) => i);
+    indices.sort((a, b) => effectiveSizes[b] - effectiveSizes[a]);
+
+    // Write sorted indices to sort buffer
+    const array = sortBuffer.value.array;
+    for (let i = 0; i < realCount; i++) {
+      array[i] = indices[i];
+    }
+    sortBuffer.value.needsUpdate = true;
+  }, -1); // priority -1 to run before picking/render
+
   useGpuPicking({
     positionNode: mesh?.material?.positionNode,
+    originalIndex,
     instanceCount: countriesGeoSorted?.length,
     geometry: mesh?.geometry,
     dataRef: countriesGeoSortedRef,

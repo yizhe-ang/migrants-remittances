@@ -1,13 +1,14 @@
 import { useRoomStore } from "@/store";
 import { useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef } from "react";
-import { instancedBufferAttribute } from "three/tsl";
+import { instancedArray } from "three/tsl";
 import * as THREE from "three/webgpu";
 
 const colorDummy = new THREE.Color();
 
 export default function useGpuPicking({
   positionNode,
+  originalIndex,
   instanceCount,
   geometry,
   dataRef,
@@ -21,7 +22,7 @@ export default function useGpuPicking({
   const setMousePosition = useRoomStore((state) => state.setMousePosition);
 
   const { pickingScene, pickingTexture } = useMemo(() => {
-    if (!positionNode || !instanceCount || !geometry) return {};
+    if (!positionNode || !instanceCount || !geometry || !originalIndex) return {};
 
     const pickingColors = [];
     for (let i = 0; i < instanceCount; i++) {
@@ -29,14 +30,16 @@ export default function useGpuPicking({
       pickingColors.push(colorDummy.r, colorDummy.g, colorDummy.b);
     }
 
-    const pickingColorsAttribute = instancedBufferAttribute(
-      new THREE.InstancedBufferAttribute(new Float32Array(pickingColors), 3),
+    const pickingColorsBuffer = instancedArray(
+      new Float32Array(pickingColors),
+      "vec3",
     );
 
     const pickingMaterial = new THREE.MeshBasicNodeMaterial({
       depthWrite: false,
     });
-    pickingMaterial.colorNode = pickingColorsAttribute;
+    // Use originalIndex indirection so picked ID maps to original data index
+    pickingMaterial.colorNode = pickingColorsBuffer.element(originalIndex);
     pickingMaterial.positionNode = positionNode;
 
     const pickingMesh = new THREE.InstancedMesh(
@@ -51,7 +54,7 @@ export default function useGpuPicking({
     pickingScene.add(pickingMesh);
 
     return { pickingScene, pickingTexture };
-  }, [positionNode, instanceCount, geometry]);
+  }, [positionNode, originalIndex, instanceCount, geometry]);
 
   useFrame(({ gl, pointer, camera, size }) => {
     if (!pickingTexture || !pickingScene) return;
