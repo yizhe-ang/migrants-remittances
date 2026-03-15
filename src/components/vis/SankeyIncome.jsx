@@ -16,7 +16,7 @@ const SankeyIncome = ({ width, height, margin = defaultMargin }) => {
   const incomeColorScale = useRoomStore((s) => s.incomeColorScale);
   const flowsByIncome = useRoomStore((s) => s.flowsByIncome);
 
-  const setSankeyIncomeGraphs = useRoomStore((s) => s.setSankeyIncomeGraphs);
+  const setSankeyIncome = useRoomStore((s) => s.setSankeyIncome);
 
   const data = useMemo(() => {
     if (!flowsByIncome) return null;
@@ -126,9 +126,9 @@ const SankeyIncome = ({ width, height, margin = defaultMargin }) => {
 
   useEffect(() => {
     if (graphs) {
-      setSankeyIncomeGraphs(graphs);
+      setSankeyIncome({ graphs });
     }
-  }, [graphs, setSankeyIncomeGraphs]);
+  }, [graphs, setSankeyIncome]);
 
   return (
     <>
@@ -137,7 +137,10 @@ const SankeyIncome = ({ width, height, margin = defaultMargin }) => {
           className="flex gap-10"
           style={{
             transform: `translate(calc(50vw - ${width / 2}px), ${0}px)`,
+            opacity: 0,
+            visibility: "hidden",
           }}
+          id="sankey-income"
         >
           <Sankey
             graph={graphs.all}

@@ -13,6 +13,7 @@ const ScrollyTelling = () => {
   const cameraControls = useRoomStore((s) => s.cameraControls);
   const arcs = useRoomStore((s) => s.arcs);
   const points = useRoomStore((s) => s.points);
+  const sankeyIncome = useRoomStore((s) => s.sankeyIncome);
 
   useGSAP(() => {
     if (!cameraControls || !arcs || !points) return;
@@ -357,6 +358,26 @@ const ScrollyTelling = () => {
 
     // Random arcs go!
 
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: "#step-7",
+          start: "top bottom",
+          end: "bottom bottom",
+          scrub: true,
+          markers: true,
+        },
+        duration: 1,
+      })
+      .to(
+        "#sankey-income",
+        {
+          autoAlpha: 1,
+          duration: 0.5,
+        },
+        0.5,
+      );
+
     // Sankey income
     // gsap
     //   .timeline()
@@ -404,7 +425,7 @@ const ScrollyTelling = () => {
   }, [cameraControls, arcs, points]);
 
   return (
-    <div className="w-full">
+    <div className="w-full z-10">
       <div className="h-screen" />
 
       <Step id="step-1">
@@ -456,6 +477,31 @@ const ScrollyTelling = () => {
           between countries from 2010 to 2019 at a monthly level.
         </P>
       </Step>
+
+      <Step id="step-7">
+        <P>
+          If we were to group countries by their income level, we can see that
+          high-income countries dominate the sending of money.
+        </P>
+      </Step>
+
+      <Step id="step-8">
+        <P>
+          These high-income countries send $680 billion but only receive $195
+          billion. In other words, people in these countries provide 87% of the
+          funds while receiving just 25%. Economic resources from high-income
+          countries are being redistributed abroad.
+        </P>
+      </Step>
+
+      <Step id="step-9">
+        <P>
+          Looking at the other income groups individually, we can also see that
+          the flows tend to be clustered among the same income-group countries,
+          especially for remittance senders living in lower-middle- and
+          low-income countries.
+        </P>
+      </Step>
     </div>
   );
 };
@@ -469,7 +515,9 @@ const Step = ({ className, children, ...props }) => {
       )}
       {...props}
     >
-      <div className="px-4 py-4 bg-white rounded shadow-xl">{children}</div>
+      <div className="px-4 py-4 bg-white rounded shadow-xl flex flex-col gap-4">
+        {children}
+      </div>
     </div>
   );
 };

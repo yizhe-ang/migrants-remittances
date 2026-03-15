@@ -104,9 +104,9 @@ export const { roomStore, useRoomStore } = createRoomStore(
     incomeColorScale: null,
     setIncomeColorScale: (scale) => set({ incomeColorScale: scale }),
 
-    // Data vis layouts ########################################################
-    sankeyIncomeGraphs: null,
-    setSankeyIncomeGraphs: (graphs) => set({ sankeyIncomeGraphs: graphs }),
+    // Data vis ########################################################
+    sankeyIncome: null,
+    setSankeyIncome: (sankeyIncome) => set({ sankeyIncome }),
 
     // Controls / Interactions #################################################
     enableMapInteractions: true,
