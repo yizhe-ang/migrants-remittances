@@ -16,6 +16,7 @@ import {
   cameraPosition,
   uniform,
   mix,
+  fract,
 } from "three/tsl";
 import * as THREE from "three/webgpu";
 import { latToMercatorY } from "@/lib/utils";
@@ -227,7 +228,12 @@ const Points = ({ ...props }) => {
 
       const strokeColor = vec3(0.1, 0.1, 0.1);
 
-      const color = fillColor.mul(fill).add(strokeColor.mul(stroke));
+      // Diagonal stripe pattern
+      const diag = uv().x.sub(uv().y).mul(float(10));
+      const fw2 = fwidth(diag);
+      const stripe = smoothstep(float(0.5).sub(fw2), float(0.5).add(fw2), fract(diag));
+      const stripeColor = mix(fillColor, vec3(1, 1, 1), stripe);
+      const color = stripeColor.mul(fill).add(strokeColor.mul(stroke));
 
       return vec4(color, outer.mul(0.995));
     })();
