@@ -11,7 +11,7 @@ import { PatternLines, PatternCircles } from "@visx/pattern";
 
 const linkHorizontal = sankeyLinkHorizontal();
 
-const linkOpacity = 0.3
+const linkOpacity = 0.3;
 
 const Sankey = ({ graph, width, height, colorScale, margin, ...props }) => {
   const {
@@ -61,7 +61,7 @@ const Sankey = ({ graph, width, height, colorScale, margin, ...props }) => {
         })}
 
         <g transform={`translate(${margin.left}, ${margin.top})`}>
-          <g id="sankey-income-links">
+          <g className="sankey-links">
             {graph.links.map((link, i) => (
               <motion.path
                 key={i}
@@ -92,7 +92,7 @@ const Sankey = ({ graph, width, height, colorScale, margin, ...props }) => {
               />
             ))}
           </g>
-          <g id="sankey-income-nodes">
+          <g className="sankey-nodes">
             {graph.nodes.map(({ y0, y1, x0, x1, id }, i) => (
               <motion.rect
                 key={i}
