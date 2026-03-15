@@ -5,6 +5,8 @@ import {
   sankeyRight,
   sankeyLeft,
   sankeyJustify,
+  sankeyLinkHorizontal,
+  sankey,
 } from "@visx/sankey";
 import { Group } from "@visx/group";
 import { useTooltip, TooltipWithBounds } from "@visx/tooltip";
@@ -18,6 +20,8 @@ const defaultMargin = { top: 10, left: 10, right: 10, bottom: 10 };
 // TODO: Use patterns
 // TODO: Apply textures !!!!!!!!!!!!!!!!
 // TODO: Add gradient to the flow too?
+
+const linkHorizontal = sankeyLinkHorizontal();
 
 const Sankey = ({
   data,
@@ -69,11 +73,32 @@ const Sankey = ({
 
     return {
       links: links.filter(linkFilter),
+      // links: links.filter((d) => d.source === "Upper middle income-"),
       nodes: [...nodesSet].map((id) => ({ id })),
     };
   }, [data, linkSource, linkTarget, linkValue, linkFilter]);
 
   if (width < 10) return null;
+
+  const test = useMemo(() => {
+    const nodesCopy = root.nodes.map((d) => ({ ...d }));
+    const linksCopy = root.links
+      // .filter((d) => d.source === "Upper middle income-")
+      .map((d) => ({ ...d }));
+
+    const generator = sankey()
+      .nodeId((d) => d.id)
+      .nodeWidth(nodeWidth)
+      .size([xMax, yMax])
+      .nodePadding(nodePadding)
+      .nodeAlign(nodeAlign)
+      .nodeSort(nodeSort)
+      .linkSort(linkSort);
+
+    const graph = generator(root);
+
+    console.log(graph);
+  }, [root]);
 
   return (
     <div
@@ -128,7 +153,6 @@ const Sankey = ({
             nodeAlign={nodeAlign}
             nodeSort={nodeSort}
             linkSort={linkSort}
-            iterations={10}
           >
             {({ graph, createPath }) => (
               <>

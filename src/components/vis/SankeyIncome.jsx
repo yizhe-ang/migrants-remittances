@@ -26,7 +26,7 @@ const SankeyIncome = ({ width, height }) => {
       nodeOrder.push(`${d}-`);
     });
 
-    return nodeOrder
+    return nodeOrder;
   }, [incomeColorScale]);
 
   return (
