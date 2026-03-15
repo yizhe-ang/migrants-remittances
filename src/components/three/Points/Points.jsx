@@ -32,6 +32,7 @@ const Points = ({ ...props }) => {
   const countriesGeo = useRoomStore((state) => state.countriesGeo);
 
   const remRadiusScale = useRoomStore((state) => state.remRadiusScale);
+  const propGdpRadiusScale = useRoomStore((state) => state.propGdpRadiusScale);
   const remToColorScale = useRoomStore((state) => state.remToColorScale);
   const remFromColorScale = useRoomStore((state) => state.remFromColorScale);
 
@@ -134,6 +135,7 @@ const Points = ({ ...props }) => {
     const positions = [];
 
     const sizesOg = [];
+    const sizesPropGdp = [];
     const colors = [];
 
     for (let i = 0; i < countriesGeoSorted.length; i++) {
@@ -148,6 +150,12 @@ const Points = ({ ...props }) => {
       if (d) {
         sizesOg.push(remRadiusScale(d.sim_remittances_with));
 
+        if (d.prop_of_gdp) {
+          sizesPropGdp.push(propGdpRadiusScale(d.prop_of_gdp));
+        } else {
+          sizesPropGdp.push(0);
+        }
+
         if (c.type === "origin") {
           colorDummy.setStyle(remToColorScale(d.sim_remittances_with));
         } else {
@@ -157,6 +165,7 @@ const Points = ({ ...props }) => {
       } else {
         // If doesn't exist, don't render at all
         sizesOg.push(0);
+        sizesPropGdp.push(0);
 
         colors.push(0, 0, 0, 1);
       }
@@ -205,10 +214,20 @@ const Points = ({ ...props }) => {
     material.positionNode = Fn(() => {
       const offset = positionsBuffer.element(instanceIndex);
 
-      const threshold = float(instanceIndex).div(float(countriesGeoSorted.length));
+      const threshold = float(instanceIndex).div(
+        float(countriesGeoSorted.length),
+      );
       const overlap = float(0.05);
-      const instanceT = smoothstep(threshold.sub(overlap), threshold.add(overlap), u.staggeredT);
-      const size = mix(sizeBuffer.element(instanceIndex), sizeOgBuffer.element(instanceIndex), instanceT);
+      const instanceT = smoothstep(
+        threshold.sub(overlap),
+        threshold.add(overlap),
+        u.staggeredT,
+      );
+      const size = mix(
+        sizeBuffer.element(instanceIndex),
+        sizeOgBuffer.element(instanceIndex),
+        instanceT,
+      );
 
       // Always same size
       const dist = cameraPosition.sub(offset).length();
@@ -225,7 +244,7 @@ const Points = ({ ...props }) => {
       mesh,
       u,
       buffers: {
-        size: { og: sizesOg, buffer: sizeBuffer.value },
+        size: { og: sizesOg, buffer: sizeBuffer.value, propGdp: sizesPropGdp },
         color: { og: colorsOg, buffer: colorBuffer.value },
       },
     };
