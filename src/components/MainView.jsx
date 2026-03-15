@@ -6,6 +6,7 @@ import CountryTooltip from "@/components/interface/CountryTooltip";
 import ScrollyTelling from "@/components/ScrollyTelling";
 import { ParentSize } from "@visx/responsive";
 import SankeyIncome from "@/components/vis/SankeyIncome";
+import Steps from "@/components/Steps";
 
 const MainView = () => {
   useDataPreparation();
@@ -28,6 +29,8 @@ const MainView = () => {
           </ParentSize>
         </div>
       </div>
+
+      <Steps />
 
       <ScrollyTelling />
 
