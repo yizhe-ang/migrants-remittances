@@ -403,7 +403,7 @@ const ScrollyTelling = () => {
               return sankeyIncome.graphs.upperMiddle.links[i].width;
             },
           },
-          duration: 0.3,
+          duration: 0.4,
         },
         0,
       )
@@ -447,6 +447,66 @@ const ScrollyTelling = () => {
           duration: 0.2,
         },
         0.35,
+      );
+
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: "#step-10",
+          start: "top bottom",
+          end: "bottom bottom",
+          scrub: true,
+        },
+        duration: 1,
+      })
+      .to(
+        "#sankey-income-lower-middle, #sankey-income-all",
+        {
+          autoAlpha: 0,
+          duration: 0.2,
+        },
+        0,
+      )
+      .to(
+        "#sankey-income-low .sankey-links path",
+        {
+          attr: {
+            d: (i) => {
+              const path = linkHorizontal(sankeyIncome.graphs.all.links[i]);
+              return path;
+            },
+            "stroke-width": (i) => {
+              return sankeyIncome.graphs.all.links[i].width;
+            },
+          },
+          duration: 0.6,
+        },
+        0,
+      )
+      .to(
+        "#sankey-income-low .sankey-nodes rect",
+        {
+          attr: {
+            width: (i) => {
+              const { x1, x0 } = sankeyIncome.graphs.all.nodes[i];
+              return x1 - x0;
+            },
+            height: (i) => {
+              const { y1, y0 } = sankeyIncome.graphs.all.nodes[i];
+              return y1 - y0;
+            },
+            x: (i) => {
+              const { x0 } = sankeyIncome.graphs.all.nodes[i];
+              return x0;
+            },
+            y: (i) => {
+              const { y0 } = sankeyIncome.graphs.all.nodes[i];
+              return y0;
+            },
+          },
+          duration: 0.6,
+        },
+        0,
       );
   }, [cameraControls, arcs, points]);
 
