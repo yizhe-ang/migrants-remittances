@@ -92,6 +92,9 @@ export const { roomStore, useRoomStore } = createRoomStore(
     remRadiusScale: null,
     setRemRadiusScale: (scale) => set({ remRadiusScale: scale }),
 
+    propGdpRadiusScale: null,
+    setPropGdpRadiusScale: (scale) => set({ propGdpRadiusScale: scale }),
+
     remFromColorScale: null,
     setRemFromColorScale: (scale) => set({ remFromColorScale: scale }),
 
