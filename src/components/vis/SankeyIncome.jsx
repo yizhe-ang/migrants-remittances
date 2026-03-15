@@ -16,6 +16,8 @@ const SankeyIncome = ({ width, height, margin = defaultMargin }) => {
   const incomeColorScale = useRoomStore((s) => s.incomeColorScale);
   const flowsByIncome = useRoomStore((s) => s.flowsByIncome);
 
+  const setSankeyIncomeGraphs = useRoomStore((s) => s.setSankeyIncomeGraphs);
+
   const data = useMemo(() => {
     if (!flowsByIncome) return null;
 
@@ -111,10 +113,14 @@ const SankeyIncome = ({ width, height, margin = defaultMargin }) => {
       return graph;
     }
 
-    return {
+    const graphs = {
       all: genGraph(),
       upperMiddle: genGraph((d) => d.source === "Upper middle income-"),
     };
+
+    setSankeyIncomeGraphs(graphs);
+
+    return graphs;
   }, [root, nodeSort, linkSort]);
 
   return (

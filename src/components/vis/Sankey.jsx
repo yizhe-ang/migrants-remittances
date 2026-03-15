@@ -1,23 +1,9 @@
-import { useMemo, useState } from "react";
-import {
-  Sankey as SankeyImpl,
-  sankeyCenter,
-  sankeyRight,
-  sankeyLeft,
-  sankeyJustify,
-  sankeyLinkHorizontal,
-  sankey,
-} from "@visx/sankey";
-import { Group } from "@visx/group";
+import { sankeyLinkHorizontal } from "@visx/sankey";
 import { useTooltip, TooltipWithBounds } from "@visx/tooltip";
 import { localPoint } from "@visx/event";
 import { motion } from "motion/react";
 import PatternWavesAnimated from "@/components/vis/PatternWavesAnimated";
 import { PatternLines, PatternCircles } from "@visx/pattern";
-import { useGSAP } from "@gsap/react";
-import gsap from "gsap";
-
-gsap.registerPlugin(useGSAP);
 
 // TODO: Use patterns
 // TODO: Apply textures !!!!!!!!!!!!!!!!
@@ -25,14 +11,7 @@ gsap.registerPlugin(useGSAP);
 
 const linkHorizontal = sankeyLinkHorizontal();
 
-const Sankey = ({
-  graph,
-  width,
-  height,
-  colorScale,
-  margin,
-  ...props
-}) => {
+const Sankey = ({ graph, width, height, colorScale, margin, ...props }) => {
   const {
     tooltipData,
     tooltipLeft,
@@ -41,9 +20,6 @@ const Sankey = ({
     showTooltip,
     hideTooltip,
   } = useTooltip();
-
-  const xMax = width - margin.left - margin.right;
-  const yMax = height - margin.top - margin.bottom;
 
   if (width < 10) return null;
 
