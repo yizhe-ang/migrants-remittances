@@ -2,6 +2,8 @@ import Sankey from "@/components/vis/Sankey";
 import { useMemo, useEffect } from "react";
 import { useRoomStore } from "@/store";
 import { sankey } from "@visx/sankey";
+import PatternWavesAnimated from "@/components/vis/PatternWavesAnimated";
+import { PatternLines, PatternCircles } from "@visx/pattern";
 
 const linkSource = (d) => d.destination_income;
 const linkTarget = (d) => d.origin_income;
@@ -15,6 +17,8 @@ const defaultMargin = { top: 10, left: 10, right: 10, bottom: 10 };
 const SankeyIncome = ({ width, height, margin = defaultMargin }) => {
   const incomeColorScale = useRoomStore((s) => s.incomeColorScale);
   const flowsByIncome = useRoomStore((s) => s.flowsByIncome);
+
+  const colorScale = incomeColorScale
 
   const setSankeyIncome = useRoomStore((s) => s.setSankeyIncome);
 
@@ -132,7 +136,7 @@ const SankeyIncome = ({ width, height, margin = defaultMargin }) => {
 
   return (
     <>
-      {graphs && incomeColorScale && (
+      {graphs && colorScale && (
         <div
           className="flex gap-10"
           style={{
@@ -142,6 +146,39 @@ const SankeyIncome = ({ width, height, margin = defaultMargin }) => {
           }}
           id="sankey-income"
         >
+          <svg>
+            {/* Patterns */}
+            {incomeColorScale.domain().map((d, i) => {
+              const idName = d.replace(/ /g, "-");
+
+              return (
+                <g key={d}>
+                  <PatternWavesAnimated
+                    id={`flow-pattern-${idName}`}
+                    background={colorScale(d)}
+                  />
+                  <PatternLines
+                    id={`node-pattern-${idName}-`}
+                    height={15}
+                    width={15}
+                    stroke="white"
+                    strokeWidth={1}
+                    orientation={["diagonal"]}
+                    background={colorScale(d)}
+                  />
+                  <PatternCircles
+                    id={`node-pattern-${idName}`}
+                    height={15}
+                    width={15}
+                    radius={2}
+                    fill="white"
+                    complement
+                    background={colorScale(d)}
+                  />
+                </g>
+              );
+            })}
+          </svg>
           <Sankey
             graph={graphs.all}
             width={width}

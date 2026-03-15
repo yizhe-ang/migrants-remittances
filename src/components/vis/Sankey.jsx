@@ -2,8 +2,6 @@ import { sankeyLinkHorizontal } from "@visx/sankey";
 import { useTooltip, TooltipWithBounds } from "@visx/tooltip";
 import { localPoint } from "@visx/event";
 import { motion } from "motion/react";
-import PatternWavesAnimated from "@/components/vis/PatternWavesAnimated";
-import { PatternLines, PatternCircles } from "@visx/pattern";
 
 // TODO: Use patterns
 // TODO: Apply textures !!!!!!!!!!!!!!!!
@@ -31,37 +29,6 @@ const Sankey = ({ graph, width, height, colorScale, margin, ...props }) => {
       visibility: "hidden"
     }} {...props}>
       <svg width={width} height={height}>
-        {/* Patterns */}
-        {colorScale.domain().map((d, i) => {
-          const idName = d.replace(/ /g, "-");
-
-          return (
-            <g key={d}>
-              <PatternWavesAnimated
-                id={`flow-pattern-${idName}`}
-                background={colorScale(d)}
-              />
-              <PatternLines
-                id={`node-pattern-${idName}-`}
-                height={15}
-                width={15}
-                stroke="white"
-                strokeWidth={1}
-                orientation={["diagonal"]}
-                background={colorScale(d)}
-              />
-              <PatternCircles
-                id={`node-pattern-${idName}`}
-                height={15}
-                width={15}
-                radius={2}
-                fill="white"
-                complement
-                background={colorScale(d)}
-              />
-            </g>
-          );
-        })}
 
         <g transform={`translate(${margin.left}, ${margin.top})`}>
           <g className="sankey-links">
