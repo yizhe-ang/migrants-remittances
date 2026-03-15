@@ -208,6 +208,7 @@ function flowsByCountryQuery(group) {
       a.*,
       -- (s.gdp * s.population) AS gdp,
       a.sim_remittances_with / (s.gdp * s.population) AS prop_of_gdp,
+      s.group AS income
 
     FROM step_1 a
 

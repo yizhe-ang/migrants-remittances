@@ -35,6 +35,7 @@ const Points = ({ ...props }) => {
   const propGdpRadiusScale = useRoomStore((state) => state.propGdpRadiusScale);
   const remToColorScale = useRoomStore((state) => state.remToColorScale);
   const remFromColorScale = useRoomStore((state) => state.remFromColorScale);
+  const incomeColorScale = useRoomStore((state) => state.incomeColorScale);
 
   const setPoints = useRoomStore((state) => state.setPoints);
 
@@ -137,6 +138,7 @@ const Points = ({ ...props }) => {
     const sizesOg = [];
     const sizesPropGdp = [];
     const colors = [];
+    const colorsIncome = [];
 
     for (let i = 0; i < countriesGeoSorted.length; i++) {
       const c = countriesGeoSorted[i];
@@ -162,12 +164,16 @@ const Points = ({ ...props }) => {
           colorDummy.setStyle(remFromColorScale(d.sim_remittances_with));
         }
         colors.push(colorDummy.r, colorDummy.g, colorDummy.b, 1);
+
+        colorDummy.setStyle(incomeColorScale(d.income));
+        colorsIncome.push(colorDummy.r, colorDummy.g, colorDummy.b, 1);
       } else {
         // If doesn't exist, don't render at all
         sizesOg.push(0);
         sizesPropGdp.push(0);
 
         colors.push(0, 0, 0, 1);
+        colorsIncome.push(0, 0, 0, 1);
       }
     }
 
@@ -245,7 +251,11 @@ const Points = ({ ...props }) => {
       u,
       buffers: {
         size: { og: sizesOg, buffer: sizeBuffer.value, propGdp: sizesPropGdp },
-        color: { og: colorsOg, buffer: colorBuffer.value },
+        color: {
+          og: colorsOg,
+          buffer: colorBuffer.value,
+          income: colorsIncome,
+        },
       },
     };
   }, [countriesGeoSorted, dataIndex, remRadiusScale, remToColorScale]);
