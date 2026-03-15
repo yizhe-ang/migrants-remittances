@@ -529,6 +529,20 @@ const ScrollyTelling = () => {
           low-income countries.
         </P>
       </Step>
+
+      <Step id="step-10" className="">
+        <P>
+          At first glance, The main beneficiaries are middle-income countries.
+          Upper-middle-income countries send 7% but receive 30%, and
+          lower-middle-income countries send only 4% but receive 44%.
+        </P>
+        <P>
+          This also means that very little money reaches the poorest countries,
+          where people need it the most. Low-income countries receive just 1.7%
+          of all money sent or brought back by migrants, despite being home to
+          9% of the global population.
+        </P>
+      </Step>
     </div>
   );
 };
