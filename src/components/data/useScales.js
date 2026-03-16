@@ -40,7 +40,7 @@ export default function useScales() {
           (d) => d.sim_remittances_with,
         ),
       ])
-      .range([0.7, 11]);
+      .range([1, 11]);
 
     setRemRadiusScale(remRadiusScale);
 
@@ -50,7 +50,7 @@ export default function useScales() {
         0,
         max([...flowsByDestination, ...flowsByOrigin], (d) => d.prop_of_gdp),
       ])
-      .range([0.7, 11]);
+      .range([1, 11]);
 
     setPropGdpRadiusScale(propsGdpRadiusScale);
   }, [flowsByDestination, flowsByOrigin]);
