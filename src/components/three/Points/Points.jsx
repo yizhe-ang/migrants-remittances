@@ -370,7 +370,7 @@ const Points = ({ ...props }) => {
 
   useInteractions({
     buffers,
-    countryTypeToIndex: countryTypeToIdx,
+    countryTypeToIdx,
   });
 
   return <>{mesh && <primitive object={mesh} {...props} />}</>;
