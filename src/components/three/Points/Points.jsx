@@ -196,7 +196,8 @@ const Points = ({ ...props }) => {
 
     const positionsBuffer = instancedArray(new Float32Array(positions), "vec3");
     const sizeOgBuffer = instancedArray(new Float32Array(sizesOg), "float");
-    const sizeBuffer = instancedArray(realCount, "float");
+    // const sizeBuffer = instancedArray(realCount, "float");
+    const sizeBuffer = instancedArray(new Float32Array(sizesOg), "float");
     const sizePropGdpBuffer = instancedArray(
       new Float32Array(sizesPropGdp),
       "float",

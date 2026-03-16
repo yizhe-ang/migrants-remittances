@@ -55,6 +55,9 @@ const Steps = () => {
         </P>
       </Step>
 
+      <div id="step-dashboard" className="h-[100vh]">
+      </div>
+
       <Step id="step-7">
         <P>
           If we were to group countries by their income level, we can see that
