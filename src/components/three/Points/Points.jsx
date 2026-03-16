@@ -316,32 +316,15 @@ const Points = ({ ...props }) => {
     });
   }, [u, buffers]);
 
-  // Per-frame: compute effective sizes on CPU, sort indices, write to sort buffer
+  // Per-frame: sort indices by current size buffer descending (largest first = drawn behind)
   useFrame(() => {
-    if (!sortBuffer || !buffers || !u) return;
+    if (!sortBuffer || !buffers) return;
 
     const sizeArr = buffers.size.buffer.array;
-    const sizeOgArr = buffers.size.og;
-    const sizePropGdpArr = buffers.size.propGdp;
-    const stT = u.staggeredT.value;
-    const gdpT = u.sizePropGdpT.value;
 
-    // Compute effective size for each point
-    const effectiveSizes = new Float32Array(realCount);
-    for (let i = 0; i < realCount; i++) {
-      const thr = i / realCount;
-      // CPU smoothstep
-      const t = Math.max(0, Math.min(1, (stT - thr + 0.05) / 0.1));
-      const instT = t * t * (3 - 2 * t);
-      const size = sizeArr[i] * (1 - instT) + sizeOgArr[i] * instT;
-      effectiveSizes[i] = size * (1 - gdpT) + sizePropGdpArr[i] * gdpT;
-    }
-
-    // Sort indices by size descending (largest first = drawn behind)
     const indices = Array.from({ length: realCount }, (_, i) => i);
-    indices.sort((a, b) => effectiveSizes[b] - effectiveSizes[a]);
+    indices.sort((a, b) => sizeArr[b] - sizeArr[a]);
 
-    // Write sorted indices to sort buffer
     const array = sortBuffer.value.array;
     for (let i = 0; i < realCount; i++) {
       array[i] = indices[i];
