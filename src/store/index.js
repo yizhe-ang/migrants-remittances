@@ -128,6 +128,15 @@ export const { roomStore, useRoomStore } = createRoomStore(
     mousePosition: { x: 0, y: 0 },
     setMousePosition: (mousePosition) => set({ mousePosition }),
 
+    showCountryPoints: ["sending", "receiving"],
+    setShowCountryPoints: (showCountryPoints) => set({ showCountryPoints }),
+
+    pointsValue: ["absolute"],
+    setPointsValue: (pointsValue) => set({ pointsValue }),
+
+    colorPointsBy: ["value"],
+    setColorPointsBy: (colorPointsBy) => set({ colorPointsBy }),
+
     // Scene objects ###########################################################
     cameraControls: null,
     setCameraControls: (cameraControls) => set({ cameraControls }),

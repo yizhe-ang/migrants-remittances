@@ -7,6 +7,7 @@ import ScrollyTelling from "@/components/ScrollyTelling";
 import { ParentSize } from "@visx/responsive";
 import SankeyIncome from "@/components/vis/SankeyIncome";
 import Steps from "@/components/Steps";
+import Controls from "@/components/interface/Controls";
 
 const MainView = () => {
   useDataPreparation();
@@ -19,6 +20,8 @@ const MainView = () => {
     <>
       <div className="fixed inset-0 bg-stone-200 z-10">
         <Three />
+
+        <Controls />
       </div>
 
       {/* Sankey income */}

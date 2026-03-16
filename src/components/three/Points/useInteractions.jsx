@@ -6,10 +6,13 @@ import * as THREE from "three/webgpu";
 const colorDummy = new THREE.Color();
 
 export default function useInteractions({ buffers, countryTypeToIdx }) {
-  const hoveredCountry = useRoomStore((state) => state.hoveredCountry);
   const enableMapInteractions = useRoomStore(
     (state) => state.enableMapInteractions,
   );
+
+  const hoveredCountry = useRoomStore((state) => state.hoveredCountry);
+  const showCountryPoints = useRoomStore((state) => state.showCountryPoints);
+  const pointsValue = useRoomStore((state) => state.pointsValue);
 
   const flowsMap = useRoomStore((state) => state.flowsMap);
   const remRadiusScale = useRoomStore((state) => state.remRadiusScale);
@@ -99,4 +102,26 @@ export default function useInteractions({ buffers, countryTypeToIdx }) {
     remFromColorScale,
     enableMapInteractions,
   ]);
+
+  useEffect(() => {
+    if (!enableMapInteractions) return;
+
+    if (!buffers) return;
+
+    const sizeArr = buffers.size.buffer.array;
+    const sizeSnapshot = sizeArr.slice();
+    const sizeTargets =
+      pointsValue[0] === "absolute" ? buffers.size.og : buffers.size.propGdp;
+
+    animate(0, 1, {
+      duration: 0.5,
+      ease: "easeOut",
+      onUpdate: (t) => {
+        for (let i = 0; i < sizeArr.length; i++) {
+          sizeArr[i] = sizeSnapshot[i] + (sizeTargets[i] - sizeSnapshot[i]) * t;
+        }
+        buffers.size.buffer.needsUpdate = true;
+      },
+    });
+  }, [pointsValue, enableMapInteractions, buffers]);
 }
