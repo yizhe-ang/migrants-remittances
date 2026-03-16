@@ -43,6 +43,9 @@ const ScrollyTelling = () => {
     const fromUsaPoints = fromUsaPointsIndices.map(() => ({
       sizeT: 0,
     }));
+    const pointsAnim = {
+      sizePropGdpT: 0,
+    };
 
     gsap
       .timeline({
@@ -537,10 +540,17 @@ const ScrollyTelling = () => {
         duration: 1,
       })
       .to(
-        points.u.sizePropGdpT,
+        pointsAnim,
         {
-          value: 1,
+          sizePropGdpT: 1,
           duration: 0.1,
+          onUpdate: () => {
+            for (let i = 0; i < points.buffers.size.buffer.array.length; i++) {
+              points.buffers.size.buffer.array[i] =
+                pointsAnim.sizePropGdpT * points.buffers.size.propGdp[i];
+            }
+            points.buffers.size.buffer.needsUpdate = true;
+          },
         },
         0,
       )

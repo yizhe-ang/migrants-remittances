@@ -125,7 +125,6 @@ const Points = ({ ...props }) => {
       hoveredId: uniform(0),
       staggeredT: uniform(0),
       incomeColorT: uniform(0),
-      sizePropGdpT: uniform(0),
       stripesT: uniform(0), // 0 = off, 1 = stripes
       dotsT: uniform(0), // 0 = off, 1 = polka dots
     };
@@ -196,12 +195,8 @@ const Points = ({ ...props }) => {
 
     const positionsBuffer = instancedArray(new Float32Array(positions), "vec3");
     const sizeOgBuffer = instancedArray(new Float32Array(sizesOg), "float");
-    // const sizeBuffer = instancedArray(realCount, "float");
-    const sizeBuffer = instancedArray(new Float32Array(sizesOg), "float");
-    const sizePropGdpBuffer = instancedArray(
-      new Float32Array(sizesPropGdp),
-      "float",
-    );
+    const sizeBuffer = instancedArray(realCount, "float");
+    // const sizeBuffer = instancedArray(new Float32Array(sizesOg), "float");
     const colorBuffer = instancedArray(new Float32Array(colors), "vec4");
     const colorIncomeBuffer = instancedArray(
       new Float32Array(colorsIncome),
@@ -286,15 +281,10 @@ const Points = ({ ...props }) => {
         sizeOgBuffer.element(originalIndex),
         instanceT,
       );
-      const sizeFinal = mix(
-        size,
-        sizePropGdpBuffer.element(originalIndex),
-        u.sizePropGdpT,
-      );
 
       // Always same size
       const dist = cameraPosition.sub(offset).length();
-      const scale = sizeFinal.mul(dist).mul(0.01);
+      const scale = size.mul(dist).mul(0.01);
 
       return positionLocal.mul(scale).add(offset);
     })();

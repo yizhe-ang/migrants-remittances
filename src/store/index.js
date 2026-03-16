@@ -112,7 +112,7 @@ export const { roomStore, useRoomStore } = createRoomStore(
     setSankeyIncome: (sankeyIncome) => set({ sankeyIncome }),
 
     // Controls / Interactions #################################################
-    enableMapInteractions: true,
+    enableMapInteractions: false,
     setEnableMapInteractions: (enableInteractions) =>
       set({ enableInteractions }),
 

@@ -17,12 +17,12 @@ const MainView = () => {
 
   return (
     <>
-      <div className="fixed inset-0 bg-stone-200 z-10">
+      <div className="fixed inset-0 bg-stone-200 -z-10">
         <Three />
       </div>
 
       {/* Sankey income */}
-      {/* <div className="fixed inset-0 grid place-items-center pointer-events-none">
+      <div className="fixed inset-0 grid place-items-center pointer-events-none">
         <div className="h-[80vh]">
           <ParentSize>
             {({ height }) => <SankeyIncome width={500} height={height} />}
@@ -32,7 +32,7 @@ const MainView = () => {
 
       <Steps />
 
-      <ScrollyTelling /> */}
+      <ScrollyTelling />
 
       <CountryTooltip />
     </>
