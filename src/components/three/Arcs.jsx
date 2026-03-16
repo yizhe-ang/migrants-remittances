@@ -173,7 +173,7 @@ const Arcs = (props) => {
 
       const randomProgress = mix(
         0,
-        time.mul(baseSpeed).add(randOffset).add(wobble),
+        time.mul(baseSpeed).add(randOffset.mul(7)).add(wobble),
         u.movementT,
       );
 
