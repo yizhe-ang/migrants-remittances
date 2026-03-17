@@ -145,6 +145,8 @@ export default function useInteractions({ buffers, countryTypeToIdx }) {
         for (let i = 0; i < sizeArr.length; i++) {
           sizeArr[i] =
             sizeSnapshot[i] + (sizeTargetsProcessed[i] - sizeSnapshot[i]) * t;
+        }
+        for (let i = 0; i < colorArr.length; i++) {
           colorArr[i] =
             colorSnapshot[i] +
             (colorTargetsProcessed[i] - colorSnapshot[i]) * t;
@@ -170,35 +172,4 @@ export default function useInteractions({ buffers, countryTypeToIdx }) {
     colorScale,
     pointsValue
   ]);
-
-  // useEffect(() => {
-  //   if (!enableMapInteractions) return;
-
-  //   if (!buffers) return;
-
-  //   const sizeArr = buffers.size.buffer.array;
-  //   const colorArr = buffers.color.buffer.array;
-  //   const sizeSnapshot = sizeArr.slice();
-  //   const colorSnapshot = colorArr.slice();
-
-  //   const sizeTargets =
-  //     pointsValue[0] === "absolute" ? buffers.size.og : buffers.size.propGdp;
-  //   const colorTargets =
-  //     pointsValue[0] === "absolute" ? buffers.color.og : buffers.color.propGdp;
-
-  //   animate(0, 1, {
-  //     duration: 0.5,
-  //     ease: "easeOut",
-  //     onUpdate: (t) => {
-  //       for (let i = 0; i < sizeArr.length; i++) {
-  //         sizeArr[i] = sizeSnapshot[i] + (sizeTargets[i] - sizeSnapshot[i]) * t;
-
-  //         colorArr[i] =
-  //           colorSnapshot[i] + (colorTargets[i] - colorSnapshot[i]) * t;
-  //       }
-  //       buffers.size.buffer.needsUpdate = true;
-  //       buffers.color.buffer.needsUpdate = true;
-  //     },
-  //   });
-  // }, [pointsValue, enableMapInteractions, buffers]);
 }

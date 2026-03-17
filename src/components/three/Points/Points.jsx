@@ -187,11 +187,13 @@ const Points = ({ ...props }) => {
 
           // NOTE: Account for missing / null values!
           if (d.prop_of_gdp === null) {
-            colorDummy.setRGB(1, 1, 1)
+            colorDummy.setRGB(1, 1, 1);
           } else if (c.type === "origin") {
-            colorDummy.setStyle(propGdpToColorScale(d.prop_of_gdp));
+            const cssColor = propGdpToColorScale(d.prop_of_gdp);
+            colorDummy.setStyle(cssColor);
           } else if (c.type === "destination") {
-            colorDummy.setStyle(propGdpFromColorScale(d.prop_of_gdp));
+            const cssColor = propGdpFromColorScale(d.prop_of_gdp);
+            colorDummy.setStyle(cssColor);
           }
           colorsPropGdp.push(colorDummy.r, colorDummy.g, colorDummy.b, 1);
 
@@ -203,6 +205,7 @@ const Points = ({ ...props }) => {
           sizesPropGdp.push(0);
 
           colors.push(0, 0, 0, 1);
+          colorsPropGdp.push(0, 0, 0, 1);
           colorsIncome.push(0, 0, 0, 1);
         }
       }
