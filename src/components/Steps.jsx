@@ -8,7 +8,7 @@ const Steps = () => {
       <Step id="step-1">
         <P>
           As of 2024, an estimated 304 million, or 1 in 27 people around the
-          world are international migrants[1].
+          world are international migrants.
         </P>
       </Step>
 
@@ -28,9 +28,9 @@ const Steps = () => {
 
       <Step id="step-4">
         <P>
-          These remittances - estimated in 2023 to total about $857 billion,
-          equivalent to the GDP of Belgium[2] – now dwarf official development
-          aid and represent a lifeline for many economies.
+          These remittances - estimated in 2023 to total about $857 billion –
+          now dwarf official development aid and represent a lifeline for many
+          economies.
         </P>
       </Step>
 
@@ -55,8 +55,7 @@ const Steps = () => {
         </P>
       </Step>
 
-      <div id="step-dashboard" className="h-[100vh]">
-      </div>
+      <div id="step-dashboard" className="h-[100vh]"></div>
 
       <Step id="step-7">
         <P>
