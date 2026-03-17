@@ -25,8 +25,8 @@ const Sankey = ({ graph, width, height, colorScale, margin, ...props }) => {
 
   return (
     <div className="relative" style={{
-      opacity: 0,
-      visibility: "hidden"
+      // opacity: 0,
+      // visibility: "hidden"
     }} {...props}>
       <svg width={width} height={height}>
 
@@ -97,6 +97,20 @@ const Sankey = ({ graph, width, height, colorScale, margin, ...props }) => {
                 onMouseOut={hideTooltip}
               />
             ))}
+          </g>
+          <g>
+            {graph.nodes.map((d) => {
+              return (
+                <text
+                  x={d.x0 < width / 2 ? d.x1 + 12 : d.x0 - 6}
+                  y={(d.y1 + d.y0) / 2}
+                  dy="0.35em"
+                  textAnchor={d => d.x0 < width / 2 ? "start" : "end"}
+                >
+                  {d.id}
+                </text>
+              )
+            })}
           </g>
         </g>
       </svg>
