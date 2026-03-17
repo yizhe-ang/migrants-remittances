@@ -80,7 +80,7 @@ export default function useScales() {
       extent(flowsByOrigin, (d) => d.prop_of_gdp),
     );
 
-    console.log("propGdpToColorScale domain:", propGdpToColorScale.domain());
+    // console.log("propGdpToColorScale domain:", propGdpToColorScale.domain());
     setPropGdpToColorScale(propGdpToColorScale);
   }, [flowsByOrigin]);
 
@@ -98,7 +98,7 @@ export default function useScales() {
       extent(flowsByDestination, (d) => d.prop_of_gdp),
     );
 
-    console.log("propGdpFromColorScale domain:", propGdpFromColorScale.domain());
+    // console.log("propGdpFromColorScale domain:", propGdpFromColorScale.domain());
     setPropGdpFromColorScale(propGdpFromColorScale);
   }, [flowsByDestination]);
 

@@ -118,7 +118,7 @@ const Points = ({ ...props }) => {
   // Keep ref in sync for use in useFrame/click handlers
   countriesGeoSortedRef.current = countriesGeoSorted;
 
-  const { mesh, u, sortBuffer, realCount, originalIndex, buffers } =
+  const { mesh, u, sortBuffer, realCount, originalIndex, sortIndices, buffers } =
     useMemo(() => {
       if (
         !countriesGeoSorted ||
@@ -172,7 +172,7 @@ const Points = ({ ...props }) => {
         if (d) {
           sizesOg.push(remRadiusScale(d.sim_remittances_with));
 
-          if (d.prop_of_gdp) {
+          if (d.prop_of_gdp != null) {
             sizesPropGdp.push(propGdpRadiusScale(d.prop_of_gdp));
           } else {
             sizesPropGdp.push(0);
@@ -253,7 +253,7 @@ const Points = ({ ...props }) => {
         const stroke = outer.mul(inner);
         const fill = outer.mul(inner.oneMinus());
 
-        const isHovered = originalIndex.add(1).equal(u.hoveredId).toFloat();
+        // const isHovered = originalIndex.add(1).equal(u.hoveredId).toFloat();
 
         const dataColor = mix(
           colorBuffer.element(originalIndex).xyz,
@@ -261,7 +261,7 @@ const Points = ({ ...props }) => {
           u.incomeColorT,
         );
 
-        const hoveredColor = vec3(0, 0, 0);
+        // const hoveredColor = vec3(0, 0, 0);
 
         const fillColor = dataColor;
 
@@ -324,12 +324,16 @@ const Points = ({ ...props }) => {
         return positionLocal.mul(scale).add(offset);
       })();
 
+      // Pre-allocate for per-frame sort (avoids allocation every frame)
+      const sortIndices = Array.from({ length: realCount }, (_, i) => i);
+
       return {
         mesh,
         u,
         sortBuffer,
         realCount,
         originalIndex,
+        sortIndices,
         buffers: {
           size: {
             og: sizesOg,
@@ -344,7 +348,7 @@ const Points = ({ ...props }) => {
           },
         },
       };
-    }, [countriesGeoSorted, dataIndex, remRadiusScale, remToColorScale]);
+    }, [countriesGeoSorted, dataIndex, remRadiusScale, remToColorScale, propGdpRadiusScale, propGdpToColorScale, propGdpFromColorScale, remFromColorScale, incomeColorScale]);
 
   useEffect(() => {
     if (!u || !buffers || !countryTypeToIdx) return;
@@ -358,16 +362,17 @@ const Points = ({ ...props }) => {
 
   // Per-frame: sort indices by current size buffer descending (largest first = drawn behind)
   useFrame(() => {
-    if (!sortBuffer || !buffers) return;
+    if (!sortBuffer || !buffers || !sortIndices) return;
 
     const sizeArr = buffers.size.buffer.array;
 
-    const indices = Array.from({ length: realCount }, (_, i) => i);
-    indices.sort((a, b) => sizeArr[b] - sizeArr[a]);
+    // Reset indices and sort (reuses pre-allocated array)
+    for (let i = 0; i < realCount; i++) sortIndices[i] = i;
+    sortIndices.sort((a, b) => sizeArr[b] - sizeArr[a]);
 
     const array = sortBuffer.value.array;
     for (let i = 0; i < realCount; i++) {
-      array[i] = indices[i];
+      array[i] = sortIndices[i];
     }
     sortBuffer.value.needsUpdate = true;
   }, -1); // priority -1 to run before picking/render

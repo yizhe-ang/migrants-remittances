@@ -110,7 +110,7 @@ export default function useGpuPicking({
         const entry = dataRef.current[pickedId.current - 1];
         if (entry) {
           setSelectedCountry({ country: entry.country, type: entry.type });
-          console.log(entry);
+          // console.log(entry);
           return;
         }
       }

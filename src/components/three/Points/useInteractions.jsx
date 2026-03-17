@@ -62,7 +62,7 @@ export default function useInteractions({ buffers, countryTypeToIdx }) {
 
       colorScale = (d, flowType) => {
         if (flowType === "origin") {
-          console.log(d.flow.prop_of_gdp);
+          // console.log(d.flow.prop_of_gdp);
           return propGdpToColorScale(d.flow.prop_of_gdp);
         }
         if (flowType === "destination") {
@@ -71,13 +71,31 @@ export default function useInteractions({ buffers, countryTypeToIdx }) {
       };
     }
 
+    // TODO: Use opacity for this
+    if (!showCountryPoints.includes("receiving")) {
+
+    }
+    if (!showCountryPoints.includes("sending")) {
+
+    }
+
     return {
       sizeTargets,
       colorTargets,
       sizeScale,
       colorScale,
     };
-  }, [pointsValue, buffers]);
+  }, [
+    pointsValue,
+    buffers,
+    remRadiusScale,
+    propGdpRadiusScale,
+    remToColorScale,
+    remFromColorScale,
+    propGdpToColorScale,
+    propGdpFromColorScale,
+    showCountryPoints
+  ]);
 
   // Animate on hovered country change
   useEffect(() => {
@@ -111,7 +129,7 @@ export default function useInteractions({ buffers, countryTypeToIdx }) {
     // If hovered, change target values
     if (hoveredCountry) {
       // NOTE: Don't handle first
-      if (pointsValue[0] === "propGdp") return
+      if (pointsValue[0] === "propGdp") return;
 
       const { type, country } = hoveredCountry;
       const highlightFlows = flowsMap.get(type).get(country);
@@ -170,6 +188,6 @@ export default function useInteractions({ buffers, countryTypeToIdx }) {
     colorTargets,
     sizeScale,
     colorScale,
-    pointsValue
+    pointsValue,
   ]);
 }
