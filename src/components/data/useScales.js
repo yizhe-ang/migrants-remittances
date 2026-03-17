@@ -25,8 +25,11 @@ export default function useScales() {
   const setIncomeColorScale = useRoomStore(
     (state) => state.setIncomeColorScale,
   );
-  const setPropGdpColorScale = useRoomStore(
-    (state) => state.setPropGdpColorScale,
+  const setPropGdpFromColorScale = useRoomStore(
+    (state) => state.setPropGdpFromColorScale,
+  );
+  const setPropGdpToColorScale = useRoomStore(
+    (state) => state.setPropGdpToColorScale,
   );
 
   useEffect(() => {
@@ -67,6 +70,12 @@ export default function useScales() {
       .exponent(0.4);
 
     setRemToColorScale(remToColorScale);
+
+    const propGdpToColorScale = scaleSequentialPow(interpolatePuBuGn)
+      .domain(extent(flowsByOrigin, (d) => d.prop_of_gdp))
+      .exponent(0.4);
+
+    setPropGdpToColorScale(propGdpToColorScale);
   }, [flowsByOrigin]);
 
   // rem from color scale
@@ -78,6 +87,12 @@ export default function useScales() {
       .exponent(0.4);
 
     setRemFromColorScale(remFromColorScale);
+
+    const propGdpFromColorScale = scaleSequentialPow(interpolateYlOrBr)
+      .domain(extent(flowsByDestination, (d) => d.prop_of_gdp))
+      .exponent(0.4);
+
+    setPropGdpFromColorScale(propGdpFromColorScale);
   }, [flowsByDestination]);
 
   // Flows radius scale

@@ -45,6 +45,12 @@ const Points = ({ ...props }) => {
   const remToColorScale = useRoomStore((state) => state.remToColorScale);
   const remFromColorScale = useRoomStore((state) => state.remFromColorScale);
   const incomeColorScale = useRoomStore((state) => state.incomeColorScale);
+  const propGdpFromColorScale = useRoomStore(
+    (state) => state.propGdpFromColorScale,
+  );
+  const propGdpToColorScale = useRoomStore(
+    (state) => state.propGdpToColorScale,
+  );
 
   const setPoints = useRoomStore((state) => state.setPoints);
 
@@ -178,6 +184,13 @@ const Points = ({ ...props }) => {
             colorDummy.setStyle(remFromColorScale(d.sim_remittances_with));
           }
           colors.push(colorDummy.r, colorDummy.g, colorDummy.b, 1);
+
+          if (c.type === "origin") {
+            colorDummy.setStyle(propGdpToColorScale(d.prop_of_gdp));
+          } else {
+            colorDummy.setStyle(propGdpFromColorScale(d.prop_of_gdp));
+          }
+          colorsPropGdp.push(colorDummy.r, colorDummy.g, colorDummy.b, 1);
 
           colorDummy.setStyle(incomeColorScale(d.income));
           colorsIncome.push(colorDummy.r, colorDummy.g, colorDummy.b, 1);
@@ -320,6 +333,7 @@ const Points = ({ ...props }) => {
             og: colorsOg,
             buffer: colorBuffer.value,
             income: colorsIncome,
+            propGdp: colorsPropGdp,
           },
         },
       };

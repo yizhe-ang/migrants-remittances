@@ -110,6 +110,9 @@ export const { roomStore, useRoomStore } = createRoomStore(
     propGdpFromColorScale: null,
     setPropGdpFromColorScale: (scale) => set({ propGdpFromColorScale: scale }),
 
+    propGdpToColorScale: null,
+    setPropGdpToColorScale: (scale) => set({ propGdpToColorScale: scale }),
+
     // Data vis ########################################################
     sankeyIncome: null,
     setSankeyIncome: (sankeyIncome) => set({ sankeyIncome }),
