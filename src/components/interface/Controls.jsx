@@ -50,7 +50,7 @@ const Controls = () => {
             $
           </ToggleGroupItem>
           <ToggleGroupItem value="income" aria-label="">
-            income
+            Income
           </ToggleGroupItem>
         </ToggleGroup>
       </div>
