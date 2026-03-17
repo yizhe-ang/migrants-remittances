@@ -25,6 +25,9 @@ export default function useScales() {
   const setIncomeColorScale = useRoomStore(
     (state) => state.setIncomeColorScale,
   );
+  const setPropGdpColorScale = useRoomStore(
+    (state) => state.setPropGdpColorScale,
+  );
 
   useEffect(() => {
     if (!flowsByOrigin || !flowsByDestination) return;

@@ -112,199 +112,218 @@ const Points = ({ ...props }) => {
   // Keep ref in sync for use in useFrame/click handlers
   countriesGeoSortedRef.current = countriesGeoSorted;
 
-  const { mesh, u, sortBuffer, realCount, originalIndex, buffers } = useMemo(() => {
-    if (
-      !countriesGeoSorted ||
-      !dataIndex ||
-      !remRadiusScale ||
-      !remToColorScale
-    )
-      return {};
+  const { mesh, u, sortBuffer, realCount, originalIndex, buffers } =
+    useMemo(() => {
+      if (
+        !countriesGeoSorted ||
+        !dataIndex ||
+        !remRadiusScale ||
+        !remToColorScale
+      )
+        return {};
 
-    const u = {
-      hoveredId: uniform(0),
-      staggeredT: uniform(0),
-      incomeColorT: uniform(0),
-      stripesT: uniform(0), // 0 = off, 1 = stripes
-      dotsT: uniform(0), // 0 = off, 1 = polka dots
-    };
+      const u = {
+        hoveredId: uniform(0),
+        staggeredT: uniform(0),
+        incomeColorT: uniform(0),
+        stripesT: uniform(0), // 0 = off, 1 = stripes
+        dotsT: uniform(0), // 0 = off, 1 = polka dots
+      };
 
-    const geometry = new THREE.PlaneGeometry(1, 1);
+      const geometry = new THREE.PlaneGeometry(1, 1);
 
-    const material = new THREE.MeshBasicNodeMaterial({
-      transparent: true,
-      depthWrite: false,
-    });
+      const material = new THREE.MeshBasicNodeMaterial({
+        transparent: true,
+        depthWrite: false,
+      });
 
-    const mesh = new THREE.InstancedMesh(
-      geometry,
-      material,
-      countriesGeoSorted.length,
-    );
-    mesh.frustumCulled = false;
-    mesh.renderOrder = 1;
+      const mesh = new THREE.InstancedMesh(
+        geometry,
+        material,
+        countriesGeoSorted.length,
+      );
+      mesh.frustumCulled = false;
+      mesh.renderOrder = 1;
 
-    // Init buffers / attributes
-    const positions = [];
+      // Init buffers / attributes
+      const positions = [];
 
-    const sizesOg = [];
-    const sizesPropGdp = [];
-    const colors = [];
-    const colorsIncome = [];
+      const sizesOg = [];
+      const sizesPropGdp = [];
+      const colors = [];
+      const colorsPropGdp = [];
+      const colorsIncome = [];
 
-    for (let i = 0; i < countriesGeoSorted.length; i++) {
-      const c = countriesGeoSorted[i];
+      for (let i = 0; i < countriesGeoSorted.length; i++) {
+        const c = countriesGeoSorted[i];
 
-      // Compute mercator projection
-      const mercatorY = latToMercatorY(c.latitude);
+        // Compute mercator projection
+        const mercatorY = latToMercatorY(c.latitude);
 
-      positions.push(c.longitude, mercatorY, 0);
+        positions.push(c.longitude, mercatorY, 0);
 
-      const d = dataIndex.get(c.type).get(c.country);
-      if (d) {
-        sizesOg.push(remRadiusScale(d.sim_remittances_with));
+        const d = dataIndex.get(c.type).get(c.country);
+        if (d) {
+          sizesOg.push(remRadiusScale(d.sim_remittances_with));
 
-        if (d.prop_of_gdp) {
-          sizesPropGdp.push(propGdpRadiusScale(d.prop_of_gdp));
+          if (d.prop_of_gdp) {
+            sizesPropGdp.push(propGdpRadiusScale(d.prop_of_gdp));
+          } else {
+            sizesPropGdp.push(0);
+          }
+
+          if (c.type === "origin") {
+            colorDummy.setStyle(remToColorScale(d.sim_remittances_with));
+          } else {
+            colorDummy.setStyle(remFromColorScale(d.sim_remittances_with));
+          }
+          colors.push(colorDummy.r, colorDummy.g, colorDummy.b, 1);
+
+          colorDummy.setStyle(incomeColorScale(d.income));
+          colorsIncome.push(colorDummy.r, colorDummy.g, colorDummy.b, 1);
         } else {
+          // If doesn't exist, don't render at all
+          sizesOg.push(0);
           sizesPropGdp.push(0);
+
+          colors.push(0, 0, 0, 1);
+          colorsIncome.push(0, 0, 0, 1);
         }
-
-        if (c.type === "origin") {
-          colorDummy.setStyle(remToColorScale(d.sim_remittances_with));
-        } else {
-          colorDummy.setStyle(remFromColorScale(d.sim_remittances_with));
-        }
-        colors.push(colorDummy.r, colorDummy.g, colorDummy.b, 1);
-
-        colorDummy.setStyle(incomeColorScale(d.income));
-        colorsIncome.push(colorDummy.r, colorDummy.g, colorDummy.b, 1);
-      } else {
-        // If doesn't exist, don't render at all
-        sizesOg.push(0);
-        sizesPropGdp.push(0);
-
-        colors.push(0, 0, 0, 1);
-        colorsIncome.push(0, 0, 0, 1);
       }
-    }
 
-    const colorsOg = new Float32Array(colors);
+      const colorsOg = new Float32Array(colors);
 
-    const realCount = countriesGeoSorted.length;
+      const realCount = countriesGeoSorted.length;
 
-    const positionsBuffer = instancedArray(new Float32Array(positions), "vec3");
-    const sizeOgBuffer = instancedArray(new Float32Array(sizesOg), "float");
-    const sizeBuffer = instancedArray(realCount, "float");
-    // const sizeBuffer = instancedArray(new Float32Array(sizesOg), "float");
-    const colorBuffer = instancedArray(new Float32Array(colors), "vec4");
-    const colorIncomeBuffer = instancedArray(
-      new Float32Array(colorsIncome),
-      "vec4",
-    );
-
-    // Sort buffer: stores original data index for each draw position
-    // Initialize with identity mapping, CPU sort in useFrame reorders these
-    const sortKeys = new Uint32Array(realCount);
-    for (let i = 0; i < realCount; i++) sortKeys[i] = i;
-    const sortBuffer = instancedArray(sortKeys, "uint");
-
-    // Indirection: look up original data index from sorted draw order
-    const originalIndex = sortBuffer.element(instanceIndex);
-
-    material.colorNode = Fn(() => {
-      const distUV = uv().sub(vec2(0.5, 0.5)).length();
-
-      const fw = fwidth(distUV);
-      const strokePx = float(1.5); // stroke width in pixels
-      const strokeWidth = fw.mul(strokePx);
-
-      // Outer edge with 1px AA
-      const outer = smoothstep(float(0.5), float(0.5).sub(fw), distUV);
-      // Inner edge of stroke
-      const innerEdge = float(0.5).sub(strokeWidth);
-      const inner = smoothstep(innerEdge.sub(fw), innerEdge, distUV);
-
-      const stroke = outer.mul(inner);
-      const fill = outer.mul(inner.oneMinus());
-
-      const isHovered = originalIndex.add(1).equal(u.hoveredId).toFloat();
-
-      const dataColor = mix(
-        colorBuffer.element(originalIndex).xyz,
-        colorIncomeBuffer.element(originalIndex).xyz,
-        u.incomeColorT,
+      const positionsBuffer = instancedArray(
+        new Float32Array(positions),
+        "vec3",
+      );
+      const sizeOgBuffer = instancedArray(new Float32Array(sizesOg), "float");
+      const sizeBuffer = instancedArray(realCount, "float");
+      // const sizeBuffer = instancedArray(new Float32Array(sizesOg), "float");
+      const colorBuffer = instancedArray(new Float32Array(colors), "vec4");
+      const colorIncomeBuffer = instancedArray(
+        new Float32Array(colorsIncome),
+        "vec4",
       );
 
-      const hoveredColor = vec3(0, 0, 0);
+      // Sort buffer: stores original data index for each draw position
+      // Initialize with identity mapping, CPU sort in useFrame reorders these
+      const sortKeys = new Uint32Array(realCount);
+      for (let i = 0; i < realCount; i++) sortKeys[i] = i;
+      const sortBuffer = instancedArray(sortKeys, "uint");
 
-      const fillColor = dataColor;
+      // Indirection: look up original data index from sorted draw order
+      const originalIndex = sortBuffer.element(instanceIndex);
 
-      const strokeColor = vec3(0.1, 0.1, 0.1);
+      material.colorNode = Fn(() => {
+        const distUV = uv().sub(vec2(0.5, 0.5)).length();
 
-      // Diagonal stripe pattern (screen-space for uniform sizing)
-      const sc = screenCoordinate;
-      const diag = sc.x.add(sc.y).mul(float(STRIPE_FREQUENCY));
-      const fw2 = fwidth(diag);
-      const stripe = smoothstep(float(STRIPE_THRESHOLD).sub(fw2), float(STRIPE_THRESHOLD).add(fw2), fract(diag));
-      const stripeColor = mix(fillColor, vec3(1, 1, 1), stripe);
+        const fw = fwidth(distUV);
+        const strokePx = float(1.5); // stroke width in pixels
+        const strokeWidth = fw.mul(strokePx);
 
-      // Polka dot pattern (screen-space)
-      const cell = vec2(float(DOTS_SPACING), float(DOTS_SPACING));
-      const cellPos = mod(sc.xy, cell).sub(cell.mul(0.5));
-      const dotDist = cellPos.length().div(float(DOTS_SPACING));
-      const fwDot = fwidth(dotDist);
-      const dotMask = smoothstep(float(DOTS_RADIUS).add(fwDot), float(DOTS_RADIUS).sub(fwDot), dotDist);
-      const dotsColor = mix(fillColor, vec3(1, 1, 1), dotMask);
+        // Outer edge with 1px AA
+        const outer = smoothstep(float(0.5), float(0.5).sub(fw), distUV);
+        // Inner edge of stroke
+        const innerEdge = float(0.5).sub(strokeWidth);
+        const inner = smoothstep(innerEdge.sub(fw), innerEdge, distUV);
 
-      // Mix between no pattern, stripes, and dots
-      const patternColor = mix(mix(fillColor, stripeColor, u.stripesT), dotsColor, u.dotsT);
-      const color = patternColor.mul(fill).add(strokeColor.mul(stroke));
+        const stroke = outer.mul(inner);
+        const fill = outer.mul(inner.oneMinus());
 
-      return vec4(color, outer.mul(0.995));
-    })();
+        const isHovered = originalIndex.add(1).equal(u.hoveredId).toFloat();
 
-    material.positionNode = Fn(() => {
-      const offset = positionsBuffer.element(originalIndex);
+        const dataColor = mix(
+          colorBuffer.element(originalIndex).xyz,
+          colorIncomeBuffer.element(originalIndex).xyz,
+          u.incomeColorT,
+        );
 
-      const threshold = float(originalIndex).div(
-        float(realCount),
-      );
-      const overlap = float(0.05);
-      const instanceT = smoothstep(
-        threshold.sub(overlap),
-        threshold.add(overlap),
-        u.staggeredT,
-      );
-      const size = mix(
-        sizeBuffer.element(originalIndex),
-        sizeOgBuffer.element(originalIndex),
-        instanceT,
-      );
+        const hoveredColor = vec3(0, 0, 0);
 
-      // Always same size
-      const dist = cameraPosition.sub(offset).length();
-      const scale = size.mul(dist).mul(0.01);
+        const fillColor = dataColor;
 
-      return positionLocal.mul(scale).add(offset);
-    })();
+        const strokeColor = vec3(0.1, 0.1, 0.1);
 
-    return {
-      mesh,
-      u,
-      sortBuffer,
-      realCount,
-      originalIndex,
-      buffers: {
-        size: { og: sizesOg, buffer: sizeBuffer.value, propGdp: sizesPropGdp },
-        color: {
-          og: colorsOg,
-          buffer: colorBuffer.value,
-          income: colorsIncome,
+        // Diagonal stripe pattern (screen-space for uniform sizing)
+        const sc = screenCoordinate;
+        const diag = sc.x.add(sc.y).mul(float(STRIPE_FREQUENCY));
+        const fw2 = fwidth(diag);
+        const stripe = smoothstep(
+          float(STRIPE_THRESHOLD).sub(fw2),
+          float(STRIPE_THRESHOLD).add(fw2),
+          fract(diag),
+        );
+        const stripeColor = mix(fillColor, vec3(1, 1, 1), stripe);
+
+        // Polka dot pattern (screen-space)
+        const cell = vec2(float(DOTS_SPACING), float(DOTS_SPACING));
+        const cellPos = mod(sc.xy, cell).sub(cell.mul(0.5));
+        const dotDist = cellPos.length().div(float(DOTS_SPACING));
+        const fwDot = fwidth(dotDist);
+        const dotMask = smoothstep(
+          float(DOTS_RADIUS).add(fwDot),
+          float(DOTS_RADIUS).sub(fwDot),
+          dotDist,
+        );
+        const dotsColor = mix(fillColor, vec3(1, 1, 1), dotMask);
+
+        // Mix between no pattern, stripes, and dots
+        const patternColor = mix(
+          mix(fillColor, stripeColor, u.stripesT),
+          dotsColor,
+          u.dotsT,
+        );
+        const color = patternColor.mul(fill).add(strokeColor.mul(stroke));
+
+        return vec4(color, outer.mul(0.995));
+      })();
+
+      material.positionNode = Fn(() => {
+        const offset = positionsBuffer.element(originalIndex);
+
+        const threshold = float(originalIndex).div(float(realCount));
+        const overlap = float(0.05);
+        const instanceT = smoothstep(
+          threshold.sub(overlap),
+          threshold.add(overlap),
+          u.staggeredT,
+        );
+        const size = mix(
+          sizeBuffer.element(originalIndex),
+          sizeOgBuffer.element(originalIndex),
+          instanceT,
+        );
+
+        // Always same size
+        const dist = cameraPosition.sub(offset).length();
+        const scale = size.mul(dist).mul(0.01);
+
+        return positionLocal.mul(scale).add(offset);
+      })();
+
+      return {
+        mesh,
+        u,
+        sortBuffer,
+        realCount,
+        originalIndex,
+        buffers: {
+          size: {
+            og: sizesOg,
+            buffer: sizeBuffer.value,
+            propGdp: sizesPropGdp,
+          },
+          color: {
+            og: colorsOg,
+            buffer: colorBuffer.value,
+            income: colorsIncome,
+          },
         },
-      },
-    };
-  }, [countriesGeoSorted, dataIndex, remRadiusScale, remToColorScale]);
+      };
+    }, [countriesGeoSorted, dataIndex, remRadiusScale, remToColorScale]);
 
   useEffect(() => {
     if (!u || !buffers || !countryTypeToIdx) return;
