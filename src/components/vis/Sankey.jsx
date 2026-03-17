@@ -116,6 +116,7 @@ const Sankey = ({ graph, width, height, colorScale, margin, ...props }) => {
                     dy="0.35em"
                     textAnchor={d.x0 < width / 2 ? "start" : "end"}
                     fontSize={14}
+                    // fontWeight={600}
                   >
                     {text}
                   </text>
