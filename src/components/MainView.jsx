@@ -8,6 +8,8 @@ import { ParentSize } from "@visx/responsive";
 import SankeyIncome from "@/components/vis/SankeyIncome";
 import Steps from "@/components/Steps";
 import Controls from "@/components/interface/Controls";
+import BeeswarmDisasters from "@/components/vis/BeeswarmDisasters";
+import AreaDisasters from "@/components/vis/AreaDisasters";
 
 const MainView = () => {
   useDataPreparation();
@@ -18,11 +20,11 @@ const MainView = () => {
 
   return (
     <>
-      <div className="fixed inset-0 bg-stone-200 -z-10">
+      {/* <div className="fixed inset-0 bg-stone-200 -z-10">
         <Three />
 
         <Controls />
-      </div>
+      </div> */}
 
       {/* Sankey income */}
       <div className="fixed inset-0 grid place-items-center pointer-events-none">
@@ -30,6 +32,15 @@ const MainView = () => {
           <ParentSize>
             {({ height }) => <SankeyIncome width={500} height={height} />}
           </ParentSize>
+        </div>
+      </div>
+
+      <div className="fixed inset-0 grid place-items-center pointer-events-none">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+          <BeeswarmDisasters />
+        </div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+          <AreaDisasters />
         </div>
       </div>
 

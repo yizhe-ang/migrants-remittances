@@ -1,7 +1,7 @@
 import { useRoomStore } from "@/store";
 import { useSql } from "@sqlrooms/duckdb";
 import { index } from "d3-array";
-import { use, useEffect, useMemo } from "react";
+import { useEffect } from "react";
 
 export default function useDataProcessing() {
   const selectedYear = useRoomStore((state) => state.selectedYear);
@@ -19,6 +19,10 @@ export default function useDataProcessing() {
     (state) => state.setFlowsByDestination,
   );
   const setFlowsMap = useRoomStore((state) => state.setFlowsMap);
+  const setDisasters = useRoomStore((state) => state.setDisasters);
+  const setDisastersImpactsByMonth = useRoomStore(
+    (state) => state.setDisastersImpactsByMonth,
+  );
 
   const flowsPerYearStore = useRoomStore((state) => state.flowsPerYear);
 
@@ -33,6 +37,12 @@ export default function useDataProcessing() {
   );
   const countriesAggStatsReady = useRoomStore((state) =>
     state.db.findTableByName("countries_agg_stats"),
+  );
+  const disastersReady = useRoomStore((state) =>
+    state.db.findTableByName("disasters"),
+  );
+  const disastersImpactsReady = useRoomStore((state) =>
+    state.db.findTableByName("disasters_impacts"),
   );
 
   const { data: countriesStats } = useSql({
@@ -189,6 +199,57 @@ export default function useDataProcessing() {
 
     setCountriesAggStatsMap(countriesAggStatsMap);
   }, [countriesAggStats]);
+
+  const { data: disasters } = useSql({
+    query: /* sql */ `
+      SELECT
+        a.*,
+        b.latitude,
+        b.longitude
+
+      FROM disasters a
+
+      LEFT JOIN countries_geo b
+        ON a.country = b.country
+    `,
+    enabled: Boolean(disastersReady) && Boolean(countriesGeoReady),
+  });
+
+  useEffect(() => {
+    if (!disasters) return;
+
+    setDisasters(disasters.toArray());
+  }, [disasters]);
+
+  const { data: disastersImpactsByMonth } = useSql({
+    query: /* sql */ `
+      WITH step1 AS (
+        SELECT
+          date,
+          sum(floods) AS floods,
+          sum(storms) AS storms,
+          sum(droughts) AS droughts,
+          sum(earthquakes) AS earthquakes
+
+        FROM disasters_impacts
+
+        GROUP BY "date"
+      )
+
+      UNPIVOT step1
+      ON floods, storms, droughts, earthquakes
+      INTO
+        NAME disaster_type
+        VALUE remittance
+    `,
+    enabled: Boolean(disastersImpactsReady),
+  });
+
+  useEffect(() => {
+    if (!disastersImpactsByMonth) return;
+
+    setDisastersImpactsByMonth(disastersImpactsByMonth.toArray());
+  }, [disastersImpactsByMonth]);
 }
 
 function flowsByCountryQuery(group) {

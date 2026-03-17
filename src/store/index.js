@@ -88,6 +88,13 @@ export const { roomStore, useRoomStore } = createRoomStore(
     flowsByDestination: null,
     setFlowsByDestination: (flowsByDestination) => set({ flowsByDestination }),
 
+    disasters: null,
+    setDisasters: (disasters) => set({ disasters }),
+
+    disastersImpactsByMonth: null,
+    setDisastersImpactsByMonth: (disastersImpactsByMonth) =>
+      set({ disastersImpactsByMonth }),
+
     // Scales ##################################################################
     remRadiusScale: null,
     setRemRadiusScale: (scale) => set({ remRadiusScale: scale }),
