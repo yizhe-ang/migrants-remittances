@@ -9,20 +9,8 @@ const BeeswarmDisasters = ({ width = 700, height = 850 }) => {
 
   const disasters = useRoomStore((state) => state.disasters);
 
-  const disastersProcessed = useMemo(() => {
-    if (!disasters) return null;
-
-    return disasters.map((d) => {
-      return {
-        ...d,
-        start_date: new Date(d.start_date),
-        end_date: new Date(d.end_date),
-      };
-    });
-  }, [disasters]);
-
   useEffect(() => {
-    if (!disastersProcessed) return;
+    if (!disasters) return;
 
     const plot = Plot.plot({
       height,
@@ -45,7 +33,7 @@ const BeeswarmDisasters = ({ width = 700, height = 850 }) => {
       },
       marks: [
         Plot.dot(
-          disastersProcessed,
+          disasters,
           Plot.dodgeY("bottom", {
             x: "start_date",
             r: "affected",
@@ -62,7 +50,7 @@ const BeeswarmDisasters = ({ width = 700, height = 850 }) => {
     return () => {
       plot.remove();
     };
-  }, [disastersProcessed, width, height]);
+  }, [disasters, width, height]);
 
   return <div ref={containerRef} className="opacity-40"></div>;
 };

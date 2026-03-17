@@ -12,19 +12,8 @@ const AreaDisasters = ({ width = 700, height = 800 }) => {
     (state) => state.disastersImpactsByMonth,
   );
 
-  const disastersImpactsByMonthProcessed = useMemo(() => {
-    if (!disastersImpactsByMonth) return null;
-
-    return disastersImpactsByMonth.map((d) => {
-      return {
-        ...d,
-        date: new Date(d.date),
-      };
-    });
-  }, [disastersImpactsByMonth]);
-
   useEffect(() => {
-    if (!disastersImpactsByMonthProcessed) return;
+    if (!disastersImpactsByMonth) return;
 
     const plot = Plot.plot({
       // title: "Remittances induced by each disaster type, over time",
@@ -48,14 +37,14 @@ const AreaDisasters = ({ width = 700, height = 800 }) => {
         domain: ["floods", "earthquakes", "droughts", "storms"],
       },
       marks: [
-        Plot.areaY(disastersImpactsByMonthProcessed, {
+        Plot.areaY(disastersImpactsByMonth, {
           x: "date",
           y: "remittance",
           fill: "disaster_type",
           fillOpacity: 0.5,
           fy: "disaster_type",
         }),
-        Plot.lineY(disastersImpactsByMonthProcessed, {
+        Plot.lineY(disastersImpactsByMonth, {
           x: "date",
           y: "remittance",
           stroke: "disaster_type",
@@ -68,7 +57,7 @@ const AreaDisasters = ({ width = 700, height = 800 }) => {
     containerRef.current.append(plot);
 
     return () => plot.remove();
-  }, [disastersImpactsByMonthProcessed]);
+  }, [disastersImpactsByMonth]);
 
   return <div ref={containerRef}></div>;
 };

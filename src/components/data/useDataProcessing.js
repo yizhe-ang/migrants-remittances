@@ -218,7 +218,15 @@ export default function useDataProcessing() {
   useEffect(() => {
     if (!disasters) return;
 
-    setDisasters(disasters.toArray());
+    setDisasters(
+      disasters.toArray().map((d) => {
+        return {
+          ...d,
+          start_date: new Date(d.start_date),
+          end_date: new Date(d.end_date),
+        };
+      }),
+    );
   }, [disasters]);
 
   const { data: disastersImpactsByMonth } = useSql({
@@ -248,7 +256,14 @@ export default function useDataProcessing() {
   useEffect(() => {
     if (!disastersImpactsByMonth) return;
 
-    setDisastersImpactsByMonth(disastersImpactsByMonth.toArray());
+    setDisastersImpactsByMonth(
+      disastersImpactsByMonth.toArray().map((d) => {
+        return {
+          ...d,
+          date: new Date(d.date),
+        };
+      }),
+    );
   }, [disastersImpactsByMonth]);
 }
 
