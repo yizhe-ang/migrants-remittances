@@ -10,6 +10,7 @@ import Steps from "@/components/Steps";
 import Controls from "@/components/interface/Controls";
 import BeeswarmDisasters from "@/components/vis/BeeswarmDisasters";
 import AreaDisasters from "@/components/vis/AreaDisasters";
+import RectDisasters from "@/components/vis/RectDisasters";
 
 const MainView = () => {
   useDataPreparation();
@@ -36,11 +37,14 @@ const MainView = () => {
       </div>
 
       <div className="fixed inset-0 grid place-items-center pointer-events-none">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+        {/* <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
           <BeeswarmDisasters />
-        </div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+        </div> */}
+        {/* <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
           <AreaDisasters />
+        </div> */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+          <RectDisasters />
         </div>
       </div>
 

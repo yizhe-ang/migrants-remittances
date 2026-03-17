@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef } from "react";
 import * as Plot from "@observablehq/plot";
-import { useSql } from "@sqlrooms/duckdb";
 import { mean, rollup, sum } from "d3-array";
+import { useRoomStore } from "@/store";
 
 const disasterTypes = ["flood", "earthquake", "drought", "storm"];
 
@@ -12,10 +12,22 @@ const disasterTypeMap = new Map([
   ["drought", "droughts"],
 ]);
 
+const fmt = new Intl.NumberFormat("en", {
+  notation: "compact",
+  maximumFractionDigits: 1,
+});
+
 const RectDisasters = () => {
   const containerRef = useRef();
 
+  const disastersImpactsByMonth = useRoomStore(
+    (state) => state.disastersImpactsByMonth,
+  );
+  const disasters = useRoomStore((state) => state.disasters);
+
   const aggData = useMemo(() => {
+    if (!disastersImpactsByMonth || !disasters) return;
+
     const o = Object.fromEntries(
       [...disasterTypeMap.keys()].map((v) => [v, {}]),
     );
@@ -27,13 +39,13 @@ const RectDisasters = () => {
     );
 
     const affectedByDisaster = rollup(
-      disastersProcessed,
+      disasters,
       (v) => sum(v, (d) => d.affected),
       (d) => d["disaster_type"],
     );
 
     const affectedPerOccurrence = rollup(
-      disastersProcessed,
+      disasters,
       (v) => mean(v, (d) => d.affected),
       (d) => d["disaster_type"],
     );
@@ -53,10 +65,19 @@ const RectDisasters = () => {
         disaster_type: k,
       };
     });
-  }, [disastersImpactsByMonth, disastersProcessed]);
+  }, [disastersImpactsByMonth, disasters]);
 
   useEffect(() => {
+    if (!aggData) return;
+
     const plot = Plot.plot({
+      y: {
+        tickFormat: "$.0s",
+        ticks: 5,
+      },
+      x: {
+        tickFormat: (d) => fmt.format(d),
+      },
       height: 300,
       width: 700,
       marginLeft: 80,
@@ -81,7 +102,7 @@ const RectDisasters = () => {
     containerRef.current.append(plot);
 
     return () => plot.remove();
-  }, []);
+  }, [aggData]);
 
   return <div ref={containerRef}></div>;
 };
