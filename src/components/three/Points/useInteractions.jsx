@@ -57,6 +57,7 @@ export default function useInteractions({ buffers, countryTypeToIdx }) {
       sizeTargets = buffers.size.propGdp;
       colorTargets = buffers.color.propGdp;
 
+      // FIXME: d.flow.prop_of_gdp does not exist
       sizeScale = (d) => propGdpRadiusScale(d.flow.prop_of_gdp);
 
       colorScale = (d, flowType) => {
