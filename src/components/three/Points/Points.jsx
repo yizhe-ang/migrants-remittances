@@ -356,6 +356,9 @@ const Points = ({ ...props }) => {
           income: colorsIncome,
           propGdp: colorsPropGdp,
         },
+        opacity: {
+          buffer: opacityBuffer.value,
+        },
       },
     };
   }, [

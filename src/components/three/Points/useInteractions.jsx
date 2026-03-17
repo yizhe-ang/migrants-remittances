@@ -71,14 +71,6 @@ export default function useInteractions({ buffers, countryTypeToIdx }) {
       };
     }
 
-    // TODO: Use opacity for this
-    if (!showCountryPoints.includes("receiving")) {
-
-    }
-    if (!showCountryPoints.includes("sending")) {
-
-    }
-
     return {
       sizeTargets,
       colorTargets,
@@ -94,8 +86,41 @@ export default function useInteractions({ buffers, countryTypeToIdx }) {
     remFromColorScale,
     propGdpToColorScale,
     propGdpFromColorScale,
-    showCountryPoints
+    showCountryPoints,
   ]);
+
+  // Select which points to hide
+  useEffect(() => {
+    if (!buffers) return;
+
+    const opacityArr = buffers.opacity.buffer.array;
+
+    const opacitySnapshot = opacityArr.slice();
+    const opacityTargets = new Float32Array(opacityArr.length);
+
+    if (showCountryPoints.includes("receiving")) {
+      for (const idx of countryTypeToIdx.get("origin").values()) {
+        opacityTargets[idx] = 1;
+      }
+    }
+    if (showCountryPoints.includes("sending")) {
+      for (const idx of countryTypeToIdx.get("destination").values()) {
+        opacityTargets[idx] = 1;
+      }
+    }
+
+    animRef.current = animate(0, 1, {
+      duration: 0.2,
+      ease: "easeOut",
+      onUpdate: (t) => {
+        for (let i = 0; i < opacityArr.length; i++) {
+          opacityArr[i] =
+            opacitySnapshot[i] + (opacityTargets[i] - opacitySnapshot[i]) * t;
+        }
+        buffers.opacity.buffer.needsUpdate = true;
+      },
+    });
+  }, [buffers, showCountryPoints]);
 
   // Animate on hovered country change
   useEffect(() => {
