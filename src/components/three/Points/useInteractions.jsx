@@ -107,7 +107,11 @@ export default function useInteractions({ buffers, countryTypeToIdx }) {
       : sizeTargets.slice();
     const colorTargetsProcessed = colorTargets.slice();
 
+    // If hovered, change target values
     if (hoveredCountry) {
+      // NOTE: Don't handle first
+      if (pointsValue[0] === "propGdp") return
+
       const { type, country } = hoveredCountry;
       const highlightFlows = flowsMap.get(type).get(country);
 
@@ -163,6 +167,7 @@ export default function useInteractions({ buffers, countryTypeToIdx }) {
     colorTargets,
     sizeScale,
     colorScale,
+    pointsValue
   ]);
 
   // useEffect(() => {

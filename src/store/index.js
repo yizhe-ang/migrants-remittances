@@ -137,7 +137,8 @@ export const { roomStore, useRoomStore } = createRoomStore(
     showCountryPoints: ["sending", "receiving"],
     setShowCountryPoints: (showCountryPoints) => set({ showCountryPoints }),
 
-    pointsValue: ["absolute"],
+    // pointsValue: ["absolute"],
+    pointsValue: ["propGdp"],
     setPointsValue: (pointsValue) => set({ pointsValue }),
 
     colorPointsBy: ["value"],

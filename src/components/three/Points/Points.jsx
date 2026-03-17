@@ -185,13 +185,15 @@ const Points = ({ ...props }) => {
           }
           colors.push(colorDummy.r, colorDummy.g, colorDummy.b, 1);
 
-          if (c.type === "origin") {
+          // NOTE: Account for missing / null values!
+          if (d.prop_of_gdp === null) {
+            colorDummy.setRGB(1, 1, 1)
+          } else if (c.type === "origin") {
             colorDummy.setStyle(propGdpToColorScale(d.prop_of_gdp));
-          } else {
+          } else if (c.type === "destination") {
             colorDummy.setStyle(propGdpFromColorScale(d.prop_of_gdp));
           }
-          // colorsPropGdp.push(colorDummy.r, colorDummy.g, colorDummy.b, 1);
-          colorsPropGdp.push(0, 0, 0, 1);
+          colorsPropGdp.push(colorDummy.r, colorDummy.g, colorDummy.b, 1);
 
           colorDummy.setStyle(incomeColorScale(d.income));
           colorsIncome.push(colorDummy.r, colorDummy.g, colorDummy.b, 1);
