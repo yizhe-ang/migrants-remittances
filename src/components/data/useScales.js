@@ -1,8 +1,10 @@
 import { useRoomStore } from "@/store";
 import { extent, max } from "d3-array";
 import {
+  scaleLog,
   scaleOrdinal,
   scaleSequential,
+  scaleSequentialLog,
   scaleSequentialPow,
   scaleSqrt,
 } from "d3-scale";
@@ -54,7 +56,7 @@ export default function useScales() {
           (d) => d.sim_remittances_with,
         ),
       ])
-      .range([1, 12]);
+      .range([1.1, 13]);
 
     setRemRadiusScale(remRadiusScale);
 
@@ -64,7 +66,7 @@ export default function useScales() {
         0,
         max([...flowsByDestination, ...flowsByOrigin], (d) => d.prop_of_gdp),
       ])
-      .range([1, 12]);
+      .range([1.1, 13]);
 
     setPropGdpRadiusScale(propsGdpRadiusScale);
   }, [flowsByDestination, flowsByOrigin]);
@@ -75,7 +77,7 @@ export default function useScales() {
 
     const remToColorScale = scaleSequentialPow(interpolatePuBuGn)
       .domain(extent(flowsByOrigin, (d) => d.sim_remittances_with))
-      .exponent(0.4);
+      .exponent(0.35);
 
     setRemToColorScale(remToColorScale);
 
@@ -93,7 +95,7 @@ export default function useScales() {
 
     const remFromColorScale = scaleSequentialPow(interpolateYlOrBr)
       .domain(extent(flowsByDestination, (d) => d.sim_remittances_with))
-      .exponent(0.4);
+      .exponent(0.35);
 
     setRemFromColorScale(remFromColorScale);
 
