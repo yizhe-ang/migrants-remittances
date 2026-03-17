@@ -1,6 +1,6 @@
 import { useRoomStore } from "@/store";
 import { animate } from "motion";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three/webgpu";
 
 const colorDummy = new THREE.Color();
@@ -16,10 +16,66 @@ export default function useInteractions({ buffers, countryTypeToIdx }) {
 
   const flowsMap = useRoomStore((state) => state.flowsMap);
   const remRadiusScale = useRoomStore((state) => state.remRadiusScale);
+  const propGdpRadiusScale = useRoomStore((state) => state.propGdpRadiusScale);
   const remToColorScale = useRoomStore((state) => state.remToColorScale);
   const remFromColorScale = useRoomStore((state) => state.remFromColorScale);
+  const propGdpFromColorScale = useRoomStore(
+    (state) => state.propGdpFromColorScale,
+  );
+  const propGdpToColorScale = useRoomStore(
+    (state) => state.propGdpToColorScale,
+  );
 
   const animRef = useRef(null);
+
+  // Get target sizes and colors
+  const { sizeTargets, colorTargets, sizeScale, colorScale } = useMemo(() => {
+    if (!buffers) return {};
+
+    let sizeTargets;
+    let colorTargets;
+    let sizeScale;
+    let colorScale;
+
+    if (pointsValue[0] === "absolute") {
+      sizeTargets = buffers.size.og;
+      colorTargets = buffers.color.og;
+
+      sizeScale = (d) => remRadiusScale(d.flow.sim_remittances_with);
+
+      colorScale = (d, flowType) => {
+        if (flowType === "origin") {
+          return remToColorScale(d.flow.sim_remittances_with);
+        }
+        if (flowType === "destination") {
+          return remFromColorScale(d.flow.sim_remittances_with);
+        }
+      };
+    }
+
+    if (pointsValue[0] === "propGdp") {
+      sizeTargets = buffers.size.propGdp;
+      colorTargets = buffers.color.propGdp;
+
+      sizeScale = (d) => propGdpRadiusScale(d.flow.prop_of_gdp);
+
+      colorScale = (d, flowType) => {
+        if (flowType === "origin") {
+          return propGdpToColorScale(d.flow.prop_of_gdp);
+        }
+        if (flowType === "destination") {
+          return propGdpFromColorScale(d.flow.prop_of_gdp);
+        }
+      };
+    }
+
+    return {
+      sizeTargets,
+      colorTargets,
+      sizeScale,
+      colorScale,
+    };
+  }, [pointsValue, buffers]);
 
   // Animate on hovered country change
   useEffect(() => {
@@ -31,7 +87,11 @@ export default function useInteractions({ buffers, countryTypeToIdx }) {
       !countryTypeToIdx ||
       !remRadiusScale ||
       !remToColorScale ||
-      !remFromColorScale
+      !remFromColorScale ||
+      !sizeTargets ||
+      !colorTargets ||
+      !sizeScale ||
+      !colorScale
     )
       return;
 
@@ -40,11 +100,11 @@ export default function useInteractions({ buffers, countryTypeToIdx }) {
     const sizeSnapshot = sizeArr.slice();
     const colorSnapshot = colorArr.slice();
 
-    const sizeTargets = hoveredCountry
+    // Init copies (to be mutated)
+    const sizeTargetsProcessed = hoveredCountry
       ? new Float32Array(sizeArr.length)
-      : new Float32Array(buffers.size.og);
-
-    const colorTargets = buffers.color.og.slice();
+      : sizeTargets.slice();
+    const colorTargetsProcessed = colorTargets.slice();
 
     if (hoveredCountry) {
       const { type, country } = hoveredCountry;
@@ -55,24 +115,21 @@ export default function useInteractions({ buffers, countryTypeToIdx }) {
 
         const idx = countryTypeToIdx.get(flowType).get(d.flow[flowType]);
 
-        sizeTargets[idx] = remRadiusScale(d.flow.sim_remittances_with);
+        sizeTargetsProcessed[idx] = sizeScale(d);
 
-        if (flowType === "origin") {
-          colorDummy.setStyle(remToColorScale(d.flow.sim_remittances_with));
-        } else {
-          colorDummy.setStyle(remFromColorScale(d.flow.sim_remittances_with));
-        }
-        colorTargets[idx * 4] = colorDummy.r;
-        colorTargets[idx * 4 + 1] = colorDummy.g;
-        colorTargets[idx * 4 + 2] = colorDummy.b;
+        colorDummy.setStyle(colorScale(d, flowType));
+
+        colorTargetsProcessed[idx * 4] = colorDummy.r;
+        colorTargetsProcessed[idx * 4 + 1] = colorDummy.g;
+        colorTargetsProcessed[idx * 4 + 2] = colorDummy.b;
       });
 
       // Hovered country should be the same
       const countryOriginIdx = countryTypeToIdx.get("origin").get(country);
       const countryDestIdx = countryTypeToIdx.get("destination").get(country);
 
-      sizeTargets[countryOriginIdx] = buffers.size.og[countryOriginIdx];
-      sizeTargets[countryDestIdx] = buffers.size.og[countryDestIdx];
+      sizeTargetsProcessed[countryOriginIdx] = sizeTargets[countryOriginIdx];
+      sizeTargetsProcessed[countryDestIdx] = sizeTargets[countryDestIdx];
     }
 
     animRef.current = animate(0, 1, {
@@ -80,9 +137,11 @@ export default function useInteractions({ buffers, countryTypeToIdx }) {
       ease: "easeOut",
       onUpdate: (t) => {
         for (let i = 0; i < sizeArr.length; i++) {
-          sizeArr[i] = sizeSnapshot[i] + (sizeTargets[i] - sizeSnapshot[i]) * t;
+          sizeArr[i] =
+            sizeSnapshot[i] + (sizeTargetsProcessed[i] - sizeSnapshot[i]) * t;
           colorArr[i] =
-            colorSnapshot[i] + (colorTargets[i] - colorSnapshot[i]) * t;
+            colorSnapshot[i] +
+            (colorTargetsProcessed[i] - colorSnapshot[i]) * t;
         }
         buffers.size.buffer.needsUpdate = true;
         buffers.color.buffer.needsUpdate = true;
@@ -99,36 +158,40 @@ export default function useInteractions({ buffers, countryTypeToIdx }) {
     remToColorScale,
     remFromColorScale,
     enableMapInteractions,
+    sizeTargets,
+    colorTargets,
+    sizeScale,
+    colorScale,
   ]);
 
-  useEffect(() => {
-    if (!enableMapInteractions) return;
+  // useEffect(() => {
+  //   if (!enableMapInteractions) return;
 
-    if (!buffers) return;
+  //   if (!buffers) return;
 
-    const sizeArr = buffers.size.buffer.array;
-    const colorArr = buffers.color.buffer.array;
-    const sizeSnapshot = sizeArr.slice();
-    const colorSnapshot = colorArr.slice();
+  //   const sizeArr = buffers.size.buffer.array;
+  //   const colorArr = buffers.color.buffer.array;
+  //   const sizeSnapshot = sizeArr.slice();
+  //   const colorSnapshot = colorArr.slice();
 
-    const sizeTargets =
-      pointsValue[0] === "absolute" ? buffers.size.og : buffers.size.propGdp;
-    const colorTargets =
-      pointsValue[0] === "absolute" ? buffers.color.og : buffers.color.propGdp;
+  //   const sizeTargets =
+  //     pointsValue[0] === "absolute" ? buffers.size.og : buffers.size.propGdp;
+  //   const colorTargets =
+  //     pointsValue[0] === "absolute" ? buffers.color.og : buffers.color.propGdp;
 
-    animate(0, 1, {
-      duration: 0.5,
-      ease: "easeOut",
-      onUpdate: (t) => {
-        for (let i = 0; i < sizeArr.length; i++) {
-          sizeArr[i] = sizeSnapshot[i] + (sizeTargets[i] - sizeSnapshot[i]) * t;
+  //   animate(0, 1, {
+  //     duration: 0.5,
+  //     ease: "easeOut",
+  //     onUpdate: (t) => {
+  //       for (let i = 0; i < sizeArr.length; i++) {
+  //         sizeArr[i] = sizeSnapshot[i] + (sizeTargets[i] - sizeSnapshot[i]) * t;
 
-          colorArr[i] =
-            colorSnapshot[i] + (colorTargets[i] - colorSnapshot[i]) * t;
-        }
-        buffers.size.buffer.needsUpdate = true;
-        buffers.color.buffer.needsUpdate = true;
-      },
-    });
-  }, [pointsValue, enableMapInteractions, buffers]);
+  //         colorArr[i] =
+  //           colorSnapshot[i] + (colorTargets[i] - colorSnapshot[i]) * t;
+  //       }
+  //       buffers.size.buffer.needsUpdate = true;
+  //       buffers.color.buffer.needsUpdate = true;
+  //     },
+  //   });
+  // }, [pointsValue, enableMapInteractions, buffers]);
 }

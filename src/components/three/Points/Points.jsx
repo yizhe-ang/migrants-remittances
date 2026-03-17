@@ -204,7 +204,7 @@ const Points = ({ ...props }) => {
         }
       }
 
-      const colorsOg = new Float32Array(colors);
+      const colorsOg = colors.slice();
 
       const realCount = countriesGeoSorted.length;
 

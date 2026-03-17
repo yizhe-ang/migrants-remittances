@@ -1,6 +1,6 @@
 import { useRoomStore } from "@/store";
 import { extent, max } from "d3-array";
-import { scaleOrdinal, scaleSequentialPow, scaleSqrt } from "d3-scale";
+import { scaleOrdinal, scaleSequential, scaleSequentialPow, scaleSqrt } from "d3-scale";
 import {
   interpolatePuBuGn,
   interpolateYlOrBr,
@@ -46,7 +46,7 @@ export default function useScales() {
           (d) => d.sim_remittances_with,
         ),
       ])
-      .range([1, 11]);
+      .range([1, 12]);
 
     setRemRadiusScale(remRadiusScale);
 
@@ -56,7 +56,7 @@ export default function useScales() {
         0,
         max([...flowsByDestination, ...flowsByOrigin], (d) => d.prop_of_gdp),
       ])
-      .range([1, 11]);
+      .range([1, 12]);
 
     setPropGdpRadiusScale(propsGdpRadiusScale);
   }, [flowsByDestination, flowsByOrigin]);
@@ -71,9 +71,11 @@ export default function useScales() {
 
     setRemToColorScale(remToColorScale);
 
-    const propGdpToColorScale = scaleSequentialPow(interpolatePuBuGn)
-      .domain(extent(flowsByOrigin, (d) => d.prop_of_gdp))
-      .exponent(0.4);
+    const propGdpToColorScale = scaleSequential(interpolatePuBuGn).domain(
+      extent(flowsByOrigin, (d) => d.prop_of_gdp),
+    );
+
+    console.log(extent(flowsByOrigin, (d) => d.prop_of_gdp))
 
     setPropGdpToColorScale(propGdpToColorScale);
   }, [flowsByOrigin]);
@@ -88,9 +90,9 @@ export default function useScales() {
 
     setRemFromColorScale(remFromColorScale);
 
-    const propGdpFromColorScale = scaleSequentialPow(interpolateYlOrBr)
-      .domain(extent(flowsByDestination, (d) => d.prop_of_gdp))
-      .exponent(0.4);
+    const propGdpFromColorScale = scaleSequential(interpolateYlOrBr).domain(
+      extent(flowsByDestination, (d) => d.prop_of_gdp),
+    );
 
     setPropGdpFromColorScale(propGdpFromColorScale);
   }, [flowsByDestination]);
