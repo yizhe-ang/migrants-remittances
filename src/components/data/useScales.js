@@ -1,6 +1,11 @@
 import { useRoomStore } from "@/store";
 import { extent, max } from "d3-array";
-import { scaleOrdinal, scaleSequential, scaleSequentialPow, scaleSqrt } from "d3-scale";
+import {
+  scaleOrdinal,
+  scaleSequential,
+  scaleSequentialPow,
+  scaleSqrt,
+} from "d3-scale";
 import {
   interpolatePuBuGn,
   interpolateYlOrBr,
@@ -74,8 +79,6 @@ export default function useScales() {
     const propGdpToColorScale = scaleSequential(interpolatePuBuGn).domain(
       extent(flowsByOrigin, (d) => d.prop_of_gdp),
     );
-
-    console.log(extent(flowsByOrigin, (d) => d.prop_of_gdp))
 
     setPropGdpToColorScale(propGdpToColorScale);
   }, [flowsByOrigin]);

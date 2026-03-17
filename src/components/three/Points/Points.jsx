@@ -190,7 +190,8 @@ const Points = ({ ...props }) => {
           } else {
             colorDummy.setStyle(propGdpFromColorScale(d.prop_of_gdp));
           }
-          colorsPropGdp.push(colorDummy.r, colorDummy.g, colorDummy.b, 1);
+          // colorsPropGdp.push(colorDummy.r, colorDummy.g, colorDummy.b, 1);
+          colorsPropGdp.push(0, 0, 0, 1);
 
           colorDummy.setStyle(incomeColorScale(d.income));
           colorsIncome.push(colorDummy.r, colorDummy.g, colorDummy.b, 1);
@@ -205,6 +206,7 @@ const Points = ({ ...props }) => {
       }
 
       const colorsOg = colors.slice();
+      // const colorsOg = colorsPropGdp.slice();
 
       const realCount = countriesGeoSorted.length;
 

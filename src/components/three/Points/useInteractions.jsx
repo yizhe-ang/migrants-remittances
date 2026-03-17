@@ -61,6 +61,7 @@ export default function useInteractions({ buffers, countryTypeToIdx }) {
 
       colorScale = (d, flowType) => {
         if (flowType === "origin") {
+          console.log(d.flow.prop_of_gdp);
           return propGdpToColorScale(d.flow.prop_of_gdp);
         }
         if (flowType === "destination") {
