@@ -31,7 +31,7 @@ const MainView = () => {
       <div className="fixed inset-0 grid place-items-center pointer-events-none">
         <div className="h-[80vh]">
           <ParentSize>
-            {({ height }) => <SankeyIncome width={500} height={height} />}
+            {({ height }) => <SankeyIncome width={600} height={height} />}
           </ParentSize>
         </div>
       </div>

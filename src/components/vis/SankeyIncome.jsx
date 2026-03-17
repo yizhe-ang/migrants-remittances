@@ -12,7 +12,7 @@ const linkValue = (d) => d.sim_remittances_with;
 const nodeWidth = 25;
 const nodePadding = 20;
 
-const defaultMargin = { top: 10, left: 10, right: 10, bottom: 10 };
+const defaultMargin = { top: 10, left: 70, right: 70, bottom: 10 };
 
 const SankeyIncome = ({ width, height, margin = defaultMargin }) => {
   const incomeColorScale = useRoomStore((s) => s.incomeColorScale);

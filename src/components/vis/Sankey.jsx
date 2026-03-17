@@ -2,6 +2,7 @@ import { sankeyLinkHorizontal } from "@visx/sankey";
 import { useTooltip, TooltipWithBounds } from "@visx/tooltip";
 import { localPoint } from "@visx/event";
 import { motion } from "motion/react";
+import { moneyFormat } from "@/lib/utils";
 
 // TODO: Use patterns
 // TODO: Apply textures !!!!!!!!!!!!!!!!
@@ -24,12 +25,17 @@ const Sankey = ({ graph, width, height, colorScale, margin, ...props }) => {
   if (width < 10) return null;
 
   return (
-    <div className="relative" style={{
-      // opacity: 0,
-      // visibility: "hidden"
-    }} {...props}>
+    <div
+      className="relative"
+      style={
+        {
+          // opacity: 0,
+          // visibility: "hidden"
+        }
+      }
+      {...props}
+    >
       <svg width={width} height={height}>
-
         <g transform={`translate(${margin.left}, ${margin.top})`}>
           <g className="sankey-links">
             {graph.links.map((link, i) => (
@@ -100,16 +106,30 @@ const Sankey = ({ graph, width, height, colorScale, margin, ...props }) => {
           </g>
           <g>
             {graph.nodes.map((d) => {
+              const text = d.id.at(-1) === "-" ? d.id.slice(0, -1) : d.id;
+
               return (
-                <text
-                  x={d.x0 < width / 2 ? d.x1 + 12 : d.x0 - 6}
-                  y={(d.y1 + d.y0) / 2}
-                  dy="0.35em"
-                  textAnchor={d => d.x0 < width / 2 ? "start" : "end"}
-                >
-                  {d.id}
-                </text>
-              )
+                <g key={d.id}>
+                  <text
+                    x={d.x0 < width / 2 ? d.x1 + 12 : d.x0 - 12}
+                    y={(d.y1 + d.y0) / 2}
+                    dy="0.35em"
+                    textAnchor={d.x0 < width / 2 ? "start" : "end"}
+                    fontSize={14}
+                  >
+                    {text}
+                  </text>
+                  <text
+                    x={d.x0 < width / 2 ? d.x1 - 35 : d.x0 + 34}
+                    y={(d.y1 + d.y0) / 2}
+                    dy="0.35em"
+                    textAnchor={d.x0 < width / 2 ? "end" : "start"}
+                    fontSize={14}
+                  >
+                    {moneyFormat.format(d.value)}
+                  </text>
+                </g>
+              );
             })}
           </g>
         </g>

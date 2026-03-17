@@ -3,6 +3,13 @@ import { twMerge } from "tailwind-merge";
 import { color } from "d3-color";
 import { animate } from "motion";
 
+export const moneyFormat = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+  notation: "compact",
+  maximumFractionDigits: 1,
+});
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
