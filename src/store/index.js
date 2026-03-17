@@ -113,12 +113,16 @@ export const { roomStore, useRoomStore } = createRoomStore(
     propGdpToColorScale: null,
     setPropGdpToColorScale: (scale) => set({ propGdpToColorScale: scale }),
 
+    disasterTypeColorScale: null,
+    setDisasterTypeColorScale: (scale) =>
+      set({ disasterTypeColorScale: scale }),
+
     // Data vis ########################################################
     sankeyIncome: null,
     setSankeyIncome: (sankeyIncome) => set({ sankeyIncome }),
 
     // Controls / Interactions #################################################
-    enableMapInteractions: true,
+    enableMapInteractions: false,
     setEnableMapInteractions: (enableInteractions) =>
       set({ enableInteractions }),
 

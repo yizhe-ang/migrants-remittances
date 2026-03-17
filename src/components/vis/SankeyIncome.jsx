@@ -122,6 +122,7 @@ const SankeyIncome = ({ width, height, margin = defaultMargin }) => {
       upperMiddle: genGraph((d) => d.source === "Upper middle income-"),
       lowerMiddle: genGraph((d) => d.source === "Lower middle income-"),
       low: genGraph((d) => d.source === "Low income-"),
+      // test: genGraph((d) => d.source !== "High income-"),
       // TODO: Compute % of gdp
     };
 
@@ -179,6 +180,18 @@ const SankeyIncome = ({ width, height, margin = defaultMargin }) => {
               );
             })}
           </svg>
+          {/* <Sankey
+            graph={graphs.test}
+            width={width}
+            height={height}
+            colorScale={incomeColorScale}
+            margin={margin}
+            id="sankey-income-all"
+            style={{
+              opacity: 1,
+              visibility: "visible",
+            }}
+          /> */}
           <Sankey
             graph={graphs.all}
             width={width}

@@ -9,7 +9,10 @@ import {
 import {
   interpolatePuBuGn,
   interpolateYlOrBr,
+  schemeAccent,
   schemeObservable10,
+  schemeSet2,
+  schemeSet3,
 } from "d3-scale-chromatic";
 import { useEffect } from "react";
 
@@ -122,8 +125,17 @@ export default function useScales() {
         "Lower middle income",
         "Low income",
       ])
-      .range(schemeObservable10);
+      // .range(schemeObservable10.slice(6));
+      .range(schemeAccent);
+    // .range(schemeSet3);
 
     setIncomeColorScale(incomeColorScale);
+  }, []);
+
+  // Disaster type color scale
+  useEffect(() => {
+    const disasterTypeColorScale = scaleOrdinal()
+      .domain(["flood", "earthquake", "drought", "storm"])
+      .range(schemeObservable10);
   }, []);
 }
