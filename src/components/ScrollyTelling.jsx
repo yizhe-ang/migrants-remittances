@@ -16,6 +16,7 @@ const ScrollyTelling = () => {
   const arcs = useRoomStore((s) => s.arcs);
   const points = useRoomStore((s) => s.points);
   const sankeyIncome = useRoomStore((s) => s.sankeyIncome);
+  const setShowCountryPoints = useRoomStore((s) => s.setShowCountryPoints);
 
   useGSAP(() => {
     if (!cameraControls || !arcs || !points) return;
@@ -536,6 +537,13 @@ const ScrollyTelling = () => {
           start: "top bottom",
           end: "bottom bottom",
           scrub: true,
+          onEnter: () => {
+            setShowCountryPoints(["receiving"]);
+          },
+          onLeaveBack: () => {
+            console.log("yo");
+            setShowCountryPoints(["sending", "receiving"]);
+          },
         },
         duration: 1,
       })
@@ -561,15 +569,15 @@ const ScrollyTelling = () => {
           duration: 0.3,
         },
         0,
-      )
-      .to(
-        points.u.staggeredT,
-        {
-          value: 1,
-          duration: 0.8,
-        },
-        0.2,
       );
+    // .to(
+    //   points.u.staggeredT,
+    //   {
+    //     value: 1,
+    //     duration: 0.8,
+    //   },
+    //   0.2,
+    // );
   }, [cameraControls, arcs, points]);
 
   return <></>;
