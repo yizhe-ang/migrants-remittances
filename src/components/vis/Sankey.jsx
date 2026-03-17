@@ -3,6 +3,7 @@ import { useTooltip, TooltipWithBounds } from "@visx/tooltip";
 import { localPoint } from "@visx/event";
 import { motion } from "motion/react";
 import { moneyFormat } from "@/lib/utils";
+import colors from "tailwindcss/colors";
 
 // TODO: Use patterns
 // TODO: Apply textures !!!!!!!!!!!!!!!!
@@ -23,6 +24,9 @@ const Sankey = ({ graph, width, height, colorScale, margin, ...props }) => {
   } = useTooltip();
 
   if (width < 10) return null;
+
+  const xMax = width - margin.left - margin.right;
+  const yMax = height - margin.top - margin.bottom;
 
   return (
     <div
@@ -109,14 +113,14 @@ const Sankey = ({ graph, width, height, colorScale, margin, ...props }) => {
               const text = d.id.at(-1) === "-" ? d.id.slice(0, -1) : d.id;
 
               return (
-                <g key={d.id}>
+                <g key={d.id} fill={colors.stone[500]}>
                   <text
                     x={d.x0 < width / 2 ? d.x1 + 12 : d.x0 - 12}
                     y={(d.y1 + d.y0) / 2}
                     dy="0.35em"
                     textAnchor={d.x0 < width / 2 ? "start" : "end"}
                     fontSize={14}
-                    // fontWeight={600}
+                    fontWeight={600}
                   >
                     {text}
                   </text>
@@ -132,6 +136,14 @@ const Sankey = ({ graph, width, height, colorScale, margin, ...props }) => {
                 </g>
               );
             })}
+          </g>
+          <g fontWeight={600}>
+            <text textAnchor="middle" x={10} y={-20}>
+              {"Sending"}
+            </text>
+            <text textAnchor="middle" x={xMax - 12} y={-20}>
+              {"Receiving"}
+            </text>
           </g>
         </g>
       </svg>
