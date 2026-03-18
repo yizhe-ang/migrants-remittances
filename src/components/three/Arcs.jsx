@@ -58,9 +58,13 @@ const Arcs = (props) => {
       opacity: uniform(1),
       staggeredT: uniform(0),
       // Wind streaks style (0 = default, 1 = wind streaks)
-      windStreaksT: uniform(1),
+      windStreaksT: uniform(0),
       // windColor: uniform(new THREE.Color("#b0c4de")),
       windColor: uniform(new THREE.Color(chroma(colors.stone[600]).hex())),
+      // Wind color mode (0 = solid windColor, 1 = srcColor/tgtColor gradient)
+      windGradientT: uniform(0),
+      // Arc drawing direction (0 = default, 1 = reversed)
+      directionT: uniform(0),
     };
 
     // Build per-instance data
@@ -214,22 +218,21 @@ const Arcs = (props) => {
       // Blend low/high between default and wind modes
       const low = mix(defaultLow, windLow, u.windStreaksT);
       const high = mix(defaultHigh, windHigh, u.windStreaksT);
-      const t = float(1).sub(uv().x);
+      const t = mix(float(1).sub(uv().x), uv().x, u.directionT);
 
       If(t.lessThan(low).or(t.greaterThan(high)), () => {
         Discard();
       });
 
-      // Default: gradient from target to source color
-      const defaultColor = mix(u.tgtColor, u.srcColor, t);
+      // Base color: solid windColor or srcColor/tgtColor gradient, controlled by windGradientT
+      const baseColor = mix(u.windColor, mix(u.tgtColor, u.srcColor, t), u.windGradientT);
 
-      // Wind streaks: single color with directional fade (head bright, tail fades)
+      // Wind streaks: directional fade (head bright, tail fades)
       const fadeT = smoothstep(low, high, t);
-      // const windOpacity = fadeT.mul(0.9);
       const windOpacity = fadeT.mul(1);
 
-      // Blend color and opacity between modes
-      const c = mix(defaultColor, u.windColor, u.windStreaksT);
+      // Color is shared across modes; opacity differentiates them
+      const c = baseColor;
       const alpha = mix(u.opacity, windOpacity.mul(u.opacity), u.windStreaksT);
 
       return vec4(c, alpha);
