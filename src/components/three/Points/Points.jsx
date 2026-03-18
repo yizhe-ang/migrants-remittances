@@ -410,6 +410,7 @@ const Points = ({ ...props }) => {
   });
 
   useInteractions({
+    u,
     buffers,
     countryTypeToIdx,
   });

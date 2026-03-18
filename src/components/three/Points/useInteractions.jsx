@@ -5,7 +5,7 @@ import * as THREE from "three/webgpu";
 
 const colorDummy = new THREE.Color();
 
-export default function useInteractions({ buffers, countryTypeToIdx }) {
+export default function useInteractions({ u, buffers, countryTypeToIdx }) {
   const enableMapInteractions = useRoomStore(
     (state) => state.enableMapInteractions,
   );
@@ -13,6 +13,7 @@ export default function useInteractions({ buffers, countryTypeToIdx }) {
   const hoveredCountry = useRoomStore((state) => state.hoveredCountry);
   const showCountryPoints = useRoomStore((state) => state.showCountryPoints);
   const pointsValue = useRoomStore((state) => state.pointsValue);
+  const colorPointsBy = useRoomStore((state) => state.colorPointsBy);
 
   const flowsMap = useRoomStore((state) => state.flowsMap);
   const remRadiusScale = useRoomStore((state) => state.remRadiusScale);
@@ -25,10 +26,11 @@ export default function useInteractions({ buffers, countryTypeToIdx }) {
   const propGdpToColorScale = useRoomStore(
     (state) => state.propGdpToColorScale,
   );
+  const incomeColorScale = useRoomStore((state) => state.incomeColorScale);
 
   const animRef = useRef(null);
 
-  // Get target sizes and colors
+  // Get target sizes and colors ###############################################
   const { sizeTargets, colorTargets, sizeScale, colorScale } = useMemo(() => {
     if (!buffers) return {};
 
@@ -62,7 +64,6 @@ export default function useInteractions({ buffers, countryTypeToIdx }) {
 
       colorScale = (d, flowType) => {
         if (flowType === "origin") {
-          // console.log(d.flow.prop_of_gdp);
           return propGdpToColorScale(d.flow.prop_of_gdp);
         }
         if (flowType === "destination") {
@@ -87,9 +88,23 @@ export default function useInteractions({ buffers, countryTypeToIdx }) {
     propGdpToColorScale,
     propGdpFromColorScale,
     showCountryPoints,
+    colorPointsBy,
   ]);
 
-  // Select which points to hide
+  // Color by income ###########################################################
+  useEffect(() => {
+    if (!u) return;
+
+    if (colorPointsBy[0] === "income") {
+      animate(u.incomeColorT, { value: 1 }, { duration: 0.2 });
+    }
+
+    if (colorPointsBy[0] === "value") {
+      animate(u.incomeColorT, { value: 0 }, { duration: 0.2 });
+    }
+  }, [colorPointsBy, u]);
+
+  // Select which points to hide ###############################################
   useEffect(() => {
     if (!buffers) return;
 
@@ -165,6 +180,8 @@ export default function useInteractions({ buffers, countryTypeToIdx }) {
         const idx = countryTypeToIdx.get(flowType).get(d.flow[flowType]);
 
         sizeTargetsProcessed[idx] = sizeScale(d);
+
+        console.log(d);
 
         colorDummy.setStyle(colorScale(d, flowType));
 
