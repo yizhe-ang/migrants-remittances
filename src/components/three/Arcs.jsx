@@ -53,8 +53,6 @@ const Arcs = (props) => {
     const u = {
       srcColor: uniform(new THREE.Color(chroma(colors.blue["400"]).hex())),
       tgtColor: uniform(new THREE.Color(chroma(colors.orange["400"]).hex())),
-      // Movement animation
-      movementT: uniform(0),
       opacity: uniform(1),
       staggeredT: uniform(0),
       // Wind streaks style (0 = default, 1 = wind streaks)
@@ -181,19 +179,12 @@ const Arcs = (props) => {
         .add(0.5);
       const wobble = noise.mul(0.5);
 
-      const randomProgress = mix(
-        0,
-        time.mul(baseSpeed).add(randOffset.mul(7)).add(wobble),
-        u.movementT,
-      );
-
       // Staggered draw-in: each arc draws at a different time as staggeredT goes 0→1
       const instanceStagger = u.staggeredT.mul(2).sub(randOffset).clamp(0, 1);
 
       const progress = progressBase
-        .add(randomProgress)
         .add(instanceStagger)
-        .mod(mix(1, 7, u.movementT));
+        .mod(1);
 
       // Default: draw/undraw window
       const defaultLow = progress.mul(2).sub(1).max(0);

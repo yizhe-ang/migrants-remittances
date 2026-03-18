@@ -16,7 +16,11 @@ const ScrollyTelling = () => {
   const arcs = useRoomStore((s) => s.arcs);
   const points = useRoomStore((s) => s.points);
   const sankeyIncome = useRoomStore((s) => s.sankeyIncome);
+
   const setShowCountryPoints = useRoomStore((s) => s.setShowCountryPoints);
+  const setEnableMapInteractions = useRoomStore(
+    (s) => s.setEnableMapInteractions,
+  )
 
   useGSAP(() => {
     if (!cameraControls || !arcs || !points) return;
@@ -287,49 +291,25 @@ const ScrollyTelling = () => {
         },
         0.1,
       )
-      .to(
-        arcs.u.movementT,
-        {
-          value: 1,
-          duration: 0.1,
-        },
-        0.2,
-      )
-      .to(
-        arcs.u.opacity,
-        {
-          value: 1,
-          duration: 0.5,
-        },
-        0.3,
-      );
+      // .to(
+      //   arcs.u.opacity,
+      //   {
+      //     value: 1,
+      //     duration: 0.5,
+      //   },
+      //   0.3,
+      // );
 
-    gsap
-      .timeline({
-        scrollTrigger: {
-          trigger: "#step-5",
-          start: "top bottom",
-          end: "bottom bottom",
-          scrub: true,
-        },
-        duration: 1,
-      })
-      .to(
-        arcs.u.opacity,
-        {
-          value: 0,
-          duration: 0.4,
-        },
-        0.4,
-      )
-      .to(
-        arcs.u.movementT,
-        {
-          value: 0,
-          duration: 0.1,
-        },
-        0.9,
-      );
+    // gsap
+    //   .timeline({
+    //     scrollTrigger: {
+    //       trigger: "#step-5",
+    //       start: "top bottom",
+    //       end: "bottom bottom",
+    //       scrub: true,
+    //     },
+    //     duration: 1,
+    //   })
 
     gsap
       .timeline({
@@ -432,6 +412,42 @@ const ScrollyTelling = () => {
         },
         0.7,
       );
+
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: "#step-dashboard-1",
+          start: "top bottom",
+          end: "bottom bottom",
+          scrub: true,
+          onEnter: () => {
+            console.log('wot')
+            setEnableMapInteractions(true);
+            // arcs.u.staggeredT.value = 0
+          },
+          onLeaveBack: () => {
+            setEnableMapInteractions(false);
+            // arcs.u.staggeredT.value = 1
+          },
+        },
+        duration: 1,
+      })
+      .to(
+        "#show-controls",
+        {
+          autoAlpha: 1,
+          duration: 0.1
+        },
+        0
+      )
+      // .to(
+      //   arcs.u.staggeredT,
+      //   {
+      //     value: 0,
+      //     duration: 0.05,
+      //   },
+      //   0,
+      // )
 
     // Show income scales etc.
     gsap.timeline({

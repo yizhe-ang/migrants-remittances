@@ -36,11 +36,8 @@ const Steps = () => {
         <P>
           These remittances - estimated in 2023 to total about $857 billion –
           now dwarf official development aid and represent a lifeline for many
-          economies.
+          economies. [Show chart here]
         </P>
-      </Step>
-
-      <Step id="step-5">
         <P>
           But where do these transfers actually end up in? Do they flow to
           countries in need, such as low-income and middle-income countries?
@@ -52,7 +49,7 @@ const Steps = () => {
         </P>
       </Step>
 
-      <Step id="step-6" className="h-[200vh] pt-[50vh]">
+      <Step id="step-6" className="h-[200vh]">
         <P>
           To answer these questions and more, researchers from CSH built a novel
           model to better understand the dynamics and structure of remittance
@@ -62,7 +59,7 @@ const Steps = () => {
       </Step>
 
       {/* <div id="step-dashboard" className="h-[100vh]"></div> */}
-      <Step id="step-dashboard">
+      <Step id="step-dashboard-1">
         <P>
           Interact!
         </P>
@@ -155,7 +152,7 @@ const P = ({ className, ...props }) => {
 };
 
 const C = ({ className, ...props }) => {
-  return <span className={cn("px-1 rounded", className)} {...props} />;
+  return <span className={cn("px-1 rounded font-medium", className)} {...props} />;
 };
 
 export default Steps;
