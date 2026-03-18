@@ -129,7 +129,7 @@ export const { roomStore, useRoomStore } = createRoomStore(
     setSankeyIncome: (sankeyIncome) => set({ sankeyIncome }),
 
     // Controls / Interactions #################################################
-    enableMapInteractions: false,
+    enableMapInteractions: true,
     setEnableMapInteractions: (enableInteractions) =>
       set({ enableInteractions }),
 
@@ -145,7 +145,7 @@ export const { roomStore, useRoomStore } = createRoomStore(
     mousePosition: { x: 0, y: 0 },
     setMousePosition: (mousePosition) => set({ mousePosition }),
 
-    showCountryPoints: ["sending", "receiving"],
+    showCountryPoints: ["receiving"],
     setShowCountryPoints: (showCountryPoints) => set({ showCountryPoints }),
 
     pointsValue: ["absolute"],

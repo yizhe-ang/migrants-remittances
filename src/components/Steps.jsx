@@ -2,7 +2,7 @@ import { cn } from "@sqlrooms/ui";
 
 const Steps = () => {
   return (
-    <div className="w-full z-10">
+    <div className="w-full z-10 pointer-events-none">
       <div className="h-screen pointer-events-none" />
 
       <Step id="step-1">

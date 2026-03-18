@@ -21,7 +21,7 @@ const MainView = () => {
 
   return (
     <>
-      <div className="fixed inset-0 bg-stone-200 -z-10">
+      <div className="fixed inset-0 bg-stone-200 z-10">
         <Three />
 
         <Controls />
@@ -48,9 +48,9 @@ const MainView = () => {
         </div>
       </div> */}
 
-      <Steps />
+      {/* <Steps /> */}
 
-      <ScrollyTelling />
+      {/* <ScrollyTelling /> */}
 
       <CountryTooltip />
     </>

@@ -30,7 +30,6 @@ const Controls = () => {
         <div className="flex flex-col gap-1">
           <div className="text-sm pl-1 text-stone-500">show countries</div>
           <ToggleGroup
-            multiple
             value={showCountryPoints}
             onValueChange={setShowCountryPoints}
           >
