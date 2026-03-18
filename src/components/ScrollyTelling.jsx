@@ -80,6 +80,18 @@ const ScrollyTelling = () => {
         autoAlpha: 0,
       },
     );
+    // gsap.set(
+    //   "#sankey-income-upper-middle .sankey-links, #sankey-income-upper-middle .sankey-nodes, #sankey-income-upper-middle .sankey-data-texts",
+    //   {
+    //     autoAlpha: 0,
+    //   },
+    // );
+    gsap.set(
+      "#sankey-income-upper-middle .sankey-links, #sankey-income-upper-middle .sankey-nodes",
+      {
+        autoAlpha: 0,
+      },
+    );
 
     gsap
       .timeline({
@@ -546,6 +558,14 @@ const ScrollyTelling = () => {
         duration: 1,
       })
       .to(
+        "#sankey-income-all .sankey-data-texts",
+        {
+          autoAlpha: 0,
+          duration: 0.2,
+        },
+        0,
+      )
+      .to(
         "#sankey-income-all .sankey-links path",
         {
           attr: {
@@ -587,6 +607,14 @@ const ScrollyTelling = () => {
           duration: 0.4,
         },
         0,
+      )
+      .to(
+        "#sankey-income-upper-middle",
+        {
+          autoAlpha: 1,
+          duration: 0.2,
+        },
+        0.2,
       )
       .to(
         "#sankey-income",

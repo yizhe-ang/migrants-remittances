@@ -18,7 +18,7 @@ const SankeyIncome = ({ width, height, margin = defaultMargin }) => {
   const incomeColorScale = useRoomStore((s) => s.incomeColorScale);
   const flowsByIncome = useRoomStore((s) => s.flowsByIncome);
 
-  const colorScale = incomeColorScale
+  const colorScale = incomeColorScale;
 
   const setSankeyIncome = useRoomStore((s) => s.setSankeyIncome);
 
@@ -192,14 +192,26 @@ const SankeyIncome = ({ width, height, margin = defaultMargin }) => {
               visibility: "visible",
             }}
           /> */}
-          <Sankey
-            graph={graphs.all}
-            width={width}
-            height={height}
-            colorScale={incomeColorScale}
-            margin={margin}
-            id="sankey-income-all"
-          />
+          <div className="relative">
+            <Sankey
+              graph={graphs.all}
+              width={width}
+              height={height}
+              colorScale={incomeColorScale}
+              margin={margin}
+              id="sankey-income-all"
+            />
+            <div className="absolute top-0 left-0">
+              <Sankey
+                graph={graphs.upperMiddle}
+                width={width}
+                height={height}
+                colorScale={incomeColorScale}
+                margin={margin}
+                id="sankey-income-upper-middle"
+              />
+            </div>
+          </div>
           <Sankey
             graph={graphs.lowerMiddle}
             width={width}
