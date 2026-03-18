@@ -162,7 +162,15 @@ const ScrollyTelling = () => {
       .to(
         arcs.u.windStreaksT,
         {
-          value: 0,
+          value: 1,
+          duration: 0.1,
+        },
+        0,
+      )
+      .to(
+        arcs.u.windGradientT,
+        {
+          value: 1,
           duration: 0.1,
         },
         0,
@@ -426,16 +434,15 @@ const ScrollyTelling = () => {
       );
 
     // Show income scales etc.
-    gsap
-      .timeline({
-        scrollTrigger: {
-          trigger: "#step-7",
-          start: "top bottom",
-          end: "bottom bottom",
-          scrub: true,
-        },
-        duration: 1,
-      })
+    gsap.timeline({
+      scrollTrigger: {
+        trigger: "#step-7",
+        start: "top bottom",
+        end: "bottom bottom",
+        scrub: true,
+      },
+      duration: 1,
+    });
 
     // Transition to sankey
     gsap
