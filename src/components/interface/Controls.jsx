@@ -30,7 +30,6 @@ const Controls = () => {
         <div className="flex flex-col gap-1">
           <div className="text-sm pl-1 text-stone-500">show countries</div>
           <ToggleGroup
-            variant="outline"
             multiple
             value={showCountryPoints}
             onValueChange={setShowCountryPoints}
@@ -44,71 +43,9 @@ const Controls = () => {
           </ToggleGroup>
         </div>
 
-        <div className="flex flex-col gap-1">
-          <div className="text-sm pl-1 text-stone-500">size represents</div>
-          <ToggleGroup
-            variant="outline"
-            value={pointsValue}
-            onValueChange={setPointsValue}
-          >
-            <ToggleGroupItem value="absolute" aria-label="">
-              Absolute
-            </ToggleGroupItem>
-            <ToggleGroupItem value="propGdp" aria-label="">
-              % of GDP
-            </ToggleGroupItem>
-          </ToggleGroup>
-
-          {/* Size scale */}
-          {/* <div className="mt-2 pl-1">
-            <AnimatePresence>
-              {remRadiusScale && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                >
-                  <LegendSize scale={remRadiusScale} className="text-sm">
-                    {(labels) =>
-                      labels.map((label) => {
-                        const size = remRadiusScale(label.datum) ?? 0;
-                        // const color = sizeColorScale(label.datum);
-                        const color = "black"
-
-                        return (
-                          <LegendItem
-                            key={`legend-${label.text}-${label.index}`}
-                          >
-                            <svg
-                              width={size}
-                              height={size}
-                              style={{ margin: "5px 0" }}
-                            >
-                              <circle
-                                fill={color}
-                                r={size / 2}
-                                cx={size / 2}
-                                cy={size / 2}
-                              />
-                            </svg>
-                            <LegendLabel align="left" margin="0 4px">
-                              {label.text}
-                            </LegendLabel>
-                          </LegendItem>
-                        );
-                      })
-                    }
-                  </LegendSize>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div> */}
-        </div>
-
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-1 w-[180px]" id="color-controls">
           <div className="text-sm pl-1 text-stone-500">color by</div>
           <ToggleGroup
-            variant="outline"
             value={colorPointsBy}
             onValueChange={setColorPointsBy}
           >
@@ -137,6 +74,21 @@ const Controls = () => {
               )}
             </AnimatePresence>
           </div>
+        </div>
+
+        <div className="flex flex-col gap-1" id="size-controls">
+          <div className="text-sm pl-1 text-stone-500">size represents</div>
+          <ToggleGroup
+            value={pointsValue}
+            onValueChange={setPointsValue}
+          >
+            <ToggleGroupItem value="absolute" aria-label="">
+              Absolute
+            </ToggleGroupItem>
+            <ToggleGroupItem value="propGdp" aria-label="">
+              % of GDP
+            </ToggleGroupItem>
+          </ToggleGroup>
         </div>
       </div>
     </div>

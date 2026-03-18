@@ -45,15 +45,22 @@ const CameraControls = (props) => {
       makeDefault
       ref={ref}
       mouseButtons={{
-        left: ACTION.TRUCK,
-        middle: ACTION.DOLLY,
-        right: ACTION.ROTATE,
-        wheel: ACTION.DOLLY,
+        // left: ACTION.TRUCK,
+        // middle: ACTION.DOLLY,
+        // right: ACTION.ROTATE,
+        // wheel: ACTION.DOLLY,
+        left: ACTION.NONE,
+        middle: ACTION.NONE,
+        right: ACTION.NONE,
+        wheel: ACTION.NONE,
       }}
       touches={{
-        one: ACTION.TOUCH_ROTATE,
-        two: ACTION.TOUCH_DOLLY_TRUCK,
-        three: ACTION.TOUCH_DOLLY_TRUCK,
+        // one: ACTION.TOUCH_ROTATE,
+        // two: ACTION.TOUCH_DOLLY_TRUCK,
+        // three: ACTION.TOUCH_DOLLY_TRUCK,
+        one: ACTION.NONE,
+        two: ACTION.NONE,
+        three: ACTION.NONE,
       }}
     ></CameraControlsDrei>
   );

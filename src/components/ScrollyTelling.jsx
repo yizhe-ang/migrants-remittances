@@ -48,6 +48,20 @@ const ScrollyTelling = () => {
       sizePropGdpT: 0,
     };
 
+    const sendingPoints = [
+      ...points.countryTypeToIdx.get("destination").values(),
+    ].map((idx) => ({
+      sizeT: 0,
+      idx,
+    }));
+
+    const receivingPoints = [
+      ...points.countryTypeToIdx.get("origin").values(),
+    ].map((idx) => ({
+      sizeT: 0,
+      idx,
+    }));
+
     gsap
       .timeline({
         scrollTrigger: {
@@ -342,6 +356,7 @@ const ScrollyTelling = () => {
         },
         0.05,
       )
+      // Zoom out to default view
       .to(
         cameraLookAt,
         {
@@ -353,11 +368,20 @@ const ScrollyTelling = () => {
         },
         0,
       )
+      // Show sending countries first
       .to(
-        points.u.staggeredT,
+        sendingPoints,
         {
-          value: 1,
-          duration: 0.9,
+          sizeT: 1,
+          duration: 0.3,
+          stagger: 0.001,
+          onUpdate: () => {
+            sendingPoints.forEach(({ sizeT, idx }) => {
+              points.buffers.size.buffer.array[idx] =
+                sizeT * points.buffers.size.og[idx];
+            });
+            points.buffers.size.buffer.needsUpdate = true;
+          },
         },
         0.1,
       )
@@ -365,10 +389,53 @@ const ScrollyTelling = () => {
         arcs.u.staggeredT,
         {
           value: 1,
-          duration: 0.9,
+          duration: 0.6,
         },
-        0.3,
+        0.4,
+      )
+      .to(
+        sendingPoints,
+        {
+          sizeT: 0,
+          duration: 0.1,
+          onUpdate: () => {
+            sendingPoints.forEach(({ sizeT, idx }) => {
+              points.buffers.size.buffer.array[idx] =
+                sizeT * points.buffers.size.og[idx];
+            });
+            points.buffers.size.buffer.needsUpdate = true;
+          },
+        },
+        0.6,
+      )
+      .to(
+        receivingPoints,
+        {
+          sizeT: 1,
+          duration: 0.3,
+          stagger: 0.001,
+          onUpdate: () => {
+            receivingPoints.forEach(({ sizeT, idx }) => {
+              points.buffers.size.buffer.array[idx] =
+                sizeT * points.buffers.size.og[idx];
+            });
+            points.buffers.size.buffer.needsUpdate = true;
+          },
+        },
+        0.7,
       );
+
+    // Show income scales etc.
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: "#step-7",
+          start: "top bottom",
+          end: "bottom bottom",
+          scrub: true,
+        },
+        duration: 1,
+      })
 
     // Transition to sankey
     gsap

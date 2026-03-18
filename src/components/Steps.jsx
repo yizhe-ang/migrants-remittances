@@ -52,7 +52,7 @@ const Steps = () => {
         </P>
       </Step>
 
-      <Step id="step-6">
+      <Step id="step-6" className="h-[200vh] pt-[50vh]">
         <P>
           To answer these questions and more, researchers from CSH built a novel
           model to better understand the dynamics and structure of remittance
@@ -61,7 +61,19 @@ const Steps = () => {
         </P>
       </Step>
 
-      <div id="step-dashboard" className="h-[100vh]"></div>
+      {/* <div id="step-dashboard" className="h-[100vh]"></div> */}
+      <Step id="step-dashboard">
+        <P>
+          Interact!
+        </P>
+      </Step>
+
+      <Step id="step-7-1">
+        <P>
+          If we were to group countries by their income level, we can see that
+          high-income countries dominate the sending of money.
+        </P>
+      </Step>
 
       <Step id="step-7">
         <P>
@@ -126,12 +138,12 @@ const Step = ({ className, children, ...props }) => {
   return (
     <div
       className={cn(
-        "border border-red-300 border-0 h-[100vh] max-w-xl mx-auto",
+        "border border-red-300 border-0 h-[100vh] max-w-xl mx-auto pointer-events-none",
         className,
       )}
       {...props}
     >
-      <div className="px-4 py-4 bg-white rounded shadow-xl flex flex-col gap-4">
+      <div className="px-4 py-4 bg-white rounded shadow-xl flex flex-col gap-4 pointer-events-auto">
         {children}
       </div>
     </div>
