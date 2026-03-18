@@ -33,8 +33,8 @@ const Sankey = ({ graph, width, height, colorScale, margin, ...props }) => {
       className="relative"
       style={
         {
-          // opacity: 0,
-          // visibility: "hidden"
+          opacity: 0,
+          visibility: "hidden"
         }
       }
       {...props}

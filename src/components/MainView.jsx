@@ -21,20 +21,20 @@ const MainView = () => {
 
   return (
     <>
-      <div className="fixed inset-0 bg-stone-200 z-10">
+      <div className="fixed inset-0 bg-stone-200 -z-10">
         <Three />
 
         <Controls />
       </div>
 
       {/* Sankey income */}
-      {/* <div className="fixed inset-0 grid place-items-center pointer-events-none">
+      <div className="fixed inset-0 grid place-items-center pointer-events-none">
         <div className="h-[80vh]">
           <ParentSize>
             {({ height }) => <SankeyIncome width={600} height={height} />}
           </ParentSize>
         </div>
-      </div> */}
+      </div>
 
       {/* <div className="fixed inset-0 grid place-items-center pointer-events-none">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
@@ -48,9 +48,9 @@ const MainView = () => {
         </div>
       </div> */}
 
-      {/* <Steps /> */}
+      <Steps />
 
-      {/* <ScrollyTelling /> */}
+      <ScrollyTelling />
 
       <CountryTooltip />
     </>
