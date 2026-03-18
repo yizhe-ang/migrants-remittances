@@ -28,6 +28,8 @@ const Sankey = ({ graph, width, height, colorScale, margin, ...props }) => {
   const xMax = width - margin.left - margin.right;
   const yMax = height - margin.top - margin.bottom;
 
+  console.log(graph.nodes)
+
   return (
     <div
       className="relative"
