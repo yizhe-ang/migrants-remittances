@@ -421,13 +421,11 @@ const ScrollyTelling = () => {
           end: "bottom bottom",
           scrub: true,
           onEnter: () => {
-            console.log('wot')
             setEnableMapInteractions(true);
-            // arcs.u.staggeredT.value = 0
           },
           onLeaveBack: () => {
+            console.log('hey')
             setEnableMapInteractions(false);
-            // arcs.u.staggeredT.value = 1
           },
         },
         duration: 1,
@@ -436,18 +434,10 @@ const ScrollyTelling = () => {
         "#show-controls",
         {
           autoAlpha: 1,
-          duration: 0.1
+          duration: 0.3
         },
         0
       )
-      // .to(
-      //   arcs.u.staggeredT,
-      //   {
-      //     value: 0,
-      //     duration: 0.05,
-      //   },
-      //   0,
-      // )
 
     // Show income scales etc.
     gsap.timeline({

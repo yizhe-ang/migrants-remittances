@@ -140,8 +140,6 @@ export default function useInteractions({ u, buffers, countryTypeToIdx }) {
 
   // Animate on hovered country change
   useEffect(() => {
-    console.log(enableMapInteractions)
-
     if (!enableMapInteractions) return;
 
     if (
