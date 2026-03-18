@@ -60,7 +60,7 @@ const Arcs = (props) => {
       // Wind streaks style (0 = default, 1 = wind streaks)
       windStreaksT: uniform(0),
       // windColor: uniform(new THREE.Color("#b0c4de")),
-      windColor: uniform(new THREE.Color(chroma(colors.stone[600]).hex())),
+      windColor: uniform(new THREE.Color(chroma(colors.stone[500]).hex())),
       // Wind color mode (0 = solid windColor, 1 = srcColor/tgtColor gradient)
       windGradientT: uniform(0),
       // Arc drawing direction (0 = default, 1 = reversed)

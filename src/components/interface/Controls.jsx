@@ -27,7 +27,14 @@ const Controls = () => {
   return (
     <div className="absolute w-full h-full top-0 left-0 pointer-events-none">
       <div className="w-full px-10 py-4 pointer-events-auto flex gap-5">
-        <div className="flex flex-col gap-1">
+        <div
+          className="flex flex-col gap-1"
+          id="show-controls"
+          style={{
+            opacity: 0,
+            visibility: "hidden",
+          }}
+        >
           <div className="text-sm pl-1 text-stone-500">show countries</div>
           <ToggleGroup
             value={showCountryPoints}
@@ -35,16 +42,33 @@ const Controls = () => {
               if (val.length > 0) setShowCountryPoints(val);
             }}
           >
-            <ToggleGroupItem value="sending" aria-label="">
-              Sending
+            <ToggleGroupItem
+              value="sending"
+              aria-label=""
+              className="flex gap-1 items-center"
+            >
+              <div className="size-4 rounded-full bg-orange-300"></div>
+              <div>Sending</div>
             </ToggleGroupItem>
-            <ToggleGroupItem value="receiving" aria-label="">
-              Receiving
+            <ToggleGroupItem
+              value="receiving"
+              aria-label=""
+              className="flex gap-1 items-center"
+            >
+              <div className="size-4 rounded-full bg-blue-300"></div>
+              <div>Receiving</div>
             </ToggleGroupItem>
           </ToggleGroup>
         </div>
 
-        <div className="flex flex-col gap-1 w-[180px]" id="color-controls">
+        <div
+          className="flex flex-col gap-1 w-[180px]"
+          id="color-controls"
+          style={{
+            opacity: 0,
+            visibility: "hidden",
+          }}
+        >
           <div className="text-sm pl-1 text-stone-500">color by</div>
           <ToggleGroup
             value={colorPointsBy}
@@ -79,7 +103,14 @@ const Controls = () => {
           </div>
         </div>
 
-        <div className="flex flex-col gap-1" id="size-controls">
+        <div
+          className="flex flex-col gap-1"
+          id="size-controls"
+          style={{
+            opacity: 0,
+            visibility: "hidden",
+          }}
+        >
           <div className="text-sm pl-1 text-stone-500">size represents</div>
           <ToggleGroup
             value={pointsValue}
