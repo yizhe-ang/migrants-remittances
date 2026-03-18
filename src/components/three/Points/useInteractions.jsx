@@ -162,14 +162,15 @@ export default function useInteractions({ u, buffers, countryTypeToIdx }) {
     const colorSnapshot = colorArr.slice();
 
     // Init copies (to be mutated)
-    const sizeTargetsProcessed = new Float32Array(sizeArr.length);
+    // const sizeTargetsProcessed = new Float32Array(sizeArr.length);
+    const sizeTargetsProcessed = sizeTargets.slice();
     const colorTargetsProcessed = colorTargets.slice();
 
     // Show only either receiving or sending
     if (showCountryPoints[0] === "receiving") {
-      for (const idx of countryTypeToIdx.get("origin").values()) {
-        sizeTargetsProcessed[idx] = buffers.size.og[idx];
-      }
+      // for (const idx of countryTypeToIdx.get("origin").values()) {
+      //   sizeTargetsProcessed[idx] = buffers.size.og[idx];
+      // }
       for (const idx of countryTypeToIdx.get("destination").values()) {
         sizeTargetsProcessed[idx] = 0;
       }
@@ -179,9 +180,9 @@ export default function useInteractions({ u, buffers, countryTypeToIdx }) {
       for (const idx of countryTypeToIdx.get("origin").values()) {
         sizeTargetsProcessed[idx] = 0;
       }
-      for (const idx of countryTypeToIdx.get("destination").values()) {
-        sizeTargetsProcessed[idx] = buffers.size.og[idx];
-      }
+      // for (const idx of countryTypeToIdx.get("destination").values()) {
+      //   sizeTargetsProcessed[idx] = buffers.size.og[idx];
+      // }
     }
 
     // If hovered, change target values
