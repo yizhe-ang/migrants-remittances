@@ -14,45 +14,54 @@ const Controls = () => {
   return (
     <div className="absolute w-full h-full top-0 left-0 pointer-events-none">
       <div className="w-full px-10 py-4 pointer-events-auto flex gap-5">
-        <ToggleGroup
-          variant="outline"
-          multiple
-          value={showCountryPoints}
-          onValueChange={setShowCountryPoints}
-        >
-          <ToggleGroupItem value="sending" aria-label="">
-            Sending
-          </ToggleGroupItem>
-          <ToggleGroupItem value="receiving" aria-label="">
-            Receiving
-          </ToggleGroupItem>
-        </ToggleGroup>
+        <div className="flex flex-col gap-1">
+          <div className="text-sm pl-1 text-stone-500">show countries</div>
+          <ToggleGroup
+            variant="outline"
+            multiple
+            value={showCountryPoints}
+            onValueChange={setShowCountryPoints}
+          >
+            <ToggleGroupItem value="sending" aria-label="">
+              Sending
+            </ToggleGroupItem>
+            <ToggleGroupItem value="receiving" aria-label="">
+              Receiving
+            </ToggleGroupItem>
+          </ToggleGroup>
+        </div>
 
-        <ToggleGroup
-          variant="outline"
-          value={pointsValue}
-          onValueChange={setPointsValue}
-        >
-          <ToggleGroupItem value="absolute" aria-label="">
-            Absolute
-          </ToggleGroupItem>
-          <ToggleGroupItem value="propGdp" aria-label="">
-            % of GDP
-          </ToggleGroupItem>
-        </ToggleGroup>
+        <div className="flex flex-col gap-1">
+          <div className="text-sm pl-1 text-stone-500">size represents</div>
+          <ToggleGroup
+            variant="outline"
+            value={pointsValue}
+            onValueChange={setPointsValue}
+          >
+            <ToggleGroupItem value="absolute" aria-label="">
+              Absolute
+            </ToggleGroupItem>
+            <ToggleGroupItem value="propGdp" aria-label="">
+              % of GDP
+            </ToggleGroupItem>
+          </ToggleGroup>
+        </div>
 
-        <ToggleGroup
-          variant="outline"
-          value={colorPointsBy}
-          onValueChange={setColorPointsBy}
-        >
-          <ToggleGroupItem value="value" aria-label="">
-            $
-          </ToggleGroupItem>
-          <ToggleGroupItem value="income" aria-label="">
-            Income
-          </ToggleGroupItem>
-        </ToggleGroup>
+        <div className="flex flex-col gap-1">
+          <div className="text-sm pl-1 text-stone-500">color by</div>
+          <ToggleGroup
+            variant="outline"
+            value={colorPointsBy}
+            onValueChange={setColorPointsBy}
+          >
+            <ToggleGroupItem value="value" aria-label="">
+              $
+            </ToggleGroupItem>
+            <ToggleGroupItem value="income" aria-label="">
+              Income
+            </ToggleGroupItem>
+          </ToggleGroup>
+        </div>
       </div>
     </div>
   );
