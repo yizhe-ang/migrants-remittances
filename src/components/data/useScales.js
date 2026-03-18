@@ -66,7 +66,7 @@ export default function useScales() {
         0,
         max([...flowsByDestination, ...flowsByOrigin], (d) => d.prop_of_gdp),
       ])
-      .range([1.1, 13]);
+      .range([1.1, 12]);
 
     setPropGdpRadiusScale(propsGdpRadiusScale);
   }, [flowsByDestination, flowsByOrigin]);
@@ -81,9 +81,9 @@ export default function useScales() {
 
     setRemToColorScale(remToColorScale);
 
-    const propGdpToColorScale = scaleSequential(interpolatePuBuGn).domain(
-      extent(flowsByOrigin, (d) => d.prop_of_gdp),
-    );
+    const propGdpToColorScale = scaleSequentialPow(interpolatePuBuGn)
+      .domain(extent(flowsByOrigin, (d) => d.prop_of_gdp))
+      .exponent(0.35);
 
     // console.log("propGdpToColorScale domain:", propGdpToColorScale.domain());
     setPropGdpToColorScale(propGdpToColorScale);
@@ -99,9 +99,9 @@ export default function useScales() {
 
     setRemFromColorScale(remFromColorScale);
 
-    const propGdpFromColorScale = scaleSequential(interpolateYlOrBr).domain(
-      extent(flowsByDestination, (d) => d.prop_of_gdp),
-    );
+    const propGdpFromColorScale = scaleSequentialPow(interpolateYlOrBr)
+      .domain(extent(flowsByDestination, (d) => d.prop_of_gdp))
+      .exponent(0.35);
 
     // console.log("propGdpFromColorScale domain:", propGdpFromColorScale.domain());
     setPropGdpFromColorScale(propGdpFromColorScale);
