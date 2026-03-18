@@ -1,6 +1,11 @@
 import { useRoomStore } from "@/store";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { LegendOrdinal } from "@visx/legend";
+import {
+  LegendItem,
+  LegendLabel,
+  LegendOrdinal,
+  LegendSize,
+} from "@visx/legend";
 import { AnimatePresence, motion } from "motion/react";
 
 const Controls = () => {
@@ -14,6 +19,10 @@ const Controls = () => {
   const setColorPointsBy = useRoomStore((state) => state.setColorPointsBy);
 
   const incomeColorScale = useRoomStore((state) => state.incomeColorScale);
+  const remRadiusScale = useRoomStore((state) => state.remRadiusScale);
+  const propsGdpRadiusScale = useRoomStore(
+    (state) => state.propsGdpRadiusScale,
+  );
 
   return (
     <div className="absolute w-full h-full top-0 left-0 pointer-events-none">
@@ -49,6 +58,51 @@ const Controls = () => {
               % of GDP
             </ToggleGroupItem>
           </ToggleGroup>
+
+          {/* Size scale */}
+          {/* <div className="mt-2 pl-1">
+            <AnimatePresence>
+              {remRadiusScale && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  <LegendSize scale={remRadiusScale} className="text-sm">
+                    {(labels) =>
+                      labels.map((label) => {
+                        const size = remRadiusScale(label.datum) ?? 0;
+                        // const color = sizeColorScale(label.datum);
+                        const color = "black"
+
+                        return (
+                          <LegendItem
+                            key={`legend-${label.text}-${label.index}`}
+                          >
+                            <svg
+                              width={size}
+                              height={size}
+                              style={{ margin: "5px 0" }}
+                            >
+                              <circle
+                                fill={color}
+                                r={size / 2}
+                                cx={size / 2}
+                                cy={size / 2}
+                              />
+                            </svg>
+                            <LegendLabel align="left" margin="0 4px">
+                              {label.text}
+                            </LegendLabel>
+                          </LegendItem>
+                        );
+                      })
+                    }
+                  </LegendSize>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div> */}
         </div>
 
         <div className="flex flex-col gap-1">
@@ -65,6 +119,8 @@ const Controls = () => {
               Income
             </ToggleGroupItem>
           </ToggleGroup>
+
+          {/* Color scale */}
           <div className="mt-2 pl-1">
             <AnimatePresence>
               {incomeColorScale && colorPointsBy[0] === "income" && (
@@ -79,7 +135,6 @@ const Controls = () => {
                   ></LegendOrdinal>
                 </motion.div>
               )}
-              {}
             </AnimatePresence>
           </div>
         </div>

@@ -181,8 +181,6 @@ export default function useInteractions({ u, buffers, countryTypeToIdx }) {
 
         sizeTargetsProcessed[idx] = sizeScale(d);
 
-        console.log(d);
-
         colorDummy.setStyle(colorScale(d, flowType));
 
         colorTargetsProcessed[idx * 4] = colorDummy.r;
