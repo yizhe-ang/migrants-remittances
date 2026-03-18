@@ -1,5 +1,7 @@
 import { useRoomStore } from "@/store";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { LegendOrdinal } from "@visx/legend";
+import { AnimatePresence, motion } from "motion/react";
 
 const Controls = () => {
   const showCountryPoints = useRoomStore((state) => state.showCountryPoints);
@@ -10,6 +12,8 @@ const Controls = () => {
   const setPointsValue = useRoomStore((state) => state.setPointsValue);
   const colorPointsBy = useRoomStore((state) => state.colorPointsBy);
   const setColorPointsBy = useRoomStore((state) => state.setColorPointsBy);
+
+  const incomeColorScale = useRoomStore((state) => state.incomeColorScale);
 
   return (
     <div className="absolute w-full h-full top-0 left-0 pointer-events-none">
@@ -61,6 +65,23 @@ const Controls = () => {
               Income
             </ToggleGroupItem>
           </ToggleGroup>
+          <div className="mt-2 pl-1">
+            <AnimatePresence>
+              {incomeColorScale && colorPointsBy[0] === "income" && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  <LegendOrdinal
+                    scale={incomeColorScale}
+                    className="text-sm"
+                  ></LegendOrdinal>
+                </motion.div>
+              )}
+              {}
+            </AnimatePresence>
+          </div>
         </div>
       </div>
     </div>
