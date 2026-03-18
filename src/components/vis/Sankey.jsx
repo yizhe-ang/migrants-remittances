@@ -28,17 +28,13 @@ const Sankey = ({ graph, width, height, colorScale, margin, ...props }) => {
   const xMax = width - margin.left - margin.right;
   const yMax = height - margin.top - margin.bottom;
 
-  console.log(graph.nodes)
-
   return (
     <div
       className="relative"
-      style={
-        {
-          opacity: 0,
-          visibility: "hidden"
-        }
-      }
+      style={{
+        opacity: 0,
+        visibility: "hidden",
+      }}
       {...props}
     >
       <svg width={width} height={height}>
@@ -110,12 +106,17 @@ const Sankey = ({ graph, width, height, colorScale, margin, ...props }) => {
               />
             ))}
           </g>
-          <g>
+          {/* Texts */}
+          <g className="sankey-data-texts">
             {graph.nodes.map((d) => {
               const text = d.id.at(-1) === "-" ? d.id.slice(0, -1) : d.id;
 
               return (
-                <g key={d.id} fill={colors.stone[500]}>
+                <g
+                  key={d.id}
+                  fill={colors.stone[500]}
+                  className={`node-text-${d.id.replace(/ /g, "-")}`}
+                >
                   <text
                     x={d.x0 < width / 2 ? d.x1 + 12 : d.x0 - 12}
                     y={(d.y1 + d.y0) / 2}

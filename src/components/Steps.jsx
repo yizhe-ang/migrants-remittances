@@ -107,10 +107,9 @@ const Steps = () => {
 
       <Step id="step-8">
         <P>
-          In 2019, these high-income countries send $680 billion but only
-          receive $195 billion. In other words, people in these countries
-          provide 87% of the funds while receiving just 25%. Economic resources
-          from high-income countries are being redistributed abroad.
+          Looking at the other income groups individually, we can also see that
+          remittances tend to flow "downwards" -- money is sent to the same or
+          lower-income groups.
         </P>
       </Step>
 

@@ -13,6 +13,7 @@ import {
   interpolateYlOrBr,
   schemeAccent,
   schemeObservable10,
+  schemeSet1,
   schemeSet2,
   schemeSet3,
 } from "d3-scale-chromatic";
@@ -128,8 +129,13 @@ export default function useScales() {
         "Low income",
       ])
       // .range(schemeObservable10.slice(6));
-      .range(schemeAccent);
-    // .range(schemeSet3);
+      // .range(schemeAccent);
+      // .range(schemeSet3);
+      // .range(["#7fc97f", "#beaed4", "#fdc086", "#ffff99"]);
+      // .range(["#7fc97f", "#beaed4", "#fdc086", schemeSet2[5]]);
+      .range(["#7fc97f", "#beaed4", "#fdc086", schemeSet3[11]]);
+
+    console.log(schemeAccent);
 
     setIncomeColorScale(incomeColorScale);
   }, []);
