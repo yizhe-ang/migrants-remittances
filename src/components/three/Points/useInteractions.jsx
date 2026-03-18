@@ -26,7 +26,6 @@ export default function useInteractions({ u, buffers, countryTypeToIdx }) {
   const propGdpToColorScale = useRoomStore(
     (state) => state.propGdpToColorScale,
   );
-  const incomeColorScale = useRoomStore((state) => state.incomeColorScale);
 
   const animRef = useRef(null);
 
@@ -107,37 +106,37 @@ export default function useInteractions({ u, buffers, countryTypeToIdx }) {
 
   // TODO: Just control size?
   // Select which points to hide ###############################################
-  useEffect(() => {
-    if (!buffers) return;
+  // useEffect(() => {
+  //   if (!buffers) return;
 
-    const opacityArr = buffers.opacity.buffer.array;
+  //   const opacityArr = buffers.opacity.buffer.array;
 
-    const opacitySnapshot = opacityArr.slice();
-    const opacityTargets = new Float32Array(opacityArr.length);
+  //   const opacitySnapshot = opacityArr.slice();
+  //   const opacityTargets = new Float32Array(opacityArr.length);
 
-    if (showCountryPoints.includes("receiving")) {
-      for (const idx of countryTypeToIdx.get("origin").values()) {
-        opacityTargets[idx] = 1;
-      }
-    }
-    if (showCountryPoints.includes("sending")) {
-      for (const idx of countryTypeToIdx.get("destination").values()) {
-        opacityTargets[idx] = 1;
-      }
-    }
+  //   if (showCountryPoints.includes("receiving")) {
+  //     for (const idx of countryTypeToIdx.get("origin").values()) {
+  //       opacityTargets[idx] = 1;
+  //     }
+  //   }
+  //   if (showCountryPoints.includes("sending")) {
+  //     for (const idx of countryTypeToIdx.get("destination").values()) {
+  //       opacityTargets[idx] = 1;
+  //     }
+  //   }
 
-    animRef.current = animate(0, 1, {
-      duration: 0.2,
-      ease: "easeOut",
-      onUpdate: (t) => {
-        for (let i = 0; i < opacityArr.length; i++) {
-          opacityArr[i] =
-            opacitySnapshot[i] + (opacityTargets[i] - opacitySnapshot[i]) * t;
-        }
-        buffers.opacity.buffer.needsUpdate = true;
-      },
-    });
-  }, [buffers, showCountryPoints]);
+  //   animRef.current = animate(0, 1, {
+  //     duration: 0.2,
+  //     ease: "easeOut",
+  //     onUpdate: (t) => {
+  //       for (let i = 0; i < opacityArr.length; i++) {
+  //         opacityArr[i] =
+  //           opacitySnapshot[i] + (opacityTargets[i] - opacitySnapshot[i]) * t;
+  //       }
+  //       buffers.opacity.buffer.needsUpdate = true;
+  //     },
+  //   });
+  // }, [buffers, showCountryPoints]);
 
   // Animate on hovered country change
   useEffect(() => {
@@ -163,18 +162,40 @@ export default function useInteractions({ u, buffers, countryTypeToIdx }) {
     const colorSnapshot = colorArr.slice();
 
     // Init copies (to be mutated)
-    const sizeTargetsProcessed = hoveredCountry
-      ? new Float32Array(sizeArr.length)
-      : sizeTargets.slice();
+    const sizeTargetsProcessed = new Float32Array(sizeArr.length);
     const colorTargetsProcessed = colorTargets.slice();
+
+    // Show only either receiving or sending
+    if (showCountryPoints[0] === "receiving") {
+      for (const idx of countryTypeToIdx.get("origin").values()) {
+        sizeTargetsProcessed[idx] = buffers.size.og[idx];
+      }
+      for (const idx of countryTypeToIdx.get("destination").values()) {
+        sizeTargetsProcessed[idx] = 0;
+      }
+    }
+
+    if (showCountryPoints[0] === "sending") {
+      for (const idx of countryTypeToIdx.get("origin").values()) {
+        sizeTargetsProcessed[idx] = 0;
+      }
+      for (const idx of countryTypeToIdx.get("destination").values()) {
+        sizeTargetsProcessed[idx] = buffers.size.og[idx];
+      }
+    }
 
     // If hovered, change target values
     if (hoveredCountry) {
-      // NOTE: Don't handle first
+      // NOTE: Don't handle propGdp first
       if (pointsValue[0] === "propGdp") return;
 
       const { type, country } = hoveredCountry;
       const highlightFlows = flowsMap.get(type).get(country);
+
+      // Init sizes to zero
+      for (const idx of countryTypeToIdx.get(type).values()) {
+        sizeTargetsProcessed[idx] = 0;
+      }
 
       highlightFlows.forEach((d) => {
         const flowType = type === "origin" ? "destination" : "origin";
@@ -190,12 +211,15 @@ export default function useInteractions({ u, buffers, countryTypeToIdx }) {
         colorTargetsProcessed[idx * 4 + 2] = colorDummy.b;
       });
 
-      // Hovered country should be the same
-      const countryOriginIdx = countryTypeToIdx.get("origin").get(country);
-      const countryDestIdx = countryTypeToIdx.get("destination").get(country);
+      // Hovered country should not change size
+      // const countryOriginIdx = countryTypeToIdx.get("origin").get(country);
+      // const countryDestIdx = countryTypeToIdx.get("destination").get(country);
 
-      sizeTargetsProcessed[countryOriginIdx] = sizeTargets[countryOriginIdx];
-      sizeTargetsProcessed[countryDestIdx] = sizeTargets[countryDestIdx];
+      // sizeTargetsProcessed[countryOriginIdx] = sizeTargets[countryOriginIdx];
+      // sizeTargetsProcessed[countryDestIdx] = sizeTargets[countryDestIdx];
+
+      const countryIdx = countryTypeToIdx.get(type).get(country);
+      sizeTargetsProcessed[countryIdx] = sizeTargets[countryIdx];
     }
 
     animRef.current = animate(0, 1, {
@@ -231,5 +255,6 @@ export default function useInteractions({ u, buffers, countryTypeToIdx }) {
     sizeScale,
     colorScale,
     pointsValue,
+    showCountryPoints,
   ]);
 }
