@@ -206,7 +206,7 @@ const Arcs = (props) => {
       const windPhase = time.mul(windSpeed).add(randOffset.mul(5)).add(wobble);
       // Each streak covers 25% of the arc length, cycling through the gate
       const streakLen = float(0.25);
-      const streakProgress = float(1).sub(windPhase.fract());
+      const streakProgress = windPhase.fract();
       const streakCenter = mix(gateLow, gateHigh, streakProgress);
       const windLow = streakCenter.sub(streakLen.mul(0.5)).max(gateLow);
       const windHigh = streakCenter.add(streakLen.mul(0.5)).min(gateHigh);
@@ -224,7 +224,7 @@ const Arcs = (props) => {
       const defaultColor = mix(u.tgtColor, u.srcColor, t);
 
       // Wind streaks: single color with directional fade (head bright, tail fades)
-      const fadeT = float(1).sub(smoothstep(low, high, t));
+      const fadeT = smoothstep(low, high, t);
       // const windOpacity = fadeT.mul(0.9);
       const windOpacity = fadeT.mul(1);
 
