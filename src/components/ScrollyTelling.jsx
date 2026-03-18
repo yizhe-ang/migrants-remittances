@@ -716,11 +716,11 @@ const ScrollyTelling = () => {
           end: "bottom bottom",
           scrub: true,
           onEnter: () => {
-            // setShowCountryPoints(["receiving"]);
+            setShowCountryPoints(["receiving"]);
             setPointsValue(["propGdp"]);
           },
           onLeaveBack: () => {
-            // setShowCountryPoints(["sending", "receiving"]);
+            setShowCountryPoints(["sending"]);
             setPointsValue(["absolute"]);
           },
         },
@@ -796,7 +796,7 @@ const ScrollyTelling = () => {
           duration: 0.3,
         },
         0,
-      )
+      );
   }, [cameraControls, arcs, points]);
 
   return <></>;
