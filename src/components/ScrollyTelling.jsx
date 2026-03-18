@@ -20,7 +20,9 @@ const ScrollyTelling = () => {
   const setShowCountryPoints = useRoomStore((s) => s.setShowCountryPoints);
   const setEnableMapInteractions = useRoomStore(
     (s) => s.setEnableMapInteractions,
-  )
+  );
+  const setColorPointsBy = useRoomStore((s) => s.setColorPointsBy);
+  const setPointsValue = useRoomStore((s) => s.setPointsValue);
 
   useGSAP(() => {
     if (!cameraControls || !arcs || !points) return;
@@ -290,15 +292,15 @@ const ScrollyTelling = () => {
           duration: 0.1,
         },
         0.1,
-      )
-      // .to(
-      //   arcs.u.opacity,
-      //   {
-      //     value: 1,
-      //     duration: 0.5,
-      //   },
-      //   0.3,
-      // );
+      );
+    // .to(
+    //   arcs.u.opacity,
+    //   {
+    //     value: 1,
+    //     duration: 0.5,
+    //   },
+    //   0.3,
+    // );
 
     // gsap
     //   .timeline({
@@ -424,7 +426,7 @@ const ScrollyTelling = () => {
             setEnableMapInteractions(true);
           },
           onLeaveBack: () => {
-            console.log('hey')
+            console.log("hey");
             setEnableMapInteractions(false);
           },
         },
@@ -434,21 +436,38 @@ const ScrollyTelling = () => {
         "#show-controls",
         {
           autoAlpha: 1,
-          duration: 0.3
+          duration: 0.3,
         },
-        0
-      )
+        0,
+      );
 
     // Show income scales etc.
-    gsap.timeline({
-      scrollTrigger: {
-        trigger: "#step-7",
-        start: "top bottom",
-        end: "bottom bottom",
-        scrub: true,
-      },
-      duration: 1,
-    });
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: "#step-7-1",
+          start: "top bottom",
+          end: "bottom bottom",
+          scrub: true,
+          onEnter: () => {
+            setColorPointsBy(["income"]);
+            setShowCountryPoints(["sending"]);
+          },
+          onLeaveBack: () => {
+            setColorPointsBy(["value"]);
+            setShowCountryPoints(["receiving"]);
+          },
+        },
+        duration: 1,
+      })
+      .to(
+        "#color-controls",
+        {
+          autoAlpha: 1,
+          duration: 0.3,
+        },
+        0,
+      );
 
     // Transition to sankey
     gsap
@@ -461,30 +480,45 @@ const ScrollyTelling = () => {
         },
         duration: 1,
       })
-      // TODO: staggered?
-      .to(
-        points.u.incomeColorT,
-        {
-          value: 1,
-          duration: 0.5,
-        },
-        0,
-      )
       .to(
         "#sankey-income-all",
         {
           autoAlpha: 1,
           duration: 0.5,
         },
-        0.5,
+        0,
       )
       .to(
-        points.u.staggeredT,
+        points.u.opacity,
         {
           value: 0,
-          duration: 1,
+          duration: 0.5,
         },
-        0.5,
+        0,
+      )
+      .to(
+        "canvas",
+        {
+          opacity: 0.2,
+          duration: 0.5,
+        },
+        0,
+      )
+      .to(
+        "#show-controls",
+        {
+          autoAlpha: 0,
+          duration: 0.3,
+        },
+        0,
+      )
+      .to(
+        "#color-controls",
+        {
+          autoAlpha: 0,
+          duration: 0.3,
+        },
+        0,
       );
 
     // Show upper-middle income sankey

@@ -141,6 +141,7 @@ const Points = ({ ...props }) => {
       incomeColorT: uniform(0),
       stripesT: uniform(0), // 0 = off, 1 = stripes
       dotsT: uniform(0), // 0 = off, 1 = polka dots
+      opacity: uniform(1),
     };
 
     const geometry = new THREE.PlaneGeometry(1, 1);
@@ -308,7 +309,7 @@ const Points = ({ ...props }) => {
 
       const opacity = opacityBuffer.element(originalIndex);
 
-      return vec4(color, outer.mul(0.995).mul(opacity));
+      return vec4(color, outer.mul(0.995).mul(opacity).mul(u.opacity));
     })();
 
     material.positionNode = Fn(() => {

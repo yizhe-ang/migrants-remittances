@@ -1,6 +1,9 @@
 import { cn } from "@sqlrooms/ui";
+import { useRoomStore } from "../store";
 
 const Steps = () => {
+  const incomeColorScale = useRoomStore((state) => state.incomeColorScale);
+
   return (
     <div className="w-full z-10 pointer-events-none">
       <div className="h-screen pointer-events-none" />
@@ -60,22 +63,45 @@ const Steps = () => {
 
       {/* <div id="step-dashboard" className="h-[100vh]"></div> */}
       <Step id="step-dashboard-1">
-        <P>
-          Interact!
-        </P>
+        <P>Interact!</P>
       </Step>
 
       <Step id="step-7-1">
         <P>
-          If we were to group countries by their income level, we can see that
-          high-income countries dominate the sending of money.
+          If we were to group countries by their income level, we can see that{" "}
+          <C
+            style={{
+              background: incomeColorScale
+                ? `${incomeColorScale("High income")}80`
+                : "transparent",
+            }}
+          >
+            high-income countries
+          </C>{" "}
+          dominate the sending of money.
         </P>
       </Step>
 
       <Step id="step-7">
         <P>
-          If we were to group countries by their income level, we can see that
-          high-income countries dominate the sending of money.
+          Aggregating all the flows by income group will make the picture
+          clearer.
+        </P>
+        <P>
+          In 2019, these{" "}
+          <C
+            style={{
+              background: incomeColorScale
+                ? `${incomeColorScale("High income")}80`
+                : "transparent",
+            }}
+          >
+            high-income countries
+          </C>{" "}
+          send $640 billion but only receive $89 billion. In other words, people
+          in these countries provide 87% of the funds while receiving just 25%.
+          Economic resources from high-income countries are being redistributed
+          abroad.
         </P>
       </Step>
 
@@ -152,7 +178,9 @@ const P = ({ className, ...props }) => {
 };
 
 const C = ({ className, ...props }) => {
-  return <span className={cn("px-1 rounded font-medium", className)} {...props} />;
+  return (
+    <span className={cn("px-1 rounded font-medium", className)} {...props} />
+  );
 };
 
 export default Steps;
