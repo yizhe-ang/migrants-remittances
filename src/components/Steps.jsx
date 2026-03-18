@@ -99,13 +99,13 @@ const Steps = () => {
             high-income countries
           </C>{" "}
           send $640 billion but only receive $89 billion. In other words, people
-          in these countries provide 87% of the funds while receiving just 25%.
-          Economic resources from high-income countries are being redistributed
-          abroad.
+          in these countries provide 96.5% of the funds while receiving just
+          14%. Economic resources from high-income countries are being
+          redistributed abroad.
         </P>
       </Step>
 
-      <Step id="step-8">
+      <Step id="step-9" className="h-[300vh]">
         <P>
           Looking at the other income groups individually, we can also see that
           remittances tend to flow "downwards" -- money is sent to the same or
@@ -113,34 +113,43 @@ const Steps = () => {
         </P>
       </Step>
 
-      <Step id="step-9" className="h-[300vh]">
-        <P>
-          Looking at the other income groups individually, we can also see that
-          the flows tend to be clustered among the same income-group countries,
-          especially for remittance senders living in lower-middle- and
-          low-income countries.
-        </P>
-      </Step>
-
       <Step id="step-10" className="">
         <P>
           At first glance, The main beneficiaries are middle-income countries.
-          Upper-middle-income countries send 7% but receive 30%, and
-          lower-middle-income countries send only 4% but receive 44%.
+          Upper middle income and lower middle income countries receive 35% and
+          44% of remittance flows respectively.
         </P>
         <P>
           This also means that very little money reaches the poorest countries,
-          where people need it the most. Low-income countries receive just 1.7%
-          of all money sent or brought back by migrants, despite being home to
-          9% of the global population.
+          where people need it the most.{" "}
+          <C
+            style={{
+              background: incomeColorScale
+                ? `${incomeColorScale("Low income")}80`
+                : "transparent",
+            }}
+          >
+            low-income countries
+          </C>{" "}
+          receive just 6% of all money sent or brought back by migrants, despite
+          being home to 9% of the global population.
         </P>
       </Step>
 
       <Step id="step-11" className="">
         <P>
           These numbers, however, hide the contribution that remittances have
-          relative to the wealth of countries. For example, for low-income
-          countries, they contribute about 9.8% of their combined GDP.
+          relative to the wealth of countries. For{" "}
+          <C
+            style={{
+              background: incomeColorScale
+                ? `${incomeColorScale("Low income")}80`
+                : "transparent",
+            }}
+          >
+            low-income countries
+          </C>
+          , they contribute about 9.8% of their combined GDP.
         </P>
       </Step>
 

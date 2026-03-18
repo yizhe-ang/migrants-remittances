@@ -220,14 +220,26 @@ const SankeyIncome = ({ width, height, margin = defaultMargin }) => {
             margin={margin}
             id="sankey-income-lower-middle"
           />
-          <Sankey
-            graph={graphs.low}
-            width={width}
-            height={height}
-            colorScale={incomeColorScale}
-            margin={margin}
-            id="sankey-income-low"
-          />
+          <div className="relative">
+            <Sankey
+              graph={graphs.low}
+              width={width}
+              height={height}
+              colorScale={incomeColorScale}
+              margin={margin}
+              id="sankey-income-low"
+            />
+            <div className="absolute top-0 left-0">
+              <Sankey
+                graph={graphs.all}
+                width={width}
+                height={height}
+                colorScale={incomeColorScale}
+                margin={margin}
+                id="sankey-income-all-alt"
+              />
+            </div>
+          </div>
         </div>
       )}
     </>

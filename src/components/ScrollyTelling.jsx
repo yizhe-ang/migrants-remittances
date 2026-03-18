@@ -80,14 +80,14 @@ const ScrollyTelling = () => {
         autoAlpha: 0,
       },
     );
-    // gsap.set(
-    //   "#sankey-income-upper-middle .sankey-links, #sankey-income-upper-middle .sankey-nodes, #sankey-income-upper-middle .sankey-data-texts",
-    //   {
-    //     autoAlpha: 0,
-    //   },
-    // );
     gsap.set(
       "#sankey-income-upper-middle .sankey-links, #sankey-income-upper-middle .sankey-nodes",
+      {
+        autoAlpha: 0,
+      },
+    );
+    gsap.set(
+      "#sankey-income-all-alt .sankey-links, #sankey-income-all-alt .sankey-nodes",
       {
         autoAlpha: 0,
       },
@@ -451,7 +451,6 @@ const ScrollyTelling = () => {
             setEnableMapInteractions(true);
           },
           onLeaveBack: () => {
-            console.log("hey");
             setEnableMapInteractions(false);
           },
         },
@@ -619,7 +618,7 @@ const ScrollyTelling = () => {
       .to(
         "#sankey-income",
         {
-          x: `-=${(sankeyIncome.width + 10) * 2}`,
+          x: `-=${(sankeyIncome.width + 40) * 2}`,
           duration: 0.6,
         },
         0.4,
@@ -645,6 +644,14 @@ const ScrollyTelling = () => {
       })
       .to(
         "#sankey-income-lower-middle, #sankey-income-all",
+        {
+          autoAlpha: 0,
+          duration: 0.2,
+        },
+        0,
+      )
+      .to(
+        "#sankey-income-low .sankey-data-texts",
         {
           autoAlpha: 0,
           duration: 0.2,
@@ -691,6 +698,14 @@ const ScrollyTelling = () => {
           duration: 0.6,
         },
         0,
+      )
+      .to(
+        "#sankey-income-all-alt",
+        {
+          autoAlpha: 1,
+          duration: 0.2,
+        },
+        0.4,
       );
 
     gsap
@@ -701,11 +716,12 @@ const ScrollyTelling = () => {
           end: "bottom bottom",
           scrub: true,
           onEnter: () => {
-            setShowCountryPoints(["receiving"]);
+            // setShowCountryPoints(["receiving"]);
+            setPointsValue(["propGdp"]);
           },
           onLeaveBack: () => {
-            console.log("yo");
-            setShowCountryPoints(["sending", "receiving"]);
+            // setShowCountryPoints(["sending", "receiving"]);
+            setPointsValue(["absolute"]);
           },
         },
         duration: 1,
@@ -726,21 +742,61 @@ const ScrollyTelling = () => {
         0,
       )
       .to(
+        "#sankey-income-all-alt",
+        {
+          autoAlpha: 0,
+          duration: 0.3,
+        },
+        0,
+      )
+      .to(
         "#sankey-income-low",
         {
           autoAlpha: 0,
           duration: 0.3,
         },
         0,
-      );
-    // .to(
-    //   points.u.staggeredT,
-    //   {
-    //     value: 1,
-    //     duration: 0.8,
-    //   },
-    //   0.2,
-    // );
+      )
+      .to(
+        "canvas",
+        {
+          opacity: 1,
+          duration: 0.3,
+        },
+        0,
+      )
+      .to(
+        "#show-controls",
+        {
+          autoAlpha: 1,
+          duration: 0.3,
+        },
+        0,
+      )
+      .to(
+        "#color-controls",
+        {
+          autoAlpha: 1,
+          duration: 0.3,
+        },
+        0,
+      )
+      .to(
+        "#size-controls",
+        {
+          autoAlpha: 1,
+          duration: 0.3,
+        },
+        0,
+      )
+      .to(
+        points.u.opacity,
+        {
+          value: 1,
+          duration: 0.3,
+        },
+        0,
+      )
   }, [cameraControls, arcs, points]);
 
   return <></>;
