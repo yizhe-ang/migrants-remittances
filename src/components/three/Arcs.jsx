@@ -18,6 +18,7 @@ import {
   Discard,
   time,
   mx_noise_float,
+  smoothstep,
 } from "three/tsl";
 import * as THREE from "three/webgpu";
 import { latToMercatorY } from "@/lib/utils";
@@ -56,6 +57,9 @@ const Arcs = (props) => {
       movementT: uniform(0),
       opacity: uniform(1),
       staggeredT: uniform(0),
+      // Wind streaks style (0 = default, 1 = wind streaks)
+      windStreaksT: uniform(1),
+      windColor: uniform(new THREE.Color("#b0c4de")),
     };
 
     // Build per-instance data
@@ -125,10 +129,11 @@ const Arcs = (props) => {
 
       // Scale arc shape by distance, cross-section by per-instance radius
       const radius = radiusBuffer.element(instanceIndex);
+      const effectiveRadius = mix(radius, radius.mul(0.4), u.windStreaksT);
       const scaled = vec3(
         positionLocal.x.mul(dist),
         positionLocal.y.mul(dist),
-        positionLocal.z.mul(radius),
+        positionLocal.z.mul(effectiveRadius),
       );
 
       // Rotate around Z axis so X aligns with source→target direction
@@ -185,21 +190,48 @@ const Arcs = (props) => {
         .add(instanceStagger)
         .mod(mix(1, 7, u.movementT));
 
-      // const progress = progressBase.add(time.mul(speed)).add(randOffset).mod(5);
+      // Default: draw/undraw window
+      const defaultLow = progress.mul(2).sub(1).max(0);
+      const defaultHigh = progress.mul(2).min(1);
 
-      // Draw phase (0→0.5): high goes 0→1, low stays 0
-      // Undraw phase (0.5→1): low goes 0→1, high stays 1
-      const low = progress.mul(2).sub(1).max(0);
-      const high = progress.mul(2).min(1);
+      // --- Wind streaks mode ---
+      // Visibility gate from progressBase (same draw/undraw as default)
+      const windGateProgress = progressBase.add(instanceStagger).mod(1);
+      const gateLow = windGateProgress.mul(2).sub(1).max(0);
+      const gateHigh = windGateProgress.mul(2).min(1);
+
+      // Flowing streaks within the visible window
+      const windSpeed = baseSpeed.mul(2);
+      const windPhase = time.mul(windSpeed).add(randOffset.mul(5)).add(wobble);
+      // Each streak covers 25% of the arc length, cycling through the gate
+      const streakLen = float(0.25);
+      const streakProgress = windPhase.fract();
+      const streakCenter = mix(gateLow, gateHigh, streakProgress);
+      const windLow = streakCenter.sub(streakLen.mul(0.5)).max(gateLow);
+      const windHigh = streakCenter.add(streakLen.mul(0.5)).min(gateHigh);
+
+      // Blend low/high between default and wind modes
+      const low = mix(defaultLow, windLow, u.windStreaksT);
+      const high = mix(defaultHigh, windHigh, u.windStreaksT);
       const t = float(1).sub(uv().x);
 
       If(t.lessThan(low).or(t.greaterThan(high)), () => {
         Discard();
       });
 
-      const c = mix(u.tgtColor, u.srcColor, t);
+      // Default: gradient from target to source color
+      const defaultColor = mix(u.tgtColor, u.srcColor, t);
 
-      return vec4(c, u.opacity);
+      // Wind streaks: single color with directional fade (head bright, tail fades)
+      const fadeT = smoothstep(low, high, t);
+      // const windOpacity = fadeT.mul(0.9);
+      const windOpacity = fadeT.mul(0.999);
+
+      // Blend color and opacity between modes
+      const c = mix(defaultColor, u.windColor, u.windStreaksT);
+      const alpha = mix(u.opacity, windOpacity.mul(u.opacity), u.windStreaksT);
+
+      return vec4(c, alpha);
     })();
 
     return {
