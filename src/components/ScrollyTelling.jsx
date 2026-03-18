@@ -145,6 +145,14 @@ const ScrollyTelling = () => {
           points.buffers.size.buffer.needsUpdate = true;
         },
       })
+      .to(
+        arcs.u.windStreaksT,
+        {
+          value: 0,
+          duration: 0.1,
+        },
+        0,
+      )
       // Show usa arcs again, flying to remit
       .to(
         usaArcs,
@@ -269,9 +277,9 @@ const ScrollyTelling = () => {
         arcs.u.opacity,
         {
           value: 1,
-          duration: 0.6,
+          duration: 0.5,
         },
-        0.4,
+        0.3,
       );
 
     gsap

@@ -104,6 +104,7 @@ export default function useInteractions({ u, buffers, countryTypeToIdx }) {
     }
   }, [colorPointsBy, u]);
 
+  // TODO: Just control size?
   // Select which points to hide ###############################################
   useEffect(() => {
     if (!buffers) return;

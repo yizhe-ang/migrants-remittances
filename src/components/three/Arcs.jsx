@@ -60,7 +60,7 @@ const Arcs = (props) => {
       // Wind streaks style (0 = default, 1 = wind streaks)
       windStreaksT: uniform(1),
       // windColor: uniform(new THREE.Color("#b0c4de")),
-      windColor: uniform(new THREE.Color("black")),
+      windColor: uniform(new THREE.Color(chroma(colors.stone[600]).hex())),
     };
 
     // Build per-instance data

@@ -22,7 +22,13 @@ const Steps = () => {
       <Step id="step-3">
         <P>
           Billions of dollars flow back across borders, as these migrants also
-          regularly send back money to support their families and communities.
+          regularly <C className="bg-orange-200">send</C> back money to support
+          their families and communities.
+        </P>
+        <P>
+          People who <C className="bg-blue-200">receive</C> them can use the
+          money to pay school fees, make repairs to their homes, or cover
+          medical bills.
         </P>
       </Step>
 
@@ -66,10 +72,10 @@ const Steps = () => {
 
       <Step id="step-8">
         <P>
-          These high-income countries send $680 billion but only receive $195
-          billion. In other words, people in these countries provide 87% of the
-          funds while receiving just 25%. Economic resources from high-income
-          countries are being redistributed abroad.
+          In 2019, these high-income countries send $680 billion but only
+          receive $195 billion. In other words, people in these countries
+          provide 87% of the funds while receiving just 25%. Economic resources
+          from high-income countries are being redistributed abroad.
         </P>
       </Step>
 
@@ -134,6 +140,10 @@ const Step = ({ className, children, ...props }) => {
 
 const P = ({ className, ...props }) => {
   return <p className={cn("", className)} {...props} />;
+};
+
+const C = ({ className, ...props }) => {
+  return <span className={cn("px-1 rounded", className)} {...props} />;
 };
 
 export default Steps;

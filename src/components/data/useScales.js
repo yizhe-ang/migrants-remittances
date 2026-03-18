@@ -66,7 +66,7 @@ export default function useScales() {
         0,
         max([...flowsByDestination, ...flowsByOrigin], (d) => d.prop_of_gdp),
       ])
-      .range([1.1, 12]);
+      .range([1.1, 10]);
 
     setPropGdpRadiusScale(propsGdpRadiusScale);
   }, [flowsByDestination, flowsByOrigin]);
