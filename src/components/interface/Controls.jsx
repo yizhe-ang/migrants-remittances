@@ -31,7 +31,9 @@ const Controls = () => {
           <div className="text-sm pl-1 text-stone-500">show countries</div>
           <ToggleGroup
             value={showCountryPoints}
-            onValueChange={setShowCountryPoints}
+            onValueChange={(val) => {
+              if (val.length > 0) setShowCountryPoints(val);
+            }}
           >
             <ToggleGroupItem value="sending" aria-label="">
               Sending
@@ -46,7 +48,9 @@ const Controls = () => {
           <div className="text-sm pl-1 text-stone-500">color by</div>
           <ToggleGroup
             value={colorPointsBy}
-            onValueChange={setColorPointsBy}
+            onValueChange={(val) => {
+              if (val.length > 0) setColorPointsBy(val);
+            }}
           >
             <ToggleGroupItem value="value" aria-label="">
               $
@@ -79,7 +83,9 @@ const Controls = () => {
           <div className="text-sm pl-1 text-stone-500">size represents</div>
           <ToggleGroup
             value={pointsValue}
-            onValueChange={setPointsValue}
+            onValueChange={(val) => {
+              if (val.length > 0) setPointsValue(val);
+            }}
           >
             <ToggleGroupItem value="absolute" aria-label="">
               Absolute
