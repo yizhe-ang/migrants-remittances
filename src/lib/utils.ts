@@ -2,6 +2,7 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { color } from "d3-color";
 import { animate } from "motion";
+import { format } from "d3-format";
 
 export const moneyFormat = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -9,6 +10,8 @@ export const moneyFormat = new Intl.NumberFormat("en-US", {
   notation: "compact",
   maximumFractionDigits: 1,
 });
+
+export const percentFormat = format(".3p");
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));

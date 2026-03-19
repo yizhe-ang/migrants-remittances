@@ -1,27 +1,24 @@
 import { useMemo, useRef } from "react";
 import { useRoomStore } from "@/store";
 import { AnimatePresence, motion } from "motion/react";
-import { moneyFormat } from "@/lib/utils";
-
-const OFFSET = 12;
+import { moneyFormat, percentFormat } from "@/lib/utils";
 
 const CountryTooltip = () => {
   const ref = useRef(null);
   const hoveredCountry = useRoomStore((state) => state.hoveredCountry);
-  const mousePosition = useRoomStore((state) => state.mousePosition);
-  const countriesGeoMap = useRoomStore((state) => state.countriesGeoMap);
   const points = useRoomStore((state) => state.points);
   const selectedYear = useRoomStore((state) => state.selectedYear);
   const flowsMap = useRoomStore((state) => state.flowsMap);
+  const pointsValue = useRoomStore((state) => state.pointsValue);
 
-  // const geo = countriesGeoMap?.get(hoveredCountry.country);
-  // const name = geo?.name ?? hoveredCountry.country;
-
-  const w = ref.current?.offsetWidth ?? 0;
-  const h = ref.current?.offsetHeight ?? 0;
-
-  const fitsRight = mousePosition.x + OFFSET + w < window.innerWidth;
-  const fitsBelow = mousePosition.y + OFFSET + h < window.innerHeight;
+  const accessor = useMemo(() => {
+    if (pointsValue[0] === "absolute") {
+      return (d) => d.sim_remittances_with;
+    }
+    if (pointsValue[0] === "propGdp") {
+      return (d) => d.prop_of_gdp;
+    }
+  }, [pointsValue]);
 
   const d = useMemo(() => {
     if (!points || !hoveredCountry) return;
@@ -59,7 +56,7 @@ const CountryTooltip = () => {
             initial={{ opacity: 0, y: 200 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 200 }}
-            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+            transition={{ type: "spring", damping: 30, stiffness: 300 }}
           >
             <div className="">
               <span className="font-bold text-2xl">
@@ -72,26 +69,38 @@ const CountryTooltip = () => {
                 in {selectedYear}{" "}
                 {hoveredCountry.type === "origin" ? "received" : "sent"}
               </span>{" "}
-              <span className="font-bold text-xl tabular-nums text-stone-950">
-                {moneyFormat.format(d.sim_remittances_with)}
-              </span>{" "}
+              {pointsValue[0] === "absolute" ? (
+                <span className="font-bold text-xl tabular-nums text-stone-950">
+                  {moneyFormat.format(accessor(d))}
+                </span>
+              ) : (
+                <>
+                  <span className="font-bold text-xl tabular-nums text-stone-950">
+                    {percentFormat(accessor(d))}
+                  </span>{" "}
+                  <span>of its GDP</span>
+                </>
+              )}{" "}
               {hoveredCountry.type === "origin" ? "from" : "to"}
             </div>
-            <div className="mt-2 grid w-fit grid-cols-[auto_auto] gap-x-4">
-              {flows?.map((d, i) => (
-                <div key={i} className="contents">
-                  <div>
-                    <span className="text-stone-400">{i + 1}.</span>{" "}
-                    {hoveredCountry.type === "origin"
-                      ? d.destination
-                      : d.origin}{" "}
+
+            {pointsValue[0] !== "propGdp" && (
+              <div className="mt-2 grid w-fit grid-cols-[auto_auto] gap-x-4">
+                {flows?.map((d, i) => (
+                  <div key={i} className="contents">
+                    <div>
+                      <span className="text-stone-400">{i + 1}.</span>{" "}
+                      {hoveredCountry.type === "origin"
+                        ? d.destination
+                        : d.origin}{" "}
+                    </div>
+                    <div className="font-medium text-stone-950 tabular-nums text-right">
+                      {moneyFormat.format(accessor(d))}
+                    </div>
                   </div>
-                  <div className="font-medium text-stone-950 tabular-nums text-right">
-                    {moneyFormat.format(d.sim_remittances_with)}
-                  </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>

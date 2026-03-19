@@ -42,7 +42,8 @@ const Steps = () => {
         <P>
           These remittances - estimated in 2023 to total about $857 billion –
           now dwarf official development aid and represent a lifeline for many
-          economies. [Show chart here]
+          economies.
+          {/* [Show chart here] */}
         </P>
         <P>
           But where do these transfers actually end up in? Do they flow to
