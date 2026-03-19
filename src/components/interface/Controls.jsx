@@ -7,6 +7,7 @@ import {
   LegendSize,
 } from "@visx/legend";
 import { AnimatePresence, motion } from "motion/react";
+import DateSlider from "@/components/interface/DateSlider";
 
 const Controls = () => {
   const showCountryPoints = useRoomStore((state) => state.showCountryPoints);
@@ -126,6 +127,10 @@ const Controls = () => {
             </ToggleGroupItem>
           </ToggleGroup>
         </div>
+      </div>
+
+      <div className="absolute top-30 w-full pb-10 pointer-events-auto">
+        <DateSlider />
       </div>
     </div>
   );
