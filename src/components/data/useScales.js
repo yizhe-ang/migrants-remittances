@@ -42,6 +42,9 @@ export default function useScales() {
   const setPropGdpToColorScale = useRoomStore(
     (state) => state.setPropGdpToColorScale,
   );
+  const setDisasterTypeColorScale = useRoomStore(
+    (state) => state.setDisasterTypeColorScale,
+  );
 
   useEffect(() => {
     if (!flowsByOrigin || !flowsByDestination) return;
@@ -135,8 +138,6 @@ export default function useScales() {
       // .range(["#7fc97f", "#beaed4", "#fdc086", schemeSet2[5]]);
       .range(["#7fc97f", "#beaed4", "#fdc086", schemeSet3[11]]);
 
-    console.log(schemeAccent);
-
     setIncomeColorScale(incomeColorScale);
   }, []);
 
@@ -145,5 +146,7 @@ export default function useScales() {
     const disasterTypeColorScale = scaleOrdinal()
       .domain(["flood", "earthquake", "drought", "storm"])
       .range(schemeObservable10);
+
+    setDisasterTypeColorScale(disasterTypeColorScale);
   }, []);
 }

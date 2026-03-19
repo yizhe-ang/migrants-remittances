@@ -52,7 +52,7 @@ const BeeswarmDisasters = ({ width = 700, height = 850 }) => {
     };
   }, [disasters, width, height]);
 
-  return <div ref={containerRef} className="opacity-40"></div>;
+  return <div ref={containerRef} className="opacity-100"></div>;
 };
 
 export default BeeswarmDisasters;

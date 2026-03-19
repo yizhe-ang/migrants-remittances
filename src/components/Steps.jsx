@@ -3,6 +3,9 @@ import { useRoomStore } from "../store";
 
 const Steps = () => {
   const incomeColorScale = useRoomStore((state) => state.incomeColorScale);
+  const disasterTypeColorScale = useRoomStore(
+    (state) => state.disasterTypeColorScale,
+  );
 
   return (
     <div className="w-full z-10 pointer-events-none">
@@ -67,6 +70,7 @@ const Steps = () => {
       </Step>
 
       <Step id="step-7-1">
+        <H>Money flows from rich countries to poorer ones</H>
         <P>
           If we were to group countries by their income level, we can see that{" "}
           <C
@@ -137,6 +141,7 @@ const Steps = () => {
       </Step>
 
       <Step id="step-11" className="">
+        <H>Small sums from rich countries go a long way in poorer nations</H>
         <P>
           These numbers, however, hide the contribution that remittances have
           relative to the wealth of countries. For{" "}
@@ -159,6 +164,55 @@ const Steps = () => {
           to their gross domestic product (GDP). In over thirty countries,
           remittances account for more than 10% of the value of their entire
           economies.
+        </P>
+      </Step>
+
+      <Step id="step-13" className="">
+        <P>
+          Between 2010 and 2019, there were around 3,000 disaster events
+          connected to the occurrence of{" "}
+          <C
+            style={{
+              background: disasterTypeColorScale
+                ? `${disasterTypeColorScale("flood")}60`
+                : "transparent",
+            }}
+          >
+            floods
+          </C>
+          ,{" "}
+          <C
+            style={{
+              background: disasterTypeColorScale
+                ? `${disasterTypeColorScale("storm")}60`
+                : "transparent",
+            }}
+          >
+            storms
+          </C>
+          ,{" "}
+          <C
+            style={{
+              background: disasterTypeColorScale
+                ? `${disasterTypeColorScale("earthquake")}60`
+                : "transparent",
+            }}
+          >
+            earthquakes
+          </C>
+          , and{" "}
+          <C
+            style={{
+              background: disasterTypeColorScale
+                ? `${disasterTypeColorScale("drought")}60`
+                : "transparent",
+            }}
+          >
+            droughts
+          </C>
+          . These events affected a total of 1.74 billion people, the vast
+          majority of whom lived in lower-middle-income and upper-middle-income
+          countries.
         </P>
       </Step>
     </div>
@@ -189,6 +243,10 @@ const C = ({ className, ...props }) => {
   return (
     <span className={cn("px-1 rounded font-medium", className)} {...props} />
   );
+};
+
+const H = ({ className, ...props }) => {
+  return <h3 className={cn("font-bold", className)} {...props} />;
 };
 
 export default Steps;

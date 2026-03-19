@@ -726,21 +726,21 @@ const ScrollyTelling = () => {
         },
         duration: 1,
       })
-      .to(
-        pointsAnim,
-        {
-          sizePropGdpT: 1,
-          duration: 0.1,
-          onUpdate: () => {
-            for (let i = 0; i < points.buffers.size.buffer.array.length; i++) {
-              points.buffers.size.buffer.array[i] =
-                pointsAnim.sizePropGdpT * points.buffers.size.propGdp[i];
-            }
-            points.buffers.size.buffer.needsUpdate = true;
-          },
-        },
-        0,
-      )
+      // .to(
+      //   pointsAnim,
+      //   {
+      //     sizePropGdpT: 1,
+      //     duration: 0.1,
+      //     onUpdate: () => {
+      //       for (let i = 0; i < points.buffers.size.buffer.array.length; i++) {
+      //         points.buffers.size.buffer.array[i] =
+      //           pointsAnim.sizePropGdpT * points.buffers.size.propGdp[i];
+      //       }
+      //       points.buffers.size.buffer.needsUpdate = true;
+      //     },
+      //   },
+      //   0,
+      // )
       .to(
         "#sankey-income-all-alt",
         {
@@ -797,6 +797,72 @@ const ScrollyTelling = () => {
         },
         0,
       );
+
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: "#step-13",
+          start: "top bottom",
+          end: "bottom bottom",
+          scrub: true,
+          onEnter: () => {
+            setEnableMapInteractions(false);
+          },
+          onLeaveBack: () => {
+            setEnableMapInteractions(true);
+          },
+
+        },
+        duration: 1,
+      })
+      .to(
+        "canvas",
+        {
+          opacity: 0.2,
+          duration: 0.3,
+        },
+        0,
+      )
+      .to(
+        "#show-controls",
+        {
+          autoAlpha: 0,
+          duration: 0.3,
+        },
+        0,
+      )
+      .to(
+        "#color-controls",
+        {
+          autoAlpha: 0,
+          duration: 0.3,
+        },
+        0,
+      )
+      .to(
+        "#size-controls",
+        {
+          autoAlpha: 0,
+          duration: 0.3,
+        },
+        0,
+      )
+      .to(
+        points.u.opacity,
+        {
+          value: 0,
+          duration: 0.3,
+        },
+        0,
+      )
+      .to(
+        "#beeswarm-disasters",
+        {
+          autoAlpha: 1,
+          duration: 0.3,
+        },
+        0,
+      )
   }, [cameraControls, arcs, points]);
 
   return <></>;
