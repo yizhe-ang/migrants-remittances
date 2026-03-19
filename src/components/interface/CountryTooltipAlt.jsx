@@ -23,6 +23,13 @@ const CountryTooltip = () => {
   const fitsRight = mousePosition.x + OFFSET + w < window.innerWidth;
   const fitsBelow = mousePosition.y + OFFSET + h < window.innerHeight;
 
+  const left = fitsRight
+    ? mousePosition.x + OFFSET
+    : mousePosition.x - OFFSET - w;
+  const top = fitsBelow
+    ? mousePosition.y + OFFSET
+    : mousePosition.y - OFFSET - h;
+
   const d = useMemo(() => {
     if (!points || !hoveredCountry) return;
 
@@ -54,10 +61,11 @@ const CountryTooltip = () => {
         <AnimatePresence>
           <motion.div
             ref={ref}
-            className="pointer-events-none fixed z-50 rounded bg-stone-50 px-5 py-2 text-sm text-stone-900 shadow-lg left-1/2 bottom-0 -translate-x-1/2"
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 50 }}
+            className="pointer-events-none fixed z-50 rounded bg-stone-50 px-2.5 py-1.5 text-sm text-stone-900 shadow-lg"
+            style={{ left, top }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
           >
             <div className="">
               <span className="font-bold text-xl">
