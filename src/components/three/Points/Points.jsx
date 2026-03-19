@@ -414,6 +414,13 @@ const Points = ({ ...props }) => {
     }
     buffers.color.incomeBuffer.needsUpdate = true;
 
+    // Initialize color display buffer with computed colors
+    const colorArr = buffers.color.buffer.array;
+    for (let i = 0; i < countriesGeoSorted.length * 4; i++) {
+      colorArr[i] = buffers.color.og[i];
+    }
+    buffers.color.buffer.needsUpdate = true;
+
     // GPU display buffers (size.buffer, color.buffer) are animated by useInteractions
   }, [
     dataIndex,
