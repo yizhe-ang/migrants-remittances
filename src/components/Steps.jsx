@@ -229,6 +229,27 @@ const Steps = () => {
           large international diasporas, such as China, Pakistan and Bangladesh.
         </P>
       </Step>
+
+      <Step id="step-15" className="">
+        <P>
+          Not all disasters generate the same remittances mobilisation.
+          Earthquakes accounted for the largest relative amount, with 542 USD
+          per affected person. Earthquakes are sudden and cause large impacts,
+          and have occurred in countries with diasporas that could be activated.
+        </P>
+        <P>
+          On the contrary, droughts caused the smallest relative impact, with
+          142 USD per affected person. Droughts are a creeping phenomenon: their
+          effects accumulate slowly, and they last for prolonged periods of
+          time. For this reason, migrant diasporas cannot sustain sending higher
+          amounts of remittances for events that last long periods.
+        </P>
+      </Step>
+      <Step id="step-16" className="">
+        <P>
+          Interact!
+        </P>
+      </Step>
     </div>
   );
 };

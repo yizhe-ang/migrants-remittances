@@ -889,6 +889,106 @@ const ScrollyTelling = () => {
         },
         0,
       );
+
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: "#step-15",
+          start: "top bottom",
+          end: "bottom bottom",
+          scrub: true,
+        },
+        duration: 1,
+      })
+      .to(
+        "#beeswarm-disasters",
+        {
+          autoAlpha: 0,
+          duration: 0.3,
+        },
+        0,
+      )
+      .to(
+        "#area-disasters",
+        {
+          autoAlpha: 0,
+          duration: 0.3,
+        },
+        0,
+      )
+      .to(
+        "#rect-disasters",
+        {
+          autoAlpha: 1,
+          duration: 0.3,
+        },
+        0,
+      );
+
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: "#step-16",
+          start: "top bottom",
+          end: "bottom bottom",
+          scrub: true,
+          onEnter: () => {
+            setEnableMapInteractions(true);
+          },
+          onLeaveBack: () => {
+            setEnableMapInteractions(false);
+          },
+        },
+        duration: 1,
+      })
+      .to(
+        "#rect-disasters",
+        {
+          autoAlpha: 0,
+          duration: 0.3,
+        },
+        0,
+      )
+      .to(
+        "canvas",
+        {
+          opacity: 1,
+          duration: 0.3,
+        },
+        0,
+      )
+      .to(
+        "#show-controls",
+        {
+          autoAlpha: 1,
+          duration: 0.3,
+        },
+        0,
+      )
+      .to(
+        "#color-controls",
+        {
+          autoAlpha: 1,
+          duration: 0.3,
+        },
+        0,
+      )
+      .to(
+        "#size-controls",
+        {
+          autoAlpha: 1,
+          duration: 0.3,
+        },
+        0,
+      )
+      .to(
+        points.u.opacity,
+        {
+          value: 1,
+          duration: 0.3,
+        },
+        0,
+      );
   }, [cameraControls, arcs, points]);
 
   return <></>;
