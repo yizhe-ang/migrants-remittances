@@ -215,6 +215,20 @@ const Steps = () => {
           countries.
         </P>
       </Step>
+
+      <Step id="step-14" className="">
+        <P>
+          We estimate that the disaster-induced flow of international
+          remittances between 2010 and 2019 amounted to around 332 billion USD,
+          equivalent to 5.46% of total remittance flows.
+        </P>
+        <P>
+          Floods moved the largest amount of remittances, with a total of 138
+          billion USD. This can be attributed to the combination of size and
+          frequency of flooding events with their occurrence in countries with
+          large international diasporas, such as China, Pakistan and Bangladesh.
+        </P>
+      </Step>
     </div>
   );
 };

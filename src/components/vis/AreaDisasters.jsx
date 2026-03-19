@@ -17,8 +17,8 @@ const AreaDisasters = ({ width = 700, height = 800 }) => {
 
     const plot = Plot.plot({
       // title: "Remittances induced by each disaster type, over time",
-      height: 800,
-      width: 700,
+      height,
+      width,
       marginLeft: 80,
       marginTop: 100,
       marginBottom: -10,
@@ -41,7 +41,7 @@ const AreaDisasters = ({ width = 700, height = 800 }) => {
           x: "date",
           y: "remittance",
           fill: "disaster_type",
-          fillOpacity: 0.5,
+          fillOpacity: 0.1,
           fy: "disaster_type",
         }),
         Plot.lineY(disastersImpactsByMonth, {
@@ -57,7 +57,7 @@ const AreaDisasters = ({ width = 700, height = 800 }) => {
     containerRef.current.append(plot);
 
     return () => plot.remove();
-  }, [disastersImpactsByMonth]);
+  }, [disastersImpactsByMonth, height, width]);
 
   return <div ref={containerRef}></div>;
 };

@@ -42,14 +42,14 @@ const MainView = () => {
           style={{ opacity: 0, visibility: "hidden" }}
           id="beeswarm-disasters"
         >
-          <BeeswarmDisasters />
+          <BeeswarmDisasters width={700} />
         </div>
         <div
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
           style={{ opacity: 0, visibility: "hidden" }}
           id="area-disasters"
         >
-          <AreaDisasters />
+          <AreaDisasters width={700} />
         </div>
         <div
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"

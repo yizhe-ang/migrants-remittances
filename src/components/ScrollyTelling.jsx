@@ -811,7 +811,6 @@ const ScrollyTelling = () => {
           onLeaveBack: () => {
             setEnableMapInteractions(true);
           },
-
         },
         duration: 1,
       })
@@ -862,7 +861,34 @@ const ScrollyTelling = () => {
           duration: 0.3,
         },
         0,
+      );
+
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: "#step-14",
+          start: "top bottom",
+          end: "bottom bottom",
+          scrub: true,
+        },
+        duration: 1,
+      })
+      .to(
+        "#beeswarm-disasters",
+        {
+          autoAlpha: 0.5,
+          duration: 0.3,
+        },
+        0,
       )
+      .to(
+        "#area-disasters",
+        {
+          autoAlpha: 1,
+          duration: 0.3,
+        },
+        0,
+      );
   }, [cameraControls, arcs, points]);
 
   return <></>;
