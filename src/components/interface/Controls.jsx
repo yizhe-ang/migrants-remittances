@@ -162,8 +162,8 @@ const Controls = () => {
         className="absolute top-30 w-full pb-10 pointer-events-auto"
         id="date-slider"
         style={{
-          // opacity: 0,
-          // visibility: "hidden",
+          opacity: 0,
+          visibility: "hidden",
         }}
       >
         <DateSlider />

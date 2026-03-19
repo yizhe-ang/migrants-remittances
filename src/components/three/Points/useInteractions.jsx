@@ -142,7 +142,7 @@ export default function useInteractions({
 
   // Animate on hovered country change
   useEffect(() => {
-    // if (!enableMapInteractions) return;
+    if (!enableMapInteractions) return;
 
     if (
       !flowsMap ||
