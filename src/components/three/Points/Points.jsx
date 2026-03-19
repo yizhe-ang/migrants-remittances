@@ -12,6 +12,7 @@ import {
   uv,
   vec2,
   smoothstep,
+  step,
   fwidth,
   float,
   cameraPosition,
@@ -274,7 +275,7 @@ const Points = ({ ...props }) => {
         threshold.sub(overlap),
         threshold.add(overlap),
         u.staggeredT,
-      );
+      ).mul(step(float(0.001), u.staggeredT));
       const size = mix(
         sizeBuffer.element(originalIndex),
         sizeOgBuffer.element(originalIndex),
@@ -406,7 +407,8 @@ const Points = ({ ...props }) => {
     const incomeArr = buffers.color.incomeBuffer.array;
     for (let i = 0; i < countriesGeoSorted.length; i++) {
       // NOTE: Init to zero at the start
-      sizeArr[i] = buffers.size.og[i];
+      // sizeArr[i] = buffers.size.og[i];
+      sizeArr[i] = 0
       sizeOgArr[i] = buffers.size.og[i];
     }
     for (let i = 0; i < countriesGeoSorted.length * 4; i++) {
