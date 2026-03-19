@@ -65,27 +65,28 @@ const CountryTooltip = () => {
               <span className="font-bold text-2xl">
                 {hoveredCountry.country}
               </span>{" "}
+            </div>
+
+            <div className="text-stone-500">
               <span className="text-stone-500">
                 in {selectedYear}{" "}
                 {hoveredCountry.type === "origin" ? "received" : "sent"}
-              </span>
-            </div>
-            <div className="text-stone-500">
+              </span>{" "}
               <span className="font-bold text-xl tabular-nums text-stone-950">
                 {moneyFormat.format(d.sim_remittances_with)}
               </span>{" "}
               {hoveredCountry.type === "origin" ? "from" : "to"}
             </div>
-            <div className="mt-2">
+            <div className="mt-2 grid grid-cols-2">
               {flows?.map((d, i) => (
-                <div key={i} className="flex gap-2">
-                  <div className="w-[100px]">
+                <div key={i} className="contents">
+                  <div>
                     <span className="text-stone-400">{i + 1}.</span>{" "}
                     {hoveredCountry.type === "origin"
                       ? d.destination
                       : d.origin}{" "}
                   </div>
-                  <div className="font-medium text-stone-950 tabular-nums w-[55px] text-right">
+                  <div className="font-medium text-stone-950 tabular-nums text-right">
                     {moneyFormat.format(d.sim_remittances_with)}
                   </div>
                 </div>
