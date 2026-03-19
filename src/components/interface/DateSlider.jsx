@@ -7,8 +7,18 @@ const END_YEAR = 2019;
 const TOTAL_MONTHS = (END_YEAR - START_YEAR + 1) * 12;
 
 const MONTH_NAMES = [
-  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
 ];
 
 function indexToLabel(index) {
@@ -22,7 +32,7 @@ const DateSlider = () => {
   const setSelectedYear = useRoomStore((state) => state.setSelectedYear);
 
   const handleValueChange = (val) => {
-    const index = val[0];
+    const index = Array.isArray(val) ? val[0] : val;
     setValue([index]);
     const year = START_YEAR + Math.floor(index / 12);
     setSelectedYear(year);
