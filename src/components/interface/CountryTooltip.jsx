@@ -40,28 +40,62 @@ const CountryTooltip = () => {
     return d;
   }, [points, hoveredCountry]);
 
+  const flows = useMemo(() => {
+    if (!flowsMap || !hoveredCountry) return;
+
+    const { country, type } = hoveredCountry;
+
+    const flows = flowsMap.get(type).get(country);
+
+    // Sort flows
+    const o = flows
+      .map((d) => d.flow)
+      .sort((d1, d2) => d2.sim_remittances_with - d1.sim_remittances_with);
+
+    return o.slice(0, 5);
+  }, [flowsMap, hoveredCountry]);
+
   return (
     <>
       {hoveredCountry && (
         <AnimatePresence>
           <motion.div
             ref={ref}
-            className="pointer-events-none fixed z-50 rounded bg-stone-100 px-2.5 py-1.5 text-sm text-stone-900 shadow-lg"
+            className="pointer-events-none fixed z-50 rounded bg-stone-50 px-2.5 py-1.5 text-sm text-stone-900 shadow-lg"
             style={{ left, top }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <div className="font-bold">{hoveredCountry.country}</div>
-            <div className="text-stone-500">
-              in {selectedYear}{" "}
-              {hoveredCountry.type === "origin" ? "received" : "sent"}
+            <div className="">
+              <span className="font-bold text-xl">
+                {hoveredCountry.country}
+              </span>{" "}
+              <span className="text-stone-500">
+                in {selectedYear}{" "}
+                {hoveredCountry.type === "origin" ? "received" : "sent"}
+              </span>
             </div>
             <div className="text-stone-500">
               <span className="font-bold text-xl tabular-nums text-stone-950">
                 {moneyFormat.format(d.sim_remittances_with)}
               </span>{" "}
               {hoveredCountry.type === "origin" ? "from" : "to"}
+            </div>
+            <div className="mt-2">
+              {flows?.map((d, i) => (
+                <div key={i} className="flex gap-2">
+                  <div className="w-[100px]">
+                    <span className="text-stone-400">{i + 1}.</span>{" "}
+                    {hoveredCountry.type === "origin"
+                      ? d.destination
+                      : d.origin}{" "}
+                  </div>
+                  <div className="font-medium text-stone-950 tabular-nums w-[55px] text-right">
+                    {moneyFormat.format(d.sim_remittances_with)}
+                  </div>
+                </div>
+              ))}
             </div>
           </motion.div>
         </AnimatePresence>
