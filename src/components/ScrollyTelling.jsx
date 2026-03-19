@@ -11,7 +11,7 @@ gsap.registerPlugin(ScrollTrigger);
 const linkHorizontal = sankeyLinkHorizontal();
 
 const ScrollyTelling = () => {
-  const flowsMap = useRoomStore((s) => s.flowsMap);
+  const flowsMap2019 = useRoomStore((s) => s.flowsMap2019);
   const cameraControls = useRoomStore((s) => s.cameraControls);
   const arcs = useRoomStore((s) => s.arcs);
   const points = useRoomStore((s) => s.points);
@@ -25,9 +25,9 @@ const ScrollyTelling = () => {
   const setPointsValue = useRoomStore((s) => s.setPointsValue);
 
   useGSAP(() => {
-    if (!cameraControls || !arcs || !points) return;
+    if (!cameraControls || !arcs || !points || !flowsMap2019) return;
 
-    const fromUsaFlows = flowsMap.get("destination").get("USA");
+    const fromUsaFlows = flowsMap2019.get("destination").get("USA");
 
     const cameraLookAt = [...cameraPositions.init];
     const arcProgressArr = arcs.buffers.progress.array;
@@ -989,7 +989,7 @@ const ScrollyTelling = () => {
         },
         0,
       );
-  }, [cameraControls, arcs, points]);
+  }, [cameraControls, arcs, points, flowsMap2019]);
 
   return <></>;
 };

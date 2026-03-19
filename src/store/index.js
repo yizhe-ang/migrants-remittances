@@ -79,6 +79,9 @@ export const { roomStore, useRoomStore } = createRoomStore(
     flowsMap: null,
     setFlowsMap: (flowsMap) => set({ flowsMap }),
 
+    flowsMap2019: null,
+    setFlowsMap2019: (flowsMap2019) => set({ flowsMap2019 }),
+
     flowsByIncome: null,
     setFlowsByIncome: (flowsByIncome) => set({ flowsByIncome }),
 

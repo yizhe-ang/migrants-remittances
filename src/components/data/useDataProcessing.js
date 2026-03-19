@@ -19,6 +19,7 @@ export default function useDataProcessing() {
     (state) => state.setFlowsByDestination,
   );
   const setFlowsMap = useRoomStore((state) => state.setFlowsMap);
+  const setFlowsMap2019 = useRoomStore((state) => state.setFlowsMap2019);
   const setDisasters = useRoomStore((state) => state.setDisasters);
   const setDisastersImpactsByMonth = useRoomStore(
     (state) => state.setDisastersImpactsByMonth,
@@ -102,6 +103,38 @@ export default function useDataProcessing() {
       ]),
     );
   }, [flowsPerYearStore, selectedYear]);
+
+  useEffect(() => {
+    if (!flowsPerYearStore) return;
+
+    const selectedFlows = flowsPerYearStore.filter((d) => d.year === 2019);
+
+    const flowsByOriginMap = new Map();
+    const flowsByDestinationMap = new Map();
+
+    selectedFlows.forEach((flow, idx) => {
+      if (!flowsByOriginMap.has(flow.origin))
+        flowsByOriginMap.set(flow.origin, []);
+      flowsByOriginMap.get(flow.origin).push({
+        flow,
+        idx,
+      });
+
+      if (!flowsByDestinationMap.has(flow.destination))
+        flowsByDestinationMap.set(flow.destination, []);
+      flowsByDestinationMap.get(flow.destination).push({
+        flow,
+        idx,
+      });
+    });
+
+    setFlowsMap2019(
+      new Map([
+        ["origin", flowsByOriginMap],
+        ["destination", flowsByDestinationMap],
+      ]),
+    );
+  }, [flowsPerYearStore]);
 
   const { data: flowsByIncome } = useSql({
     query: /* sql */ `

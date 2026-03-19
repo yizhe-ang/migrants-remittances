@@ -23,8 +23,6 @@ const MainView = () => {
     <>
       <div className="fixed inset-0 bg-stone-200 -z-10">
         <Three />
-
-        <Controls />
       </div>
 
       {/* Sankey income */}
@@ -63,6 +61,8 @@ const MainView = () => {
       <Steps />
 
       <ScrollyTelling />
+
+      <Controls />
 
       <CountryTooltip />
     </>

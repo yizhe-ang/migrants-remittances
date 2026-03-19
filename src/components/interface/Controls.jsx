@@ -26,14 +26,14 @@ const Controls = () => {
   );
 
   return (
-    <div className="absolute w-full h-full top-0 left-0 pointer-events-none">
+    <div className="fixed inset-0 pointer-events-none">
       <div className="w-full px-10 py-4 pointer-events-auto flex gap-5">
         <div
           className="flex flex-col gap-1"
           id="show-controls"
           style={{
-            opacity: 0,
-            visibility: "hidden",
+            // opacity: 0,
+            // visibility: "hidden",
           }}
         >
           <div className="text-sm pl-1 text-stone-500">show countries</div>
@@ -66,8 +66,8 @@ const Controls = () => {
           className="flex flex-col gap-1 w-[180px]"
           id="color-controls"
           style={{
-            opacity: 0,
-            visibility: "hidden",
+            // opacity: 0,
+            // visibility: "hidden",
           }}
         >
           <div className="text-sm pl-1 text-stone-500">color by</div>
@@ -108,8 +108,8 @@ const Controls = () => {
           className="flex flex-col gap-1"
           id="size-controls"
           style={{
-            opacity: 0,
-            visibility: "hidden",
+            // opacity: 0,
+            // visibility: "hidden",
           }}
         >
           <div className="text-sm pl-1 text-stone-500">size represents</div>

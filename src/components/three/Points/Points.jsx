@@ -28,6 +28,17 @@ import useGpuPicking from "./useGpuPicking";
 
 const colorDummy = new THREE.Color();
 
+// Immer (used by @sqlrooms/room-store) deep-freezes the entire Zustand state tree.
+// Wrapping in a class prevents Immer from freezing mutable GPU buffers/uniforms.
+class PointsHandle {
+  constructor({ u, buffers, countryTypeToIdx, dataIndex }) {
+    this.u = u;
+    this.buffers = buffers;
+    this.countryTypeToIdx = countryTypeToIdx;
+    this.dataIndex = dataIndex;
+  }
+}
+
 const STRIPE_FREQUENCY = 0.08;
 const STRIPE_THRESHOLD = 0.8;
 const DOTS_SPACING = 12;
@@ -393,7 +404,9 @@ const Points = ({ ...props }) => {
     const colorArr = buffers.color.buffer.array;
     const incomeArr = buffers.color.incomeBuffer.array;
     for (let i = 0; i < countriesGeoSorted.length; i++) {
-      sizeArr[i] = buffers.size.og[i];
+      // NOTE: Init to zero at the start
+      // sizeArr[i] = buffers.size.og[i];
+      sizeArr[i] = 0
       sizeOgArr[i] = buffers.size.og[i];
     }
     for (let i = 0; i < countriesGeoSorted.length * 4; i++) {
@@ -420,12 +433,7 @@ const Points = ({ ...props }) => {
   useEffect(() => {
     if (!u || !buffers || !countryTypeToIdx || !dataIndex) return;
 
-    setPoints({
-      u,
-      buffers,
-      countryTypeToIdx,
-      dataIndex,
-    });
+    setPoints(new PointsHandle({ u, buffers, countryTypeToIdx, dataIndex }));
   }, [u, buffers, countryTypeToIdx, dataIndex]);
 
   // Per-frame: sort indices by current size buffer descending (largest first = drawn behind)
