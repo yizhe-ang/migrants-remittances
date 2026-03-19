@@ -1,6 +1,6 @@
 import { useRoomStore } from "@/store";
 import { index } from "d3-array";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import {
   Fn,
@@ -52,25 +52,31 @@ const Points = ({ ...props }) => {
     (state) => state.propGdpToColorScale,
   );
 
+  const selectedYear = useRoomStore((state) => state.selectedYear);
+
   const setPoints = useRoomStore((state) => state.setPoints);
 
+  // Year-reactive data index for tooltips and external consumers
   const dataIndex = useMemo(() => {
     if (!flowsByOrigin || !flowsByDestination) return null;
 
-    const originData = flowsByOrigin.filter((d) => d.year === 2019);
+    const originData = flowsByOrigin.filter((d) => d.year === selectedYear);
     const originIndex = index(originData, (d) => d.origin);
 
-    const destinationData = flowsByDestination.filter((d) => d.year === 2019);
+    const destinationData = flowsByDestination.filter(
+      (d) => d.year === selectedYear,
+    );
     const destinationIndex = index(destinationData, (d) => d.destination);
 
     return new Map([
       ["origin", originIndex],
       ["destination", destinationIndex],
     ]);
-  }, [flowsByOrigin, flowsByDestination]);
+  }, [flowsByOrigin, flowsByDestination, selectedYear]);
 
+  // Stable ordering — no data dependency. useFrame handles visual depth sorting via sortBuffer.
   const countriesGeoSorted = useMemo(() => {
-    if (!countriesGeo || !dataIndex) return null;
+    if (!countriesGeo) return null;
 
     const countriesGeoOrigin = countriesGeo.map((d) => ({
       ...d,
@@ -80,25 +86,9 @@ const Points = ({ ...props }) => {
       ...d,
       type: `destination`,
     }));
-    const countriesGeoProcessed = [
-      ...countriesGeoOrigin,
-      ...countriesGeoDestination,
-    ];
 
-    // Sort for depth buffer
-    // const countriesGeoSorted = [...countriesGeoProcessed].sort((a, b) => {
-    const countriesGeoSorted = countriesGeoProcessed.sort((a, b) => {
-      if (!dataIndex.get(b.type).has(b.country)) return 1;
-      if (!dataIndex.get(a.type).has(a.country)) return -1;
-
-      return (
-        dataIndex.get(b.type).get(b.country).sim_remittances_with -
-        dataIndex.get(a.type).get(a.country).sim_remittances_with
-      );
-    });
-
-    return countriesGeoSorted;
-  }, [countriesGeo, dataIndex]);
+    return [...countriesGeoOrigin, ...countriesGeoDestination];
+  }, [countriesGeo]);
 
   const countryTypeToIdx = useMemo(() => {
     if (!countriesGeoSorted) return null;
@@ -127,13 +117,7 @@ const Points = ({ ...props }) => {
     sortIndices,
     buffers,
   } = useMemo(() => {
-    if (
-      !countriesGeoSorted ||
-      !dataIndex ||
-      !remRadiusScale ||
-      !remToColorScale
-    )
-      return {};
+    if (!countriesGeoSorted) return {};
 
     const u = {
       hoveredId: uniform(0),
@@ -159,14 +143,8 @@ const Points = ({ ...props }) => {
     mesh.frustumCulled = false;
     mesh.renderOrder = 1;
 
-    // Init buffers / attributes
+    // Init positions (stable — only depends on countriesGeo)
     const positions = [];
-
-    const sizesOg = [];
-    const sizesPropGdp = [];
-    const colors = [];
-    const colorsPropGdp = [];
-    const colorsIncome = [];
     const opacities = [];
 
     for (let i = 0; i < countriesGeoSorted.length; i++) {
@@ -178,59 +156,23 @@ const Points = ({ ...props }) => {
       positions.push(c.longitude, mercatorY, 0);
 
       opacities.push(1);
-
-      const d = dataIndex.get(c.type).get(c.country);
-      if (d) {
-        sizesOg.push(remRadiusScale(d.sim_remittances_with));
-
-        if (d.prop_of_gdp != null) {
-          sizesPropGdp.push(propGdpRadiusScale(d.prop_of_gdp));
-        } else {
-          sizesPropGdp.push(0);
-        }
-
-        if (c.type === "origin") {
-          colorDummy.setStyle(remToColorScale(d.sim_remittances_with));
-        } else {
-          colorDummy.setStyle(remFromColorScale(d.sim_remittances_with));
-        }
-        colors.push(colorDummy.r, colorDummy.g, colorDummy.b, 1);
-
-        // NOTE: Account for missing / null values!
-        if (d.prop_of_gdp === null) {
-          colorDummy.setRGB(1, 1, 1);
-        } else if (c.type === "origin") {
-          const cssColor = propGdpToColorScale(d.prop_of_gdp);
-          colorDummy.setStyle(cssColor);
-        } else if (c.type === "destination") {
-          const cssColor = propGdpFromColorScale(d.prop_of_gdp);
-          colorDummy.setStyle(cssColor);
-        }
-        colorsPropGdp.push(colorDummy.r, colorDummy.g, colorDummy.b, 1);
-
-        colorDummy.setStyle(incomeColorScale(d.income));
-        colorsIncome.push(colorDummy.r, colorDummy.g, colorDummy.b, 1);
-      } else {
-        // If doesn't exist, don't render at all
-        sizesOg.push(0);
-        sizesPropGdp.push(0);
-
-        colors.push(0, 0, 0, 1);
-        colorsPropGdp.push(0, 0, 0, 1);
-        colorsIncome.push(0, 0, 0, 1);
-      }
     }
 
-    const colorsOg = colors.slice();
-    // const colorsOg = colorsPropGdp.slice();
-
     const realCount = countriesGeoSorted.length;
+
+    // Size/color buffers initialized with zeros — filled by useLayoutEffect
+    const sizesOg = new Array(realCount).fill(0);
+    const sizesPropGdp = new Array(realCount).fill(0);
+    const colorsOg = new Array(realCount * 4).fill(0);
+    // const colorsOg = colorsPropGdp.slice();
+    const colorsPropGdp = new Array(realCount * 4).fill(0);
+    const colorsIncome = new Array(realCount * 4).fill(0);
 
     const positionsBuffer = instancedArray(new Float32Array(positions), "vec3");
     const sizeOgBuffer = instancedArray(new Float32Array(sizesOg), "float");
     const sizeBuffer = instancedArray(realCount, "float");
     // const sizeBuffer = instancedArray(new Float32Array(sizesOg), "float");
-    const colorBuffer = instancedArray(new Float32Array(colors), "vec4");
+    const colorBuffer = instancedArray(new Float32Array(colorsOg), "vec4");
     const colorIncomeBuffer = instancedArray(
       new Float32Array(colorsIncome),
       "vec4",
@@ -348,12 +290,14 @@ const Points = ({ ...props }) => {
       buffers: {
         size: {
           og: sizesOg,
+          ogBuffer: sizeOgBuffer.value,
           buffer: sizeBuffer.value,
           propGdp: sizesPropGdp,
         },
         color: {
           og: colorsOg,
           buffer: colorBuffer.value,
+          incomeBuffer: colorIncomeBuffer.value,
           income: colorsIncome,
           propGdp: colorsPropGdp,
         },
@@ -362,15 +306,114 @@ const Points = ({ ...props }) => {
         },
       },
     };
+  }, [countriesGeoSorted]);
+
+  // Imperatively update size/color buffers when selectedYear changes
+  useLayoutEffect(() => {
+    if (
+      !dataIndex ||
+      !countriesGeoSorted ||
+      !buffers ||
+      !remRadiusScale ||
+      !remToColorScale ||
+      !remFromColorScale ||
+      !propGdpRadiusScale ||
+      !propGdpToColorScale ||
+      !propGdpFromColorScale ||
+      !incomeColorScale
+    )
+      return;
+
+    for (let i = 0; i < countriesGeoSorted.length; i++) {
+      const c = countriesGeoSorted[i];
+      const d = dataIndex.get(c.type).get(c.country);
+
+      if (d) {
+        buffers.size.og[i] = remRadiusScale(d.sim_remittances_with);
+
+        if (d.prop_of_gdp != null) {
+          buffers.size.propGdp[i] = propGdpRadiusScale(d.prop_of_gdp);
+        } else {
+          buffers.size.propGdp[i] = 0;
+        }
+
+        if (c.type === "origin") {
+          colorDummy.setStyle(remToColorScale(d.sim_remittances_with));
+        } else {
+          colorDummy.setStyle(remFromColorScale(d.sim_remittances_with));
+        }
+        buffers.color.og[i * 4] = colorDummy.r;
+        buffers.color.og[i * 4 + 1] = colorDummy.g;
+        buffers.color.og[i * 4 + 2] = colorDummy.b;
+        buffers.color.og[i * 4 + 3] = 1;
+
+        // NOTE: Account for missing / null values!
+        if (d.prop_of_gdp === null) {
+          colorDummy.setRGB(1, 1, 1);
+        } else if (c.type === "origin") {
+          const cssColor = propGdpToColorScale(d.prop_of_gdp);
+          colorDummy.setStyle(cssColor);
+        } else if (c.type === "destination") {
+          const cssColor = propGdpFromColorScale(d.prop_of_gdp);
+          colorDummy.setStyle(cssColor);
+        }
+        buffers.color.propGdp[i * 4] = colorDummy.r;
+        buffers.color.propGdp[i * 4 + 1] = colorDummy.g;
+        buffers.color.propGdp[i * 4 + 2] = colorDummy.b;
+        buffers.color.propGdp[i * 4 + 3] = 1;
+
+        colorDummy.setStyle(incomeColorScale(d.income));
+        buffers.color.income[i * 4] = colorDummy.r;
+        buffers.color.income[i * 4 + 1] = colorDummy.g;
+        buffers.color.income[i * 4 + 2] = colorDummy.b;
+        buffers.color.income[i * 4 + 3] = 1;
+      } else {
+        // If doesn't exist, don't render at all
+        buffers.size.og[i] = 0;
+        buffers.size.propGdp[i] = 0;
+
+        buffers.color.og[i * 4] = 0;
+        buffers.color.og[i * 4 + 1] = 0;
+        buffers.color.og[i * 4 + 2] = 0;
+        buffers.color.og[i * 4 + 3] = 1;
+        buffers.color.propGdp[i * 4] = 0;
+        buffers.color.propGdp[i * 4 + 1] = 0;
+        buffers.color.propGdp[i * 4 + 2] = 0;
+        buffers.color.propGdp[i * 4 + 3] = 1;
+        buffers.color.income[i * 4] = 0;
+        buffers.color.income[i * 4 + 1] = 0;
+        buffers.color.income[i * 4 + 2] = 0;
+        buffers.color.income[i * 4 + 3] = 1;
+      }
+    }
+
+    // Copy active values to GPU buffers
+    const sizeArr = buffers.size.buffer.array;
+    const sizeOgArr = buffers.size.ogBuffer.array;
+    const colorArr = buffers.color.buffer.array;
+    const incomeArr = buffers.color.incomeBuffer.array;
+    for (let i = 0; i < countriesGeoSorted.length; i++) {
+      sizeArr[i] = buffers.size.og[i];
+      sizeOgArr[i] = buffers.size.og[i];
+    }
+    for (let i = 0; i < countriesGeoSorted.length * 4; i++) {
+      colorArr[i] = buffers.color.og[i];
+      incomeArr[i] = buffers.color.income[i];
+    }
+    buffers.size.buffer.needsUpdate = true;
+    buffers.size.ogBuffer.needsUpdate = true;
+    buffers.color.buffer.needsUpdate = true;
+    buffers.color.incomeBuffer.needsUpdate = true;
   }, [
-    countriesGeoSorted,
     dataIndex,
+    countriesGeoSorted,
+    buffers,
     remRadiusScale,
     remToColorScale,
+    remFromColorScale,
     propGdpRadiusScale,
     propGdpToColorScale,
     propGdpFromColorScale,
-    remFromColorScale,
     incomeColorScale,
   ]);
 
