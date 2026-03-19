@@ -55,7 +55,7 @@ const CountryTooltip = () => {
           <motion.div
             key="country-tooltip"
             ref={ref}
-            className="pointer-events-none fixed z-50 w-fit rounded-xl bg-stone-50 px-5 py-2 text-sm text-stone-900 shadow-lg left-1/2 bottom-0 -translate-x-1/2"
+            className="pointer-events-none fixed z-50 w-fit rounded-xl bg-stone-50 px-6 py-2 text-sm text-stone-900 shadow-lg left-1/2 bottom-0 -translate-x-1/2"
             initial={{ opacity: 0, y: 200 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 200 }}
