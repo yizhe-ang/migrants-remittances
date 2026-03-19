@@ -406,9 +406,8 @@ const Points = ({ ...props }) => {
     const colorArr = buffers.color.buffer.array;
     const incomeArr = buffers.color.incomeBuffer.array;
     for (let i = 0; i < countriesGeoSorted.length; i++) {
-      // NOTE: Init to zero at the start
-      // sizeArr[i] = buffers.size.og[i];
-      sizeArr[i] = 0
+      sizeArr[i] = buffers.size.og[i];
+      // sizeArr[i] = 0
       sizeOgArr[i] = buffers.size.og[i];
     }
     for (let i = 0; i < countriesGeoSorted.length * 4; i++) {
