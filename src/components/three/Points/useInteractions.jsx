@@ -5,7 +5,7 @@ import * as THREE from "three/webgpu";
 
 const colorDummy = new THREE.Color();
 
-export default function useInteractions({ u, buffers, countryTypeToIdx }) {
+export default function useInteractions({ u, buffers, countryTypeToIdx, dataIndex }) {
   const enableMapInteractions = useRoomStore(
     (state) => state.enableMapInteractions,
   );
@@ -103,6 +103,37 @@ export default function useInteractions({ u, buffers, countryTypeToIdx }) {
       animate(u.incomeColorT, { value: 0 }, { duration: 0.2 });
     }
   }, [colorPointsBy, u]);
+
+  // Animate on year change ##################################################
+  useEffect(() => {
+    if (!buffers || !sizeTargets || !colorTargets) return;
+
+    const sizeArr = buffers.size.buffer.array;
+    const colorArr = buffers.color.buffer.array;
+    const sizeSnapshot = sizeArr.slice();
+    const colorSnapshot = colorArr.slice();
+
+    animRef.current?.stop();
+
+    animRef.current = animate(0, 1, {
+      duration: 0.4,
+      ease: "easeInOut",
+      onUpdate: (t) => {
+        for (let i = 0; i < sizeArr.length; i++) {
+          sizeArr[i] =
+            sizeSnapshot[i] + (sizeTargets[i] - sizeSnapshot[i]) * t;
+        }
+        for (let i = 0; i < colorArr.length; i++) {
+          colorArr[i] =
+            colorSnapshot[i] + (colorTargets[i] - colorSnapshot[i]) * t;
+        }
+        buffers.size.buffer.needsUpdate = true;
+        buffers.color.buffer.needsUpdate = true;
+      },
+    });
+
+    return () => animRef.current?.stop();
+  }, [dataIndex, buffers, sizeTargets, colorTargets]);
 
   // TODO: Just control size?
   // Select which points to hide ###############################################

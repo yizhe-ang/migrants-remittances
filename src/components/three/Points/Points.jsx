@@ -321,8 +321,8 @@ const Points = ({ ...props }) => {
   }, [countriesGeoSorted]);
 
   // Imperatively update size/color buffers when selectedYear changes
-  // useLayoutEffect(() => {
-  useEffect(() => {
+  useLayoutEffect(() => {
+  // useEffect(() => {
     if (
       !dataIndex ||
       !countriesGeoSorted ||
@@ -400,24 +400,21 @@ const Points = ({ ...props }) => {
       }
     }
 
-    // Copy active values to GPU buffers
-    const sizeArr = buffers.size.buffer.array;
+    // Immediately update ogBuffer (stagger target used in shader)
     const sizeOgArr = buffers.size.ogBuffer.array;
-    const colorArr = buffers.color.buffer.array;
-    const incomeArr = buffers.color.incomeBuffer.array;
     for (let i = 0; i < countriesGeoSorted.length; i++) {
-      sizeArr[i] = buffers.size.og[i];
-      // sizeArr[i] = 0
       sizeOgArr[i] = buffers.size.og[i];
     }
+    buffers.size.ogBuffer.needsUpdate = true;
+
+    // Immediately update incomeBuffer (blended via uniform, not per-point animated)
+    const incomeArr = buffers.color.incomeBuffer.array;
     for (let i = 0; i < countriesGeoSorted.length * 4; i++) {
-      colorArr[i] = buffers.color.og[i];
       incomeArr[i] = buffers.color.income[i];
     }
-    buffers.size.buffer.needsUpdate = true;
-    buffers.size.ogBuffer.needsUpdate = true;
-    buffers.color.buffer.needsUpdate = true;
     buffers.color.incomeBuffer.needsUpdate = true;
+
+    // GPU display buffers (size.buffer, color.buffer) are animated by useInteractions
   }, [
     dataIndex,
     countriesGeoSorted,
@@ -467,6 +464,7 @@ const Points = ({ ...props }) => {
     u,
     buffers,
     countryTypeToIdx,
+    dataIndex,
   });
 
   return <>{mesh && <primitive object={mesh} {...props} />}</>;
