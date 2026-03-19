@@ -375,14 +375,15 @@ const Points = ({ ...props }) => {
   ]);
 
   useEffect(() => {
-    if (!u || !buffers || !countryTypeToIdx) return;
+    if (!u || !buffers || !countryTypeToIdx || !dataIndex) return;
 
     setPoints({
       u,
       buffers,
       countryTypeToIdx,
+      dataIndex,
     });
-  }, [u, buffers]);
+  }, [u, buffers, countryTypeToIdx, dataIndex]);
 
   // Per-frame: sort indices by current size buffer descending (largest first = drawn behind)
   useFrame(() => {

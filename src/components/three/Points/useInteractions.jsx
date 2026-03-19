@@ -213,12 +213,6 @@ export default function useInteractions({ u, buffers, countryTypeToIdx }) {
       });
 
       // Hovered country should not change size
-      // const countryOriginIdx = countryTypeToIdx.get("origin").get(country);
-      // const countryDestIdx = countryTypeToIdx.get("destination").get(country);
-
-      // sizeTargetsProcessed[countryOriginIdx] = sizeTargets[countryOriginIdx];
-      // sizeTargetsProcessed[countryDestIdx] = sizeTargets[countryDestIdx];
-
       const countryIdx = countryTypeToIdx.get(type).get(country);
       sizeTargetsProcessed[countryIdx] = sizeTargets[countryIdx];
     }
