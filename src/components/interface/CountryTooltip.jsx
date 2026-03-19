@@ -50,17 +50,19 @@ const CountryTooltip = () => {
 
   return (
     <>
-      {hoveredCountry && (
-        <AnimatePresence>
+      <AnimatePresence>
+        {hoveredCountry && (
           <motion.div
+            key="country-tooltip"
             ref={ref}
-            className="pointer-events-none fixed z-50 rounded bg-stone-50 px-5 py-2 text-sm text-stone-900 shadow-lg left-1/2 bottom-0 -translate-x-1/2"
-            initial={{ opacity: 0, y: 50 }}
+            className="pointer-events-none fixed z-50 rounded-xl bg-stone-50 px-5 py-2 text-sm text-stone-900 shadow-lg left-1/2 bottom-0 -translate-x-1/2"
+            initial={{ opacity: 0, y: 200 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 50 }}
+            exit={{ opacity: 0, y: 200 }}
+            transition={{ type: "spring", damping: 25, stiffness: 300 }}
           >
             <div className="">
-              <span className="font-bold text-xl">
+              <span className="font-bold text-2xl">
                 {hoveredCountry.country}
               </span>{" "}
               <span className="text-stone-500">
@@ -90,8 +92,8 @@ const CountryTooltip = () => {
               ))}
             </div>
           </motion.div>
-        </AnimatePresence>
-      )}
+        )}
+      </AnimatePresence>
     </>
   );
 };
