@@ -218,7 +218,7 @@ export default function useInteractions({ u, buffers, countryTypeToIdx }) {
     }
 
     animRef.current = animate(0, 1, {
-      duration: 0.4,
+      duration: 0.3,
       ease: "easeOut",
       onUpdate: (t) => {
         for (let i = 0; i < sizeArr.length; i++) {

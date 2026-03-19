@@ -320,7 +320,8 @@ const Points = ({ ...props }) => {
   }, [countriesGeoSorted]);
 
   // Imperatively update size/color buffers when selectedYear changes
-  useLayoutEffect(() => {
+  // useLayoutEffect(() => {
+  useEffect(() => {
     if (
       !dataIndex ||
       !countriesGeoSorted ||
@@ -405,8 +406,7 @@ const Points = ({ ...props }) => {
     const incomeArr = buffers.color.incomeBuffer.array;
     for (let i = 0; i < countriesGeoSorted.length; i++) {
       // NOTE: Init to zero at the start
-      // sizeArr[i] = buffers.size.og[i];
-      sizeArr[i] = 0
+      sizeArr[i] = buffers.size.og[i];
       sizeOgArr[i] = buffers.size.og[i];
     }
     for (let i = 0; i < countriesGeoSorted.length * 4; i++) {
