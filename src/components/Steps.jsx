@@ -29,11 +29,11 @@ const Steps = () => {
       <Step id="step-3">
         <P>
           Billions of dollars flow back across borders, as these migrants also
-          regularly <C className="bg-orange-200">send</C> back money to support
+          regularly <C className="bg-[#dea193]/50">send</C> back money to support
           their families and communities.
         </P>
         <P>
-          People who <C className="bg-blue-200">receive</C> them can use the
+          People who <C className="bg-[#dea193]/50">receive</C> them can use the
           money to pay school fees, make repairs to their homes, or cover
           medical bills.
         </P>

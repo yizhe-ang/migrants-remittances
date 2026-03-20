@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "motion/react";
 import DateSlider from "@/components/interface/DateSlider";
 import SizeScale from "@/components/interface/SizeScale";
 import { moneyFormat } from "@/lib/utils";
+import { ArrowRight } from "lucide-react";
 
 const Controls = () => {
   const showCountryPoints = useRoomStore((state) => state.showCountryPoints);
@@ -26,12 +27,10 @@ const Controls = () => {
         <div
           className="flex flex-col gap-1"
           id="show-controls"
-          style={
-            {
-              opacity: 0,
-              visibility: "hidden",
-            }
-          }
+          style={{
+            opacity: 0,
+            visibility: "hidden",
+          }}
         >
           <div className="text-sm pl-1 text-stone-500">show countries</div>
           <ToggleGroup
@@ -43,18 +42,19 @@ const Controls = () => {
             <ToggleGroupItem
               value="sending"
               aria-label=""
-              className="flex gap-1 items-center"
+              className="flex gap-2 items-center"
             >
-              <div className="size-4 rounded-full bg-orange-300"></div>
+              {/* <div className="size-4 rounded-full bg-[#dea193]"></div> */}
               <div>Sending</div>
             </ToggleGroupItem>
+            <ArrowRight className="stroke-stone-500" />
             <ToggleGroupItem
               value="receiving"
               aria-label=""
-              className="flex gap-1 items-center"
+              className="flex gap-2 items-center"
             >
-              <div className="size-4 rounded-full bg-blue-300"></div>
               <div>Receiving</div>
+              {/* <div className="size-4 rounded-full bg-[#dea193]"></div> */}
             </ToggleGroupItem>
           </ToggleGroup>
         </div>
@@ -62,12 +62,10 @@ const Controls = () => {
         <div
           className="flex flex-col gap-1 w-[180px]"
           id="color-controls"
-          style={
-            {
-              opacity: 0,
-              visibility: "hidden",
-            }
-          }
+          style={{
+            opacity: 0,
+            visibility: "hidden",
+          }}
         >
           <div className="text-sm pl-1 text-stone-500">color by</div>
           <ToggleGroup
@@ -100,7 +98,7 @@ const Controls = () => {
                   ></LegendOrdinal>
                 </motion.div>
               )}
-              {remFromColorScale &&
+              {/* {remFromColorScale &&
                 remToColorScale &&
                 colorPointsBy[0] === "value" && (
                   <motion.div
@@ -121,7 +119,7 @@ const Controls = () => {
                       labelFormat={(l) => moneyFormat.format(l)}
                     ></LegendLinear>
                   </motion.div>
-                )}
+                )} */}
             </AnimatePresence>
           </div>
         </div>
@@ -129,12 +127,10 @@ const Controls = () => {
         <div
           className="flex flex-col gap-1"
           id="size-controls"
-          style={
-            {
-              opacity: 0,
-              visibility: "hidden",
-            }
-          }
+          style={{
+            opacity: 0,
+            visibility: "hidden",
+          }}
         >
           <div className="text-sm pl-1 text-stone-500">size represents</div>
 

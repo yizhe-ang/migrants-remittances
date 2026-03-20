@@ -10,6 +10,7 @@ const CountryTooltip = () => {
   const selectedYear = useRoomStore((state) => state.selectedYear);
   const flowsMap = useRoomStore((state) => state.flowsMap);
   const pointsValue = useRoomStore((state) => state.pointsValue);
+  const incomeColorScale = useRoomStore((state) => state.incomeColorScale);
 
   const accessor = useMemo(() => {
     if (pointsValue[0] === "absolute") {
@@ -26,6 +27,8 @@ const CountryTooltip = () => {
     const { country, type } = hoveredCountry;
 
     const d = points.dataIndex.get(type).get(country);
+
+    console.log(d);
 
     return d;
   }, [points, hoveredCountry]);
@@ -59,7 +62,14 @@ const CountryTooltip = () => {
             transition={{ type: "spring", damping: 30, stiffness: 300 }}
           >
             <div className="">
-              <span className="font-bold text-2xl">
+              <span
+                className="font-bold text-2xl px-2"
+                style={{
+                  background: incomeColorScale
+                    ? `${incomeColorScale(d.income)}80`
+                    : "transparent",
+                }}
+              >
                 {hoveredCountry.country}
               </span>{" "}
             </div>
