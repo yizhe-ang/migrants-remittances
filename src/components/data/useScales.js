@@ -151,6 +151,7 @@ export default function useScales() {
 
   // Disaster type color scale
   useEffect(() => {
+
     const disasterTypeColorScale = scaleOrdinal()
       .domain(["flood", "earthquake", "drought", "storm"])
       // .range(schemeObservable10);

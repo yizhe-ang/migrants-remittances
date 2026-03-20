@@ -76,8 +76,10 @@ const RectDisasters = ({ width = 900, height = 500 }) => {
     const plot = Plot.plot({
       y: {
         tickFormat: "$.0s",
-        ticks: 5,
-        label: "Remittance-induced per Affected",
+        // ticks: 5,
+        ticks: 0,
+        // label: "Remittance-induced per Affected",
+        label: null
       },
       x: {
         tickFormat: (d) => fmt.format(d),

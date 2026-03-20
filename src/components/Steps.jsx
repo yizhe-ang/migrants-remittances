@@ -10,7 +10,15 @@ const Steps = () => {
 
   return (
     <div className="w-full z-10 pointer-events-none">
-      <div className="h-screen pointer-events-none" />
+      <div className="h-screen pointer-events-none">
+        <h1 className="mx-auto">
+          Migrants,
+          <br />
+          Remittances and
+          <br />
+          Disasters
+        </h1>
+      </div>
 
       <Step id="step-1">
         <P>
@@ -29,8 +37,8 @@ const Steps = () => {
       <Step id="step-3">
         <P>
           Billions of dollars flow back across borders, as these migrants also
-          regularly <C className="bg-[#dea193]/50">send</C> back money to support
-          their families and communities.
+          regularly <C className="bg-[#dea193]/50">send</C> back money to
+          support their families and communities.
         </P>
         <P>
           People who <C className="bg-[#dea193]/50">receive</C> them can use the
