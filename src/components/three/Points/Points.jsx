@@ -347,7 +347,7 @@ const Points = ({ ...props }) => {
       const c = countriesGeoSorted[i];
       const d = dataIndex.get(c.type).get(c.country);
 
-      buffers.type.buffer.array[i] = c.type === "origin" ? 0 : 1;
+      buffers.type.buffer.array[i] = c.type === "destination" ? 0 : 1;
 
       if (d) {
         buffers.size.og[i] = remRadiusScale(d.sim_remittances_with);
