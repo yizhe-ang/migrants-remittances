@@ -190,6 +190,7 @@ const Points = ({ ...props }) => {
       "vec4",
     );
     const opacityBuffer = instancedArray(new Float32Array(opacities), "float");
+    const typeBuffer = instancedArray(realCount, "float");
 
     // Sort buffer: stores original data index for each draw position
     // Initialize with identity mapping, CPU sort in useFrame reorders these
@@ -318,13 +319,16 @@ const Points = ({ ...props }) => {
         opacity: {
           buffer: opacityBuffer.value,
         },
+        type: {
+          buffer: typeBuffer.value,
+        },
       },
     };
   }, [countriesGeoSorted]);
 
   // Imperatively update size/color buffers when selectedYear changes
   useLayoutEffect(() => {
-  // useEffect(() => {
+    // useEffect(() => {
     if (
       !dataIndex ||
       !countriesGeoSorted ||
@@ -342,6 +346,8 @@ const Points = ({ ...props }) => {
     for (let i = 0; i < countriesGeoSorted.length; i++) {
       const c = countriesGeoSorted[i];
       const d = dataIndex.get(c.type).get(c.country);
+
+      buffers.type.buffer.array[i] = c.type === "origin" ? 0 : 1;
 
       if (d) {
         buffers.size.og[i] = remRadiusScale(d.sim_remittances_with);
