@@ -263,7 +263,9 @@ const Points = ({ ...props }) => {
       // Per-point pattern: type 0 = stripes (destination), type 1 = dots (origin)
       const pointType = typeBuffer.element(originalIndex);
       const patternColor = mix(stripeColor, dotsColor, pointType);
-      const color = patternColor.mul(fill).add(strokeColor.mul(stroke));
+
+      // const color = patternColor.mul(fill).add(strokeColor.mul(stroke));
+      const color = fillColor.mul(fill).add(strokeColor.mul(stroke));
 
       const opacity = opacityBuffer.element(originalIndex);
 
