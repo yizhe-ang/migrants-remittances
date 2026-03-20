@@ -76,7 +76,7 @@ const Arcs = (props) => {
       // Wind streaks style (0 = default, 1 = wind streaks)
       windStreaksT: uniform(0),
       // windColor: uniform(new THREE.Color("#b0c4de")),
-      windColor: uniform(new THREE.Color(chroma(colors.stone[500]).hex())),
+      windColor: uniform(new THREE.Color(chroma(colors.stone[400]).hex())),
       // Wind color mode (0 = solid windColor, 1 = srcColor/tgtColor gradient)
       windGradientT: uniform(0),
       // Arc drawing direction (0 = default, 1 = reversed)
@@ -220,8 +220,18 @@ const Arcs = (props) => {
       const fadeT = smoothstep(low, high, t);
       const windOpacity = fadeT.mul(1);
 
+      // Surface texture: noise driven by UV position and instance seed
+      const texCoord = vec3(
+        uv().x.mul(12),       // along the arc
+        uv().y.mul(6),        // around the tube circumference
+        seed.mul(0.1),        // per-instance variation
+      );
+      const surfaceNoise = mx_noise_float(texCoord).mul(0.5).add(0.5);
+      // Subtle brightness variation (0.8–1.0 range)
+      const textureFactor = surfaceNoise.mul(0.3).add(0.7);
+
       // Color is shared across modes; opacity differentiates them
-      const c = baseColor;
+      const c = baseColor.mul(textureFactor);
       const alpha = mix(u.opacity, windOpacity.mul(u.opacity), u.windStreaksT);
 
       return vec4(c, alpha);
