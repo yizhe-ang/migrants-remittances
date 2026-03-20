@@ -1,4 +1,4 @@
-import { Environment, PerspectiveCamera } from "@react-three/drei";
+import { Environment, Html, PerspectiveCamera, Text } from "@react-three/drei";
 import WorldMap from "@/components/three/WorldMap";
 import Points from "@/components/three/Points/Points";
 import Arcs from "@/components/three/Arcs";
@@ -24,6 +24,14 @@ const Scene = () => {
       <Points position={[0, 0, 0]} />
 
       <Arcs position={[0, 0, 0]} />
+
+      {/* <Html className="font-bold w-[500px]">
+        Migrants,
+        <br />
+        Remittances and
+        <br />
+        Disasters
+      </Html> */}
     </>
   );
 };
