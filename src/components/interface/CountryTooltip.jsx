@@ -45,6 +45,8 @@ const CountryTooltip = () => {
       .map((d) => d.flow)
       .sort((d1, d2) => d2.sim_remittances_with - d1.sim_remittances_with);
 
+    console.log(o)
+
     return o.slice(0, 5);
   }, [flowsMap, hoveredCountry]);
 
