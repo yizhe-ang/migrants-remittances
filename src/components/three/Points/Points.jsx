@@ -267,8 +267,8 @@ const Points = ({ ...props }) => {
 
       const opacity = opacityBuffer.element(originalIndex);
 
-      return vec4(color, outer.mul(0.995).mul(opacity).mul(u.opacity));
-      // return vec4(color, outer.mul(1).mul(opacity).mul(u.opacity));
+      // return vec4(color, outer.mul(0.995).mul(opacity).mul(u.opacity));
+      return vec4(color, outer.mul(1).mul(opacity).mul(u.opacity));
     })();
 
     material.positionNode = Fn(() => {
