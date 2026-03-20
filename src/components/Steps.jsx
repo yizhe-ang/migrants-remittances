@@ -1,5 +1,6 @@
 import { cn } from "@sqlrooms/ui";
 import { useRoomStore } from "../store";
+import { MousePointer } from "lucide-react";
 
 const Steps = () => {
   const incomeColorScale = useRoomStore((state) => state.incomeColorScale);
@@ -67,7 +68,12 @@ const Steps = () => {
 
       {/* <div id="step-dashboard" className="h-[100vh]"></div> */}
       <Step id="step-dashboard-1">
-        <P>Interact!</P>
+        <P className="flex gap-2">
+          <MousePointer />
+          <span>
+            Hover over the circles to see the remittance flows for each country!
+          </span>
+        </P>
       </Step>
 
       <Step id="step-7-1">
@@ -247,9 +253,7 @@ const Steps = () => {
         </P>
       </Step>
       <Step id="step-16" className="">
-        <P>
-          Interact!
-        </P>
+        <P>Interact!</P>
       </Step>
     </div>
   );

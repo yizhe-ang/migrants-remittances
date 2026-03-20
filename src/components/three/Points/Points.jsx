@@ -228,8 +228,8 @@ const Points = ({ ...props }) => {
 
       const fillColor = dataColor;
 
-      // const strokeColor = vec3(0.1, 0.1, 0.1);
-      const strokeColor = vec3(1.0);
+      const strokeColor = vec3(0.2);
+      // const strokeColor = vec3(1.0);
 
       // Diagonal stripe pattern (screen-space for uniform sizing)
       const sc = screenCoordinate;

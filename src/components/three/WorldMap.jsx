@@ -1,7 +1,16 @@
 import { useTexture } from "@react-three/drei";
 import { useMemo } from "react";
 import * as THREE from "three/webgpu";
-import { Fn, float, smoothstep, texture, uniform, uv, vec2, vec3 } from "three/tsl";
+import {
+  Fn,
+  float,
+  smoothstep,
+  texture,
+  uniform,
+  uv,
+  vec2,
+  vec3,
+} from "three/tsl";
 
 const WorldMap = ({ ...props }) => {
   const dayTexture = useTexture("/textures/earth/day.jpg");
@@ -18,7 +27,6 @@ const WorldMap = ({ ...props }) => {
       // roughness: 0.5,
       // metalness: 0.5,
       transparent: true,
-      depthWrite: false,
     });
 
     const mesh = new THREE.Mesh(geometry, material);
@@ -40,15 +48,17 @@ const WorldMap = ({ ...props }) => {
         .mul(0.299)
         .add(color.g.mul(0.587))
         .add(color.b.mul(0.114));
-      return vec3(luminance, luminance, luminance).mul(20);
+      // Tint with a warm stone color
+      const stone = vec3(0.48, 0.45, 0.42);
+      return stone.mul(luminance).mul(45);
     })();
 
     material.opacityNode = Fn(() => {
       const alphaX = smoothstep(0.0, fadeX, uv().x).mul(
-        smoothstep(0.0, fadeX, float(1.0).sub(uv().x))
+        smoothstep(0.0, fadeX, float(1.0).sub(uv().x)),
       );
       const alphaY = smoothstep(0.0, fadeY, uv().y).mul(
-        smoothstep(0.0, fadeY, float(1.0).sub(uv().y))
+        smoothstep(0.0, fadeY, float(1.0).sub(uv().y)),
       );
       return alphaX.mul(alphaY);
     })();
