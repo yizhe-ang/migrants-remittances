@@ -21,6 +21,7 @@ import {
   fract,
   screenCoordinate,
   mod,
+  floor,
 } from "three/tsl";
 import * as THREE from "three/webgpu";
 import { latToMercatorY } from "@/lib/utils";
@@ -42,7 +43,7 @@ class PointsHandle {
 
 const STRIPE_FREQUENCY = 0.08;
 const STRIPE_THRESHOLD = 0.8;
-const DOTS_SPACING = 12;
+const DOTS_SPACING = 20;
 const DOTS_RADIUS = 0.35;
 
 const Points = ({ ...props }) => {
@@ -248,11 +249,15 @@ const Points = ({ ...props }) => {
       const cellPos = mod(sc.xy, cell).sub(cell.mul(0.5));
       const dotDist = cellPos.length().div(float(DOTS_SPACING));
       const fwDot = fwidth(dotDist);
+      // Checkerboard: skip every other cell so dots have alternating gaps
+      const col = floor(sc.x.div(float(DOTS_SPACING)));
+      const row = floor(sc.y.div(float(DOTS_SPACING)));
+      const checker = mod(col.add(row), float(2));
       const dotMask = smoothstep(
         float(DOTS_RADIUS).add(fwDot),
         float(DOTS_RADIUS).sub(fwDot),
         dotDist,
-      );
+      ).mul(checker);
       const dotsColor = mix(fillColor, vec3(1, 1, 1), dotMask);
 
       // Per-point pattern: type 0 = stripes (destination), type 1 = dots (origin)
