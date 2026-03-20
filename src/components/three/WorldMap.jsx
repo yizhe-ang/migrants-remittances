@@ -50,7 +50,7 @@ const WorldMap = ({ ...props }) => {
         .add(color.b.mul(0.114));
       // Tint with a warm stone color
       const stone = vec3(0.48, 0.45, 0.42);
-      return stone.mul(luminance).mul(40);
+      return stone.mul(luminance).mul(38);
     })();
 
     material.opacityNode = Fn(() => {
