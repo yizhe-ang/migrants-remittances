@@ -39,6 +39,25 @@ const Sankey = ({ graph, width, height, colorScale, margin, ...props }) => {
     >
       <svg width={width} height={height}>
         <g transform={`translate(${margin.left}, ${margin.top})`}>
+          {/* Gradient definitions for links */}
+          <defs>
+            {graph.links.map((link, i) => {
+              const sourceColor = colorScale(link.source.id.slice(0, -1));
+              const targetColor = colorScale(link.target.id);
+              return (
+                <linearGradient
+                  key={i}
+                  id={`link-gradient-${props.id}-${i}`}
+                  gradientUnits="userSpaceOnUse"
+                  x1={link.source.x1}
+                  x2={link.target.x0}
+                >
+                  <stop offset="0%" stopColor={sourceColor} />
+                  <stop offset="100%" stopColor={targetColor} />
+                </linearGradient>
+              );
+            })}
+          </defs>
           <g className="sankey-links">
             {graph.links.map((link, i) => (
               <motion.path
@@ -46,7 +65,8 @@ const Sankey = ({ graph, width, height, colorScale, margin, ...props }) => {
                 d={linkHorizontal(link)}
                 fill="transparent"
                 // stroke={colorScale(link.source.id.slice(0, -1))}
-                stroke={`url(#flow-pattern-${link.source.id.slice(0, -1).replace(/ /g, "-")})`}
+                // stroke={`url(#flow-pattern-${link.source.id.slice(0, -1).replace(/ /g, "-")})`}
+                stroke={`url(#link-gradient-${props.id}-${i})`}
                 strokeWidth={link.width}
                 opacity={linkOpacity}
                 // initial={{ pathLength: 0, opacity: 0 }}

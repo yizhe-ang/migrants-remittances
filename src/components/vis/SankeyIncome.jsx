@@ -154,10 +154,10 @@ const SankeyIncome = ({ width, height, margin = defaultMargin }) => {
 
               return (
                 <g key={d}>
-                  <PatternWavesAnimated
+                  {/* <PatternWavesAnimated
                     id={`flow-pattern-${idName}`}
                     background={colorScale(d)}
-                  />
+                  /> */}
                   <PatternLines
                     id={`node-pattern-${idName}-`}
                     height={15}
