@@ -230,7 +230,8 @@ const Arcs = (props) => {
       );
       const surfaceNoise = mx_noise_float(texCoord).mul(0.5).add(0.5);
       // Subtle brightness variation (0.8–1.0 range)
-      const textureFactor = surfaceNoise.mul(0.3).add(0.7);
+      // const textureFactor = surfaceNoise.mul(0.3).add(0.7);
+      const textureFactor = surfaceNoise.mul(0.8).add(0.2);
 
       // Color is shared across modes; opacity differentiates them
       const c = baseColor.mul(textureFactor);
