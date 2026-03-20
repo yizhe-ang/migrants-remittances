@@ -228,7 +228,8 @@ const Points = ({ ...props }) => {
 
       const fillColor = dataColor;
 
-      const strokeColor = vec3(0.1, 0.1, 0.1);
+      // const strokeColor = vec3(0.1, 0.1, 0.1);
+      const strokeColor = vec3(1.0);
 
       // Diagonal stripe pattern (screen-space for uniform sizing)
       const sc = screenCoordinate;
@@ -264,6 +265,7 @@ const Points = ({ ...props }) => {
       const opacity = opacityBuffer.element(originalIndex);
 
       return vec4(color, outer.mul(0.995).mul(opacity).mul(u.opacity));
+      // return vec4(color, outer.mul(0.95).mul(opacity).mul(u.opacity));
     })();
 
     material.positionNode = Fn(() => {

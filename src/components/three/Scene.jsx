@@ -16,6 +16,8 @@ const Scene = () => {
 
       {/* <Environment preset="city" /> */}
 
+      <color
+
       <ambientLight intensity={2} />
 
       <WorldMap position={[0, 0, -1]} />

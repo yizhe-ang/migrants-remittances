@@ -137,6 +137,12 @@ export default function useScales() {
       // .range(["#7fc97f", "#beaed4", "#fdc086", "#ffff99"]);
       // .range(["#7fc97f", "#beaed4", "#fdc086", schemeSet2[5]]);
       .range(["#7fc97f", "#beaed4", "#fdc086", schemeSet3[11]]);
+      // .range([
+      //   "#ffd700",
+      //   "#fa8775",
+      //   "#cd34b5",
+      //   "#0000ff",
+      // ]);
 
     setIncomeColorScale(incomeColorScale);
   }, []);
@@ -145,7 +151,13 @@ export default function useScales() {
   useEffect(() => {
     const disasterTypeColorScale = scaleOrdinal()
       .domain(["flood", "earthquake", "drought", "storm"])
-      .range(schemeObservable10);
+      // .range(schemeObservable10);
+      .range([
+        schemeObservable10[0],
+        schemeObservable10[1],
+        schemeObservable10[2],
+        schemeObservable10[3],
+      ]);
 
     setDisasterTypeColorScale(disasterTypeColorScale);
   }, []);
