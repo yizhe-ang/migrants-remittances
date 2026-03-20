@@ -60,7 +60,7 @@ export default function useScales() {
           (d) => d.sim_remittances_with,
         ),
       ])
-      .range([1.1, 13]);
+      .range([1.3, 13]);
 
     setRemRadiusScale(remRadiusScale);
 
@@ -70,7 +70,7 @@ export default function useScales() {
         0,
         max([...flowsByDestination, ...flowsByOrigin], (d) => d.prop_of_gdp),
       ])
-      .range([1.1, 10]);
+      .range([1.3, 10]);
 
     setPropGdpRadiusScale(propsGdpRadiusScale);
   }, [flowsByDestination, flowsByOrigin]);
@@ -79,7 +79,8 @@ export default function useScales() {
   useEffect(() => {
     if (!flowsByOrigin) return;
 
-    const remToColorScale = scaleSequentialPow(interpolatePuBuGn)
+    // const remToColorScale = scaleSequentialPow(interpolatePuBuGn)
+    const remToColorScale = scaleSequentialPow(() => "#dea193")
       .domain(extent(flowsByOrigin, (d) => d.sim_remittances_with))
       .exponent(0.35);
 
@@ -97,7 +98,8 @@ export default function useScales() {
   useEffect(() => {
     if (!flowsByDestination) return;
 
-    const remFromColorScale = scaleSequentialPow(interpolateYlOrBr)
+    // const remFromColorScale = scaleSequentialPow(interpolateYlOrBr)
+    const remFromColorScale = scaleSequentialPow(() => "#dea193")
       .domain(extent(flowsByDestination, (d) => d.sim_remittances_with))
       .exponent(0.35);
 
@@ -137,15 +139,28 @@ export default function useScales() {
       // .range(["#7fc97f", "#beaed4", "#fdc086", "#ffff99"]);
       // .range(["#7fc97f", "#beaed4", "#fdc086", schemeSet2[5]]);
       .range(["#7fc97f", "#beaed4", "#fdc086", schemeSet3[11]]);
+      // .range([
+      //   "#ffd700",
+      //   "#fa8775",
+      //   "#cd34b5",
+      //   "#0000ff",
+      // ]);
 
     setIncomeColorScale(incomeColorScale);
   }, []);
 
   // Disaster type color scale
   useEffect(() => {
+
     const disasterTypeColorScale = scaleOrdinal()
       .domain(["flood", "earthquake", "drought", "storm"])
-      .range(schemeObservable10);
+      // .range(schemeObservable10);
+      .range([
+        schemeObservable10[0],
+        schemeObservable10[1],
+        schemeObservable10[2],
+        schemeObservable10[3],
+      ]);
 
     setDisasterTypeColorScale(disasterTypeColorScale);
   }, []);

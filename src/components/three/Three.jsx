@@ -6,8 +6,9 @@ extend(THREE);
 
 export default () => (
   <Canvas
+    flat
     gl={async (props) => {
-      const renderer = new THREE.WebGPURenderer(props);
+      const renderer = new THREE.WebGPURenderer({ ...props });
       await renderer.init();
       return renderer;
     }}

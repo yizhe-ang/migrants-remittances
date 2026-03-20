@@ -1,5 +1,6 @@
 import { cn } from "@sqlrooms/ui";
 import { useRoomStore } from "../store";
+import { MousePointer } from "lucide-react";
 
 const Steps = () => {
   const incomeColorScale = useRoomStore((state) => state.incomeColorScale);
@@ -9,7 +10,15 @@ const Steps = () => {
 
   return (
     <div className="w-full z-10 pointer-events-none">
-      <div className="h-screen pointer-events-none" />
+      <div className="h-screen pointer-events-none flex justify-center mt-10">
+        <h1 className="font-bold text-7xl">
+          Migrants,
+          <br />
+          Remittances<span className="font-normal text-4xl"> and </span>
+          <br />
+          Disasters
+        </h1>
+      </div>
 
       <Step id="step-1">
         <P>
@@ -28,11 +37,11 @@ const Steps = () => {
       <Step id="step-3">
         <P>
           Billions of dollars flow back across borders, as these migrants also
-          regularly <C className="bg-orange-200">send</C> back money to support
-          their families and communities.
+          regularly <C className="bg-[#dea193]/50">send</C> back money to
+          support their families and communities.
         </P>
         <P>
-          People who <C className="bg-blue-200">receive</C> them can use the
+          People who <C className="bg-[#dea193]/50">receive</C> them can use the
           money to pay school fees, make repairs to their homes, or cover
           medical bills.
         </P>
@@ -42,7 +51,8 @@ const Steps = () => {
         <P>
           These remittances - estimated in 2023 to total about $857 billion –
           now dwarf official development aid and represent a lifeline for many
-          economies. [Show chart here]
+          economies.
+          {/* [Show chart here] */}
         </P>
         <P>
           But where do these transfers actually end up in? Do they flow to
@@ -66,7 +76,12 @@ const Steps = () => {
 
       {/* <div id="step-dashboard" className="h-[100vh]"></div> */}
       <Step id="step-dashboard-1">
-        <P>Interact!</P>
+        <P className="flex gap-2">
+          <MousePointer />
+          <span>
+            Hover over the circles to see the remittance flows for each country!
+          </span>
+        </P>
       </Step>
 
       <Step id="step-7-1">
@@ -246,9 +261,7 @@ const Steps = () => {
         </P>
       </Step>
       <Step id="step-16" className="">
-        <P>
-          Interact!
-        </P>
+        <P>Interact!</P>
       </Step>
     </div>
   );

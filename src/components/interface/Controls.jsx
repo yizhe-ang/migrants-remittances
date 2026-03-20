@@ -1,13 +1,11 @@
 import { useRoomStore } from "@/store";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import {
-  LegendItem,
-  LegendLabel,
-  LegendOrdinal,
-  LegendSize,
-} from "@visx/legend";
+import { LegendOrdinal, LegendLinear } from "@visx/legend";
 import { AnimatePresence, motion } from "motion/react";
 import DateSlider from "@/components/interface/DateSlider";
+import SizeScale from "@/components/interface/SizeScale";
+import { moneyFormat } from "@/lib/utils";
+import { ArrowRight } from "lucide-react";
 
 const Controls = () => {
   const showCountryPoints = useRoomStore((state) => state.showCountryPoints);
@@ -20,13 +18,11 @@ const Controls = () => {
   const setColorPointsBy = useRoomStore((state) => state.setColorPointsBy);
 
   const incomeColorScale = useRoomStore((state) => state.incomeColorScale);
-  const remRadiusScale = useRoomStore((state) => state.remRadiusScale);
-  const propsGdpRadiusScale = useRoomStore(
-    (state) => state.propsGdpRadiusScale,
-  );
+  const remFromColorScale = useRoomStore((state) => state.remFromColorScale);
+  const remToColorScale = useRoomStore((state) => state.remToColorScale);
 
   return (
-    <div className="absolute w-full h-full top-0 left-0 pointer-events-none">
+    <div className="fixed inset-0 pointer-events-none">
       <div className="w-full px-10 py-4 pointer-events-auto flex gap-5">
         <div
           className="flex flex-col gap-1"
@@ -46,18 +42,19 @@ const Controls = () => {
             <ToggleGroupItem
               value="sending"
               aria-label=""
-              className="flex gap-1 items-center"
+              className="flex gap-2 items-center"
             >
-              <div className="size-4 rounded-full bg-orange-300"></div>
+              {/* <div className="size-4 rounded-full bg-[#dea193]"></div> */}
               <div>Sending</div>
             </ToggleGroupItem>
+            <ArrowRight className="stroke-stone-500" />
             <ToggleGroupItem
               value="receiving"
               aria-label=""
-              className="flex gap-1 items-center"
+              className="flex gap-2 items-center"
             >
-              <div className="size-4 rounded-full bg-blue-300"></div>
               <div>Receiving</div>
+              {/* <div className="size-4 rounded-full bg-[#dea193]"></div> */}
             </ToggleGroupItem>
           </ToggleGroup>
         </div>
@@ -87,9 +84,10 @@ const Controls = () => {
 
           {/* Color scale */}
           <div className="mt-2 pl-1">
-            <AnimatePresence>
+            <AnimatePresence mode="popLayout">
               {incomeColorScale && colorPointsBy[0] === "income" && (
                 <motion.div
+                  key="income"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
@@ -100,6 +98,28 @@ const Controls = () => {
                   ></LegendOrdinal>
                 </motion.div>
               )}
+              {/* {remFromColorScale &&
+                remToColorScale &&
+                colorPointsBy[0] === "value" && (
+                  <motion.div
+                    key="value"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="flex gap-2"
+                  >
+                    <LegendLinear
+                      scale={remFromColorScale}
+                      className="text-sm"
+                      labelFormat={(l) => moneyFormat.format(l)}
+                    ></LegendLinear>
+                    <LegendLinear
+                      scale={remToColorScale}
+                      className="text-sm"
+                      labelFormat={(l) => moneyFormat.format(l)}
+                    ></LegendLinear>
+                  </motion.div>
+                )} */}
             </AnimatePresence>
           </div>
         </div>
@@ -113,6 +133,7 @@ const Controls = () => {
           }}
         >
           <div className="text-sm pl-1 text-stone-500">size represents</div>
+
           <ToggleGroup
             value={pointsValue}
             onValueChange={(val) => {
@@ -126,10 +147,21 @@ const Controls = () => {
               % of GDP
             </ToggleGroupItem>
           </ToggleGroup>
+
+          {/* <div>
+            <SizeScale />
+          </div> */}
         </div>
       </div>
 
-      <div className="absolute top-30 w-full pb-10 pointer-events-auto">
+      <div
+        className="absolute top-30 w-full pb-10 pointer-events-auto"
+        id="date-slider"
+        style={{
+          opacity: 0,
+          visibility: "hidden",
+        }}
+      >
         <DateSlider />
       </div>
     </div>

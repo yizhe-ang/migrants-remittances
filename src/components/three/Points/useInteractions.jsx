@@ -5,7 +5,12 @@ import * as THREE from "three/webgpu";
 
 const colorDummy = new THREE.Color();
 
-export default function useInteractions({ u, buffers, countryTypeToIdx }) {
+export default function useInteractions({
+  u,
+  buffers,
+  countryTypeToIdx,
+  dataIndex,
+}) {
   const enableMapInteractions = useRoomStore(
     (state) => state.enableMapInteractions,
   );
@@ -104,39 +109,36 @@ export default function useInteractions({ u, buffers, countryTypeToIdx }) {
     }
   }, [colorPointsBy, u]);
 
-  // TODO: Just control size?
-  // Select which points to hide ###############################################
+  // Animate on year change ##################################################
   // useEffect(() => {
-  //   if (!buffers) return;
+  //   if (!buffers || !sizeTargets || !colorTargets) return;
 
-  //   const opacityArr = buffers.opacity.buffer.array;
+  //   const sizeArr = buffers.size.buffer.array;
+  //   const colorArr = buffers.color.buffer.array;
+  //   const sizeSnapshot = sizeArr.slice();
+  //   const colorSnapshot = colorArr.slice();
 
-  //   const opacitySnapshot = opacityArr.slice();
-  //   const opacityTargets = new Float32Array(opacityArr.length);
-
-  //   if (showCountryPoints.includes("receiving")) {
-  //     for (const idx of countryTypeToIdx.get("origin").values()) {
-  //       opacityTargets[idx] = 1;
-  //     }
-  //   }
-  //   if (showCountryPoints.includes("sending")) {
-  //     for (const idx of countryTypeToIdx.get("destination").values()) {
-  //       opacityTargets[idx] = 1;
-  //     }
-  //   }
+  //   animRef.current?.stop();
 
   //   animRef.current = animate(0, 1, {
-  //     duration: 0.2,
-  //     ease: "easeOut",
+  //     duration: 0.4,
+  //     ease: "easeInOut",
   //     onUpdate: (t) => {
-  //       for (let i = 0; i < opacityArr.length; i++) {
-  //         opacityArr[i] =
-  //           opacitySnapshot[i] + (opacityTargets[i] - opacitySnapshot[i]) * t;
+  //       for (let i = 0; i < sizeArr.length; i++) {
+  //         sizeArr[i] =
+  //           sizeSnapshot[i] + (sizeTargets[i] - sizeSnapshot[i]) * t;
   //       }
-  //       buffers.opacity.buffer.needsUpdate = true;
+  //       for (let i = 0; i < colorArr.length; i++) {
+  //         colorArr[i] =
+  //           colorSnapshot[i] + (colorTargets[i] - colorSnapshot[i]) * t;
+  //       }
+  //       buffers.size.buffer.needsUpdate = true;
+  //       buffers.color.buffer.needsUpdate = true;
   //     },
   //   });
-  // }, [buffers, showCountryPoints]);
+
+  //   return () => animRef.current?.stop();
+  // }, [dataIndex, buffers, sizeTargets, colorTargets]);
 
   // Animate on hovered country change
   useEffect(() => {
@@ -218,7 +220,7 @@ export default function useInteractions({ u, buffers, countryTypeToIdx }) {
     }
 
     animRef.current = animate(0, 1, {
-      duration: 0.4,
+      duration: 0.3,
       ease: "easeOut",
       onUpdate: (t) => {
         for (let i = 0; i < sizeArr.length; i++) {

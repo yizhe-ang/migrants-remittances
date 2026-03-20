@@ -11,6 +11,7 @@ import Controls from "@/components/interface/Controls";
 import BeeswarmDisasters from "@/components/vis/BeeswarmDisasters";
 import AreaDisasters from "@/components/vis/AreaDisasters";
 import RectDisasters from "@/components/vis/RectDisasters";
+import RectDisastersNew from "./vis/RectDisastersNew";
 
 const MainView = () => {
   useDataPreparation();
@@ -21,10 +22,8 @@ const MainView = () => {
 
   return (
     <>
-      <div className="fixed inset-0 bg-stone-200 -z-10">
+      <div className="fixed inset-0 bg-stone-100 -z-10">
         <Three />
-
-        <Controls />
       </div>
 
       {/* Sankey income */}
@@ -56,13 +55,16 @@ const MainView = () => {
           style={{ opacity: 0, visibility: "hidden" }}
           id="rect-disasters"
         >
-          <RectDisasters />
+          {/* <RectDisasters /> */}
+          <RectDisastersNew />
         </div>
       </div>
 
       <Steps />
 
       <ScrollyTelling />
+
+      <Controls />
 
       <CountryTooltip />
     </>

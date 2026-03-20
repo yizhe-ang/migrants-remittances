@@ -1,5 +1,5 @@
 import { useRoomStore } from "@/store";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef } from "react";
 import {
   Fn,
   instancedArray,
@@ -38,6 +38,7 @@ const Arcs = (props) => {
   const progressAnimRef = useRef(null);
 
   const flows = useRoomStore((state) => state.selectedFlows);
+  const flowsPerYear = useRoomStore((state) => state.flowsPerYear);
   const flowsMap = useRoomStore((state) => state.flowsMap);
   const countriesGeoMap = useRoomStore((state) => state.countriesGeoMap);
   const flowRadiusScale = useRoomStore((state) => state.flowRadiusScale);
@@ -47,44 +48,48 @@ const Arcs = (props) => {
 
   const setArcs = useRoomStore((state) => state.setArcs);
 
+  // Compute max flow count across all years for pre-allocation
+  const maxFlowCount = useMemo(() => {
+    if (!flowsPerYear) return null;
+
+    const countsByYear = new Map();
+    for (const flow of flowsPerYear) {
+      countsByYear.set(flow.year, (countsByYear.get(flow.year) || 0) + 1);
+    }
+
+    let max = 0;
+    for (const count of countsByYear.values()) {
+      if (count > max) max = count;
+    }
+    return max;
+  }, [flowsPerYear]);
+
+  // Create mesh once with max instance count — stable across year changes
   const { mesh, u, buffers } = useMemo(() => {
-    if (!flows || !countriesGeoMap || !flowRadiusScale) return {};
+    if (!maxFlowCount || !flowRadiusScale) return {};
 
     const u = {
-      srcColor: uniform(new THREE.Color(chroma(colors.blue["400"]).hex())),
-      tgtColor: uniform(new THREE.Color(chroma(colors.orange["400"]).hex())),
+      // srcColor: uniform(new THREE.Color(chroma(colors.blue["400"]).hex())),
+      // tgtColor: uniform(new THREE.Color(chroma(colors.orange["400"]).hex())),
+      srcColor: uniform(new THREE.Color(chroma(colors.stone["300"]).hex())),
+      tgtColor: uniform(new THREE.Color(chroma(colors.stone["300"]).hex())),
       opacity: uniform(1),
       staggeredT: uniform(0),
       // Wind streaks style (0 = default, 1 = wind streaks)
       windStreaksT: uniform(0),
       // windColor: uniform(new THREE.Color("#b0c4de")),
-      windColor: uniform(new THREE.Color(chroma(colors.stone[500]).hex())),
+      windColor: uniform(new THREE.Color(chroma(colors.stone[400]).hex())),
       // Wind color mode (0 = solid windColor, 1 = srcColor/tgtColor gradient)
       windGradientT: uniform(0),
       // Arc drawing direction (0 = default, 1 = reversed)
       directionT: uniform(0),
     };
 
-    // Build per-instance data
-    const sources = [];
-    const targets = [];
-    const progress = [];
-    const radii = [];
-
-    for (const flow of flows) {
-      const originGeo = countriesGeoMap.get(flow.origin);
-      const destGeo = countriesGeoMap.get(flow.destination);
-      if (!originGeo || !destGeo) continue;
-
-      sources.push(originGeo.longitude, latToMercatorY(originGeo.latitude), 0);
-      targets.push(destGeo.longitude, latToMercatorY(destGeo.latitude), 0);
-
-      progress.push(0);
-
-      radii.push(flowRadiusScale(flow.sim_remittances_with));
-    }
-
-    const count = flows.length;
+    // Pre-allocate buffers with max count (filled with zeros)
+    const srcBuffer = instancedArray(maxFlowCount, "vec3");
+    const tgtBuffer = instancedArray(maxFlowCount, "vec3");
+    const progressBuffer = instancedArray(maxFlowCount, "float");
+    const radiusBuffer = instancedArray(maxFlowCount, "float");
 
     // Canonical arc: height baked into curve so we can scale uniformly
     const curve = new THREE.QuadraticBezierCurve3(
@@ -110,15 +115,10 @@ const Arcs = (props) => {
       // metalness: 0.3,
     });
 
-    const mesh = new THREE.InstancedMesh(geometry, material, count);
+    const mesh = new THREE.InstancedMesh(geometry, material, maxFlowCount);
     mesh.frustumCulled = false;
     mesh.renderOrder = 2;
-
-    // Instance buffers
-    const srcBuffer = instancedArray(new Float32Array(sources), "vec3");
-    const tgtBuffer = instancedArray(new Float32Array(targets), "vec3");
-    const progressBuffer = instancedArray(new Float32Array(progress), "float");
-    const radiusBuffer = instancedArray(new Float32Array(radii), "float");
+    mesh.count = 0; // Start with nothing visible until buffer update runs
 
     material.positionNode = Fn(() => {
       const src = srcBuffer.element(instanceIndex);
@@ -222,8 +222,19 @@ const Arcs = (props) => {
       const fadeT = smoothstep(low, high, t);
       const windOpacity = fadeT.mul(1);
 
+      // Surface texture: noise driven by UV position and instance seed
+      const texCoord = vec3(
+        uv().x.mul(12),       // along the arc
+        uv().y.mul(6),        // around the tube circumference
+        seed.mul(0.1),        // per-instance variation
+      );
+      const surfaceNoise = mx_noise_float(texCoord).mul(0.5).add(0.5);
+      // Subtle brightness variation (0.8–1.0 range)
+      // const textureFactor = surfaceNoise.mul(0.3).add(0.7);
+      const textureFactor = surfaceNoise.mul(0.8).add(0.2);
+
       // Color is shared across modes; opacity differentiates them
-      const c = baseColor;
+      const c = baseColor.mul(textureFactor);
       const alpha = mix(u.opacity, windOpacity.mul(u.opacity), u.windStreaksT);
 
       return vec4(c, alpha);
@@ -233,10 +244,52 @@ const Arcs = (props) => {
       mesh,
       u,
       buffers: {
+        src: srcBuffer.value,
+        tgt: tgtBuffer.value,
+        radius: radiusBuffer.value,
         progress: progressBuffer.value,
       },
     };
-  }, [flows, countriesGeoMap, flowRadiusScale]);
+  }, [maxFlowCount, flowRadiusScale]);
+
+  // Imperatively update buffers when selectedFlows changes (year change)
+  useLayoutEffect(() => {
+    if (!flows || !mesh || !buffers || !countriesGeoMap || !flowRadiusScale)
+      return;
+
+    const srcArr = buffers.src.array;
+    const tgtArr = buffers.tgt.array;
+    const radiusArr = buffers.radius.array;
+    const progressArr = buffers.progress.array;
+
+    let count = 0;
+    for (const flow of flows) {
+      const originGeo = countriesGeoMap.get(flow.origin);
+      const destGeo = countriesGeoMap.get(flow.destination);
+      if (!originGeo || !destGeo) continue;
+
+      const i3 = count * 3;
+      srcArr[i3] = originGeo.longitude;
+      srcArr[i3 + 1] = latToMercatorY(originGeo.latitude);
+      srcArr[i3 + 2] = 0;
+
+      tgtArr[i3] = destGeo.longitude;
+      tgtArr[i3 + 1] = latToMercatorY(destGeo.latitude);
+      tgtArr[i3 + 2] = 0;
+
+      radiusArr[count] = flowRadiusScale(flow.sim_remittances_with);
+      progressArr[count] = 0;
+
+      count++;
+    }
+
+    mesh.count = count;
+
+    buffers.src.needsUpdate = true;
+    buffers.tgt.needsUpdate = true;
+    buffers.radius.needsUpdate = true;
+    buffers.progress.needsUpdate = true;
+  }, [flows, mesh, buffers, countriesGeoMap, flowRadiusScale]);
 
   useEffect(() => {
     if (!u || !buffers || !flowsMap) return;
