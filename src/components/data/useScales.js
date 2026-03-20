@@ -79,7 +79,8 @@ export default function useScales() {
   useEffect(() => {
     if (!flowsByOrigin) return;
 
-    const remToColorScale = scaleSequentialPow(interpolatePuBuGn)
+    // const remToColorScale = scaleSequentialPow(interpolatePuBuGn)
+    const remToColorScale = scaleSequentialPow(() => "#dea193")
       .domain(extent(flowsByOrigin, (d) => d.sim_remittances_with))
       .exponent(0.35);
 
@@ -97,7 +98,8 @@ export default function useScales() {
   useEffect(() => {
     if (!flowsByDestination) return;
 
-    const remFromColorScale = scaleSequentialPow(interpolateYlOrBr)
+    // const remFromColorScale = scaleSequentialPow(interpolateYlOrBr)
+    const remFromColorScale = scaleSequentialPow(() => "#dea193")
       .domain(extent(flowsByDestination, (d) => d.sim_remittances_with))
       .exponent(0.35);
 

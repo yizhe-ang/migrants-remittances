@@ -41,10 +41,10 @@ class PointsHandle {
   }
 }
 
-const STRIPE_FREQUENCY = 0.08;
+const STRIPE_FREQUENCY = 0.05;
 const STRIPE_THRESHOLD = 0.8;
-const DOTS_SPACING = 20;
-const DOTS_RADIUS = 0.35;
+const DOTS_SPACING = 10;
+const DOTS_RADIUS = 0.3;
 
 const Points = ({ ...props }) => {
   const countriesGeoSortedRef = useRef(null);
