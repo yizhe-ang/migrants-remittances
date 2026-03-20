@@ -69,8 +69,10 @@ const Arcs = (props) => {
     if (!maxFlowCount || !flowRadiusScale) return {};
 
     const u = {
-      srcColor: uniform(new THREE.Color(chroma(colors.blue["400"]).hex())),
-      tgtColor: uniform(new THREE.Color(chroma(colors.orange["400"]).hex())),
+      // srcColor: uniform(new THREE.Color(chroma(colors.blue["400"]).hex())),
+      // tgtColor: uniform(new THREE.Color(chroma(colors.orange["400"]).hex())),
+      srcColor: uniform(new THREE.Color(chroma(colors.stone["300"]).hex())),
+      tgtColor: uniform(new THREE.Color(chroma(colors.stone["300"]).hex())),
       opacity: uniform(1),
       staggeredT: uniform(0),
       // Wind streaks style (0 = default, 1 = wind streaks)

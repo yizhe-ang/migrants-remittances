@@ -255,12 +255,9 @@ const Points = ({ ...props }) => {
       );
       const dotsColor = mix(fillColor, vec3(1, 1, 1), dotMask);
 
-      // Mix between no pattern, stripes, and dots
-      const patternColor = mix(
-        mix(fillColor, stripeColor, u.stripesT),
-        dotsColor,
-        u.dotsT,
-      );
+      // Per-point pattern: type 0 = stripes (destination), type 1 = dots (origin)
+      const pointType = typeBuffer.element(originalIndex);
+      const patternColor = mix(stripeColor, dotsColor, pointType);
       const color = patternColor.mul(fill).add(strokeColor.mul(stroke));
 
       const opacity = opacityBuffer.element(originalIndex);
@@ -407,6 +404,8 @@ const Points = ({ ...props }) => {
         buffers.color.income[i * 4 + 3] = 1;
       }
     }
+
+    buffers.type.buffer.needsUpdate = true;
 
     // Immediately update ogBuffer (stagger target used in shader)
     const sizeOgArr = buffers.size.ogBuffer.array;
