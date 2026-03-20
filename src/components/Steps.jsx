@@ -10,11 +10,11 @@ const Steps = () => {
 
   return (
     <div className="w-full z-10 pointer-events-none">
-      <div className="h-screen pointer-events-none">
-        <h1 className="mx-auto">
+      <div className="h-screen pointer-events-none flex justify-center mt-10">
+        <h1 className="font-bold text-7xl">
           Migrants,
           <br />
-          Remittances and
+          Remittances<span className="font-normal text-4xl"> and </span>
           <br />
           Disasters
         </h1>
