@@ -70,15 +70,19 @@ const RectDisasters = () => {
   useEffect(() => {
     if (!aggData) return;
 
+    console.log(aggData)
+
     const plot = Plot.plot({
       y: {
         tickFormat: "$.0s",
         ticks: 5,
+        label: "Remittance-induced per Affected",
       },
       x: {
         tickFormat: (d) => fmt.format(d),
+        label: "Total Affected",
       },
-      height: 300,
+      height: 500,
       width: 700,
       marginLeft: 80,
       color: {
@@ -93,6 +97,7 @@ const RectDisasters = () => {
             y2: "remittance_per_affected",
             fill: "disaster_type",
             order: "remittance_per_affected",
+            // stroke: "white",
             reverse: true,
           }),
         ),
@@ -104,7 +109,15 @@ const RectDisasters = () => {
     return () => plot.remove();
   }, [aggData]);
 
-  return <div ref={containerRef}></div>;
+  return <div ref={containerRef} className="relative">
+    {/* {aggData?.map((d, i) => {
+      return (
+        <div>
+
+        </div>
+      )
+    })} */}
+  </div>;
 };
 
 export default RectDisasters;
