@@ -81,7 +81,7 @@ const ScrollyTelling = () => {
       },
     );
     gsap.set(
-      "#sankey-income-upper-middle .sankey-links, #sankey-income-upper-middle .sankey-nodes",
+      "#sankey-income-upper-middle .sankey-links, #sankey-income-upper-middle .sankey-nodes, #sankey-income-upper-middle .node-text-High-income-, #sankey-income-upper-middle .node-text-Lower-middle-income-, #sankey-income-upper-middle .node-text-Low-income-",
       {
         autoAlpha: 0,
       },

@@ -28,8 +28,8 @@ const Controls = () => {
           id="show-controls"
           style={
             {
-              // opacity: 0,
-              // visibility: "hidden",
+              opacity: 0,
+              visibility: "hidden",
             }
           }
         >
@@ -64,8 +64,8 @@ const Controls = () => {
           id="color-controls"
           style={
             {
-              // opacity: 0,
-              // visibility: "hidden",
+              opacity: 0,
+              visibility: "hidden",
             }
           }
         >
@@ -131,8 +131,8 @@ const Controls = () => {
           id="size-controls"
           style={
             {
-              // opacity: 0,
-              // visibility: "hidden",
+              opacity: 0,
+              visibility: "hidden",
             }
           }
         >
