@@ -32,6 +32,7 @@ const AreaDisasters = ({ width = 700, height = 800 }) => {
           return s.replace("G", "B"); // D3 uses "G" (giga) not "B" (billion)
         },
         ticks: 3,
+        label: "Disaster-induced Remittances"
       },
       color: {
         domain: ["floods", "earthquakes", "droughts", "storms"],

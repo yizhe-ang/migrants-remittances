@@ -55,8 +55,8 @@ const MainView = () => {
           style={{ opacity: 0, visibility: "hidden" }}
           id="rect-disasters"
         >
-          {/* <RectDisasters /> */}
-          <RectDisastersNew />
+          <RectDisasters />
+          {/* <RectDisastersNew /> */}
         </div>
       </div>
 

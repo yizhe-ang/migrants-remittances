@@ -67,8 +67,9 @@ const Controls = () => {
             visibility: "hidden",
           }}
         >
-          <div className="text-sm pl-1 text-stone-500">color by</div>
+          <div className="text-sm pl-1 text-stone-500 invisible">color by</div>
           <ToggleGroup
+            className="invisible"
             value={colorPointsBy}
             onValueChange={(val) => {
               if (val.length > 0) setColorPointsBy(val);
