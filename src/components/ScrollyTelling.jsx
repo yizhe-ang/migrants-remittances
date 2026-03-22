@@ -501,6 +501,14 @@ const ScrollyTelling = () => {
           start: "top bottom",
           end: "bottom bottom",
           scrub: true,
+          onEnter: () => {
+            // document.querySelector("canvas").style.pointerEvents = "none";
+            setEnableMapInteractions(false);
+          },
+          onLeaveBack: () => {
+            // document.querySelector("canvas").style.pointerEvents = "auto";
+            setEnableMapInteractions(true);
+          },
         },
         duration: 1,
       })
@@ -718,10 +726,12 @@ const ScrollyTelling = () => {
           onEnter: () => {
             setShowCountryPoints(["receiving"]);
             setPointsValue(["propGdp"]);
+            setEnableMapInteractions(true);
           },
           onLeaveBack: () => {
             setShowCountryPoints(["sending"]);
             setPointsValue(["absolute"]);
+            setEnableMapInteractions(false);
           },
         },
         duration: 1,

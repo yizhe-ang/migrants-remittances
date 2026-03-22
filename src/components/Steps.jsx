@@ -266,6 +266,14 @@ const Steps = () => {
           Interact to explore the data!
         </P>
         <P>
+          <ul className="list-disc px-5">
+            <li>Hover over each country to see the remittance flows</li>
+            <li>Show countries sending or receiving remittances</li>
+            <li>
+              Size each country by the absolute amount of remittances, or by the
+              proportion of its GDP
+            </li>
+          </ul>
         </P>
       </Step>
     </div>

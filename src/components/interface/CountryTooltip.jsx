@@ -11,6 +11,9 @@ const CountryTooltip = () => {
   const flowsMap = useRoomStore((state) => state.flowsMap);
   const pointsValue = useRoomStore((state) => state.pointsValue);
   const incomeColorScale = useRoomStore((state) => state.incomeColorScale);
+  const enableMapInteractions = useRoomStore(
+    (state) => state.enableMapInteractions,
+  )
 
   const accessor = useMemo(() => {
     if (pointsValue[0] === "absolute") {
@@ -28,8 +31,6 @@ const CountryTooltip = () => {
 
     const d = points.dataIndex.get(type).get(country);
 
-    console.log(d);
-
     return d;
   }, [points, hoveredCountry]);
 
@@ -45,15 +46,13 @@ const CountryTooltip = () => {
       .map((d) => d.flow)
       .sort((d1, d2) => d2.sim_remittances_with - d1.sim_remittances_with);
 
-    console.log(o)
-
     return o.slice(0, 5);
   }, [flowsMap, hoveredCountry]);
 
   return (
     <>
       <AnimatePresence>
-        {hoveredCountry && (
+        {enableMapInteractions && hoveredCountry && (
           <motion.div
             key="country-tooltip"
             ref={ref}
