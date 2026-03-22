@@ -141,7 +141,6 @@ const SankeyIncome = ({ width, height, margin = defaultMargin }) => {
         <div
           className="flex gap-10"
           style={{
-            transform: `translate(calc(50vw - ${width / 2}px), ${0}px)`,
             // opacity: 0,
             // visibility: "hidden",
           }}
