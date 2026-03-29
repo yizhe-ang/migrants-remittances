@@ -21,6 +21,7 @@ const ScrollyTelling = () => {
   const setEnableMapInteractions = useRoomStore(
     (s) => s.setEnableMapInteractions,
   );
+  const setEnableControls = useRoomStore((s) => s.setEnableControls);
   const setColorPointsBy = useRoomStore((s) => s.setColorPointsBy);
   const setPointsValue = useRoomStore((s) => s.setPointsValue);
 
@@ -476,10 +477,12 @@ const ScrollyTelling = () => {
           onEnter: () => {
             setColorPointsBy(["income"]);
             setShowCountryPoints(["sending"]);
+            setEnableControls(false);
           },
           onLeaveBack: () => {
             setColorPointsBy(["value"]);
             setShowCountryPoints(["receiving"]);
+            setEnableControls(true);
           },
         },
         duration: 1,

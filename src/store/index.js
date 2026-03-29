@@ -136,6 +136,9 @@ export const { roomStore, useRoomStore } = createRoomStore(
     setEnableMapInteractions: (enableMapInteractions) =>
       set({ enableMapInteractions }),
 
+    enableControls: true,
+    setEnableControls: (enableControls) => set({ enableControls }),
+
     selectedYear: 2019,
     setSelectedYear: (selectedYear) => set({ selectedYear }),
 

@@ -82,6 +82,13 @@ const Steps = () => {
             Hover over the circles to see the remittance flows for each country!
           </span>
         </P>
+        <P>
+          <ul className="px-5 list-disc">
+            <li>
+              Toggle between countries sending or receiving money
+            </li>
+          </ul>
+        </P>
       </Step>
 
       <Step id="step-7-1">

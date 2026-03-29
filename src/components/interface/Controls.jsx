@@ -6,6 +6,7 @@ import DateSlider from "@/components/interface/DateSlider";
 import SizeScale from "@/components/interface/SizeScale";
 import { moneyFormat } from "@/lib/utils";
 import { ArrowRight } from "lucide-react";
+import { pointer } from "@observablehq/plot";
 
 const Controls = () => {
   const showCountryPoints = useRoomStore((state) => state.showCountryPoints);
@@ -16,6 +17,7 @@ const Controls = () => {
   const setPointsValue = useRoomStore((state) => state.setPointsValue);
   const colorPointsBy = useRoomStore((state) => state.colorPointsBy);
   const setColorPointsBy = useRoomStore((state) => state.setColorPointsBy);
+  const enableControls = useRoomStore((state) => state.enableControls);
 
   const incomeColorScale = useRoomStore((state) => state.incomeColorScale);
   const remFromColorScale = useRoomStore((state) => state.remFromColorScale);
@@ -37,6 +39,9 @@ const Controls = () => {
             value={showCountryPoints}
             onValueChange={(val) => {
               if (val.length > 0) setShowCountryPoints(val);
+            }}
+            style={{
+              pointerEvents: enableControls ? "auto" : "none",
             }}
           >
             <ToggleGroupItem
