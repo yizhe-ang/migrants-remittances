@@ -99,13 +99,14 @@ const Sankey = ({ graph, width, height, colorScale, margin, ...props }) => {
                 x={x0}
                 y={y0}
                 rx={3}
-                // fill={
-                //   id.at(-1) === "-"
-                //     ? colorScale(id.slice(0, -1))
-                //     : colorScale(id)
-                // }
-                fill={`url(#node-pattern-${id.replace(/ /g, "-")})`}
-                stroke="black"
+                fill={
+                  id.at(-1) === "-"
+                    ? colorScale(id.slice(0, -1))
+                    : colorScale(id)
+                }
+                // fill={`url(#node-pattern-${id.replace(/ /g, "-")})`}
+                // stroke="black"
+                stroke={id.at(-1) !== "-" ? "white" : "black"}
                 strokeWidth={2}
                 // initial={{ opacity: 0 }}
                 // animate={{ opacity: 1 }}
