@@ -47,6 +47,7 @@ const Controls = () => {
             <ToggleGroupItem
               value="sending"
               aria-label=""
+              // className="flex gap-2 items-center border-2 border-black"
               className="flex gap-2 items-center"
             >
               {/* <div className="size-4 rounded-full bg-[#dea193]"></div> */}
@@ -56,6 +57,7 @@ const Controls = () => {
             <ToggleGroupItem
               value="receiving"
               aria-label=""
+              // className="flex gap-2 items-center border-2 border-white"
               className="flex gap-2 items-center"
             >
               <div>Receiving</div>

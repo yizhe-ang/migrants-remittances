@@ -203,6 +203,8 @@ const Points = ({ ...props }) => {
     const originalIndex = sortBuffer.element(instanceIndex);
 
     material.colorNode = Fn(() => {
+      const pointType = typeBuffer.element(originalIndex);
+
       const distUV = uv().sub(vec2(0.5, 0.5)).length();
 
       const fw = fwidth(distUV);
@@ -230,8 +232,12 @@ const Points = ({ ...props }) => {
 
       const fillColor = dataColor;
 
-      const strokeColor = vec3(0.2);
-      // const strokeColor = vec3(1.0);
+      // const strokeColor = vec3(0.2);
+      const strokeColor = mix(
+        vec3(0),
+        vec3(1),
+        pointType
+      )
 
       // Diagonal stripe pattern (screen-space for uniform sizing)
       const sc = screenCoordinate;
@@ -261,7 +267,7 @@ const Points = ({ ...props }) => {
       const dotsColor = mix(fillColor, vec3(1, 1, 1), dotMask);
 
       // Per-point pattern: type 0 = stripes (destination), type 1 = dots (origin)
-      const pointType = typeBuffer.element(originalIndex);
+
       const patternColor = mix(stripeColor, dotsColor, pointType);
 
       // const color = patternColor.mul(fill).add(strokeColor.mul(stroke));
