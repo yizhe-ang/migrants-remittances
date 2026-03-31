@@ -116,6 +116,9 @@ const RectDisasters = ({ width = 900, height = 500 }) => {
 
   return (
     <div ref={containerRef} className="relative" style={{ width, height }}>
+      <div className="font-bold">
+        Number of people affected, and remittance induced per affected, for each disaster type
+      </div>
       {/* {aggData?.map((d, i) => {
         const p = labelProps[d.disaster_type];
 

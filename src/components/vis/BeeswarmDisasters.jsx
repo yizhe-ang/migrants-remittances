@@ -54,7 +54,7 @@ const BeeswarmDisasters = ({ width = 700, height = 850 }) => {
   }, [disasters, width, height]);
 
   return <div ref={containerRef} className="opacity-100">
-    <div className="font-bold">Disaster occurrences over time, sized by number of people affected</div>
+    <div id="beeswarm-disasters-title" className="font-bold">Disaster occurrences over time, sized by number of people affected</div>
   </div>;
 };
 

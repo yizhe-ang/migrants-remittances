@@ -889,6 +889,22 @@ const ScrollyTelling = () => {
         duration: 1,
       })
       .to(
+        "#beeswarm-disasters-title",
+        {
+          autoAlpha: 0,
+          duration: 0.1,
+        },
+        0,
+      )
+      .from(
+        "#area-disasters-title",
+        {
+          autoAlpha: 0,
+          duration: 0.1,
+        },
+        0,
+      )
+      .to(
         "#beeswarm-disasters",
         {
           autoAlpha: 0.5,
