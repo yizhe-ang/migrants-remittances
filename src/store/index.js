@@ -161,6 +161,9 @@ export const { roomStore, useRoomStore } = createRoomStore(
     colorPointsBy: ["value"],
     setColorPointsBy: (colorPointsBy) => set({ colorPointsBy }),
 
+    dashboardView: false,
+    setDashboardView: (dashboardView) => set({ dashboardView }),
+
     // Scene objects ###########################################################
     cameraControls: null,
     setCameraControls: (cameraControls) => set({ cameraControls }),

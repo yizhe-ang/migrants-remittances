@@ -12,8 +12,26 @@ import BeeswarmDisasters from "@/components/vis/BeeswarmDisasters";
 import AreaDisasters from "@/components/vis/AreaDisasters";
 import RectDisasters from "@/components/vis/RectDisasters";
 import RectDisastersNew from "./vis/RectDisastersNew";
+import { useEffect } from "react";
+import { useRoomStore } from "@/store";
 
 const MainView = () => {
+  // const dashboardView = useRoomStore((state) => state.dashboardView);
+  // const setDashboardView = useRoomStore((state) => state.setDashboardView);
+  // const setEnableMapInteractions = useRoomStore(
+  //   (state) => state.setEnableMapInteractions
+  // )
+
+  useEffect(() => {
+    const path = window.location.pathname;
+
+    if (path === "/dashboard") {
+      // setDashboardView(true)
+      // setEnableMapInteractions(true)
+      window.scrollTo(0, document.body.scrollHeight);
+    }
+  }, []);
+
   useDataPreparation();
 
   useDataProcessing();
@@ -26,55 +44,59 @@ const MainView = () => {
         <Three />
       </div>
 
-      {/* Sankey income */}
-      <div className="fixed inset-0 grid place-items-center pointer-events-none">
-        <div className="h-[80vh] w-[600px]">
-          <ParentSize>
-            {({ height }) => <SankeyIncome width={600} height={height} />}
-          </ParentSize>
-        </div>
-      </div>
-
-      <div className="fixed inset-0 grid place-items-center pointer-events-none">
-        <div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-          style={{ opacity: 0, visibility: "hidden" }}
-          id="beeswarm-disasters"
-        >
-          <div className="h-[80vh] w-[700px]">
+      {/* {!dashboardView && ( */}
+      <>
+        {/* Sankey income */}
+        <div className="fixed inset-0 grid place-items-center pointer-events-none">
+          <div className="h-[80vh] w-[600px]">
             <ParentSize>
-              {({ height, width }) => (
-                <BeeswarmDisasters width={width} height={height} />
-              )}
+              {({ height }) => <SankeyIncome width={600} height={height} />}
             </ParentSize>
           </div>
         </div>
-        <div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-          style={{ opacity: 0, visibility: "hidden" }}
-          id="area-disasters"
-        >
-          <div className="h-[80vh] w-[700px]">
-            <ParentSize>
-              {({ height, width }) => (
-                <AreaDisasters width={width} height={height} />
-              )}
-            </ParentSize>
+
+        <div className="fixed inset-0 grid place-items-center pointer-events-none">
+          <div
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+            style={{ opacity: 0, visibility: "hidden" }}
+            id="beeswarm-disasters"
+          >
+            <div className="h-[80vh] w-[700px]">
+              <ParentSize>
+                {({ height, width }) => (
+                  <BeeswarmDisasters width={width} height={height} />
+                )}
+              </ParentSize>
+            </div>
+          </div>
+          <div
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+            style={{ opacity: 0, visibility: "hidden" }}
+            id="area-disasters"
+          >
+            <div className="h-[80vh] w-[700px]">
+              <ParentSize>
+                {({ height, width }) => (
+                  <AreaDisasters width={width} height={height} />
+                )}
+              </ParentSize>
+            </div>
+          </div>
+          <div
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+            style={{ opacity: 0, visibility: "hidden" }}
+            id="rect-disasters"
+          >
+            <RectDisasters />
+            {/* <RectDisastersNew /> */}
           </div>
         </div>
-        <div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-          style={{ opacity: 0, visibility: "hidden" }}
-          id="rect-disasters"
-        >
-          <RectDisasters />
-          {/* <RectDisastersNew /> */}
-        </div>
-      </div>
 
-      <Steps />
+        <Steps />
 
-      <ScrollyTelling />
+        <ScrollyTelling />
+      </>
+      {/* )} */}
 
       <Controls />
 
