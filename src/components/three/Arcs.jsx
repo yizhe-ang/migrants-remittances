@@ -28,8 +28,8 @@ import chroma from "chroma-js";
 import { hash } from "@/lib/tsl";
 
 const TUBE_RADIUS = 0.002;
-const TUBE_SEGMENTS = 48;
-const TUBE_RADIAL_SEGMENTS = 6;
+const TUBE_SEGMENTS = 24;
+const TUBE_RADIAL_SEGMENTS = 4;
 const HEIGHT_FACTOR = 0.5;
 const TILT_FACTOR = 0.2;
 
@@ -72,14 +72,14 @@ const Arcs = (props) => {
     const u = {
       // srcColor: uniform(new THREE.Color(chroma(colors.blue["400"]).hex())),
       // tgtColor: uniform(new THREE.Color(chroma(colors.orange["400"]).hex())),
-      srcColor: uniform(new THREE.Color(chroma(colors.stone["300"]).hex())),
-      tgtColor: uniform(new THREE.Color(chroma(colors.stone["300"]).hex())),
+      srcColor: uniform(new THREE.Color(chroma(colors.stone["400"]).hex())),
+      tgtColor: uniform(new THREE.Color(chroma(colors.stone["400"]).hex())),
       opacity: uniform(1),
       staggeredT: uniform(0),
       // Wind streaks style (0 = default, 1 = wind streaks)
       windStreaksT: uniform(0),
       // windColor: uniform(new THREE.Color("#b0c4de")),
-      windColor: uniform(new THREE.Color(chroma(colors.stone[400]).hex())),
+      windColor: uniform(new THREE.Color(chroma(colors.stone[500]).hex())),
       // Wind color mode (0 = solid windColor, 1 = srcColor/tgtColor gradient)
       windGradientT: uniform(0),
       // Arc drawing direction (0 = default, 1 = reversed)
@@ -125,6 +125,14 @@ const Arcs = (props) => {
       const src = srcBuffer.element(instanceIndex);
       const tgt = tgtBuffer.element(instanceIndex);
 
+      // Collapse invisible arcs to degenerate triangles (GPU culls zero-area triangles
+      // before fragment shading, avoiding expensive noise/discard for 900+ hidden arcs)
+      const progressBase = progressBuffer.element(instanceIndex);
+      const isVisible = progressBase
+        .add(u.staggeredT)
+        .greaterThan(0.001)
+        .toFloat();
+
       // Direction and distance
       const dx = tgt.x.sub(src.x);
       const dy = tgt.y.sub(src.y);
@@ -163,7 +171,8 @@ const Arcs = (props) => {
       // Midpoint of source and target
       const mid = src.add(tgt).mul(0.5);
 
-      return vec3(worldX.add(mid.x), worldY.add(mid.y), worldZ);
+      const finalPos = vec3(worldX.add(mid.x), worldY.add(mid.y), worldZ);
+      return mix(vec3(0, 0, 0), finalPos, isVisible);
     })();
 
     material.colorNode = Fn(() => {
@@ -226,18 +235,19 @@ const Arcs = (props) => {
       const windOpacity = fadeT.mul(1);
 
       // Surface texture: noise driven by UV position and instance seed
-      const texCoord = vec3(
-        uv().x.mul(12), // along the arc
-        uv().y.mul(6), // around the tube circumference
-        seed.mul(0.1), // per-instance variation
-      );
-      const surfaceNoise = mx_noise_float(texCoord).mul(0.5).add(0.5);
+      // const texCoord = vec3(
+      //   uv().x.mul(12), // along the arc
+      //   uv().y.mul(6), // around the tube circumference
+      //   seed.mul(0.1), // per-instance variation
+      // );
+      // const surfaceNoise = mx_noise_float(texCoord).mul(0.5).add(0.5);
       // Subtle brightness variation (0.8–1.0 range)
       // const textureFactor = surfaceNoise.mul(0.3).add(0.7);
-      const textureFactor = surfaceNoise.mul(0.8).add(0.2);
+      // const textureFactor = surfaceNoise.mul(0.8).add(0.2);
 
       // Color is shared across modes; opacity differentiates them
-      const c = baseColor.mul(textureFactor);
+      // const c = baseColor.mul(textureFactor);
+      const c = baseColor
       const alpha = mix(u.opacity, windOpacity.mul(u.opacity), u.windStreaksT);
 
       return vec4(c, alpha);
