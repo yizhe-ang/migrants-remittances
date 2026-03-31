@@ -41,14 +41,26 @@ const MainView = () => {
           style={{ opacity: 0, visibility: "hidden" }}
           id="beeswarm-disasters"
         >
-          <BeeswarmDisasters width={700} />
+          <div className="h-[80vh] w-[700px]">
+            <ParentSize>
+              {({ height, width }) => (
+                <BeeswarmDisasters width={width} height={height} />
+              )}
+            </ParentSize>
+          </div>
         </div>
         <div
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
           style={{ opacity: 0, visibility: "hidden" }}
           id="area-disasters"
         >
-          <AreaDisasters width={700} />
+          <div className="h-[80vh] w-[700px]">
+            <ParentSize>
+              {({ height, width }) => (
+                <AreaDisasters width={width} height={height} />
+              )}
+            </ParentSize>
+          </div>
         </div>
         <div
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"

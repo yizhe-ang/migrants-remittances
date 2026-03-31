@@ -730,11 +730,13 @@ const ScrollyTelling = () => {
             setShowCountryPoints(["receiving"]);
             setPointsValue(["propGdp"]);
             setEnableMapInteractions(true);
+            setEnableControls(true);
           },
           onLeaveBack: () => {
             setShowCountryPoints(["sending"]);
             setPointsValue(["absolute"]);
             setEnableMapInteractions(false);
+            setEnableControls(false);
           },
         },
         duration: 1,

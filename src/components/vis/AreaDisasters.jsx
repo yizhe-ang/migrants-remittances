@@ -16,12 +16,11 @@ const AreaDisasters = ({ width = 700, height = 800 }) => {
     if (!disastersImpactsByMonth) return;
 
     const plot = Plot.plot({
-      // title: "Remittances induced by each disaster type, over time",
-      height,
+      height: height,
       width,
       marginLeft: 80,
-      marginTop: 100,
-      marginBottom: -10,
+      marginTop: 140,
+      marginBottom: 0,
       fy: {
         label: null,
         tickFormat: (d) => null,
@@ -32,7 +31,8 @@ const AreaDisasters = ({ width = 700, height = 800 }) => {
           return s.replace("G", "B"); // D3 uses "G" (giga) not "B" (billion)
         },
         ticks: 3,
-        label: "Disaster-induced Remittances"
+        // label: "Disaster-induced Remittances"
+        label: null
       },
       color: {
         domain: ["floods", "earthquakes", "droughts", "storms"],

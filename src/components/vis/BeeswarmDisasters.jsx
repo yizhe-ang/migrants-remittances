@@ -13,7 +13,7 @@ const BeeswarmDisasters = ({ width = 700, height = 850 }) => {
     if (!disasters) return;
 
     const plot = Plot.plot({
-      title: "Disaster occurrences over time, sized by number of people affected",
+      // title: "Disaster occurrences over time, sized by number of people affected",
       height,
       width,
       marginLeft: 80,
@@ -53,7 +53,9 @@ const BeeswarmDisasters = ({ width = 700, height = 850 }) => {
     };
   }, [disasters, width, height]);
 
-  return <div ref={containerRef} className="opacity-100"></div>;
+  return <div ref={containerRef} className="opacity-100">
+    <div className="font-bold">Disaster occurrences over time, sized by number of people affected</div>
+  </div>;
 };
 
 export default BeeswarmDisasters;
