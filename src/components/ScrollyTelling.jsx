@@ -118,57 +118,25 @@ const ScrollyTelling = () => {
           end: "bottom bottom",
           scrub: true,
         },
+        onUpdate: () => {
+          // Single sync per frame — replaces ~100 individual onUpdate calls
+          fromUsaFlowsIndices.forEach((idx, i) => {
+            arcProgressArr[idx] = usaArcs[i].progress;
+          });
+          arcs.buffers.progress.needsUpdate = true;
+          cameraControls.setLookAt(...cameraLookAt, false);
+        },
       })
-      .to(
-        usaArcs,
-        {
-          progress: 0.5,
-          duration: 0.7,
-          stagger: 0.01,
-          onUpdate: () => {
-            fromUsaFlowsIndices.forEach((idx, i) => {
-              arcProgressArr[idx] = usaArcs[i].progress;
-            });
-            arcs.buffers.progress.needsUpdate = true;
-          },
-        },
-        0,
-      )
-      .to(
-        usaArcs,
-        {
-          progress: 0,
-          duration: 0.3,
-          stagger: 0.007,
-          onUpdate: () => {
-            fromUsaFlowsIndices.forEach((idx, i) => {
-              arcProgressArr[idx] = usaArcs[i].progress;
-            });
-            arcs.buffers.progress.needsUpdate = true;
-          },
-        },
-        0.7,
-      )
+      .to(usaArcs, { progress: 0.5, duration: 0.7, stagger: 0.01 }, 0)
+      .to(usaArcs, { progress: 0, duration: 0.3, stagger: 0.007 }, 0.7)
       .to(
         cameraLookAt,
-        {
-          endArray: cameraPositions.usaMid,
-          duration: 0.4,
-          onUpdate: () => {
-            cameraControls.setLookAt(...cameraLookAt, false);
-          },
-        },
+        { endArray: cameraPositions.usaMid, duration: 0.4 },
         0,
       )
       .to(
         cameraLookAt,
-        {
-          endArray: cameraPositions.usaEnd,
-          duration: 0.5,
-          onUpdate: () => {
-            cameraControls.setLookAt(...cameraLookAt, false);
-          },
-        },
+        { endArray: cameraPositions.usaEnd, duration: 0.5 },
         0.5,
       );
 
