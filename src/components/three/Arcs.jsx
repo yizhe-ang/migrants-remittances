@@ -45,6 +45,7 @@ const Arcs = (props) => {
   const enableMapInteractions = useRoomStore(
     (state) => state.enableMapInteractions,
   );
+  const pointsValue = useRoomStore((state) => state.pointsValue);
 
   const setArcs = useRoomStore((state) => state.setArcs);
 
@@ -182,9 +183,7 @@ const Arcs = (props) => {
       // Staggered draw-in: each arc draws at a different time as staggeredT goes 0→1
       const instanceStagger = u.staggeredT.mul(2).sub(randOffset).clamp(0, 1);
 
-      const progress = progressBase
-        .add(instanceStagger)
-        .mod(1);
+      const progress = progressBase.add(instanceStagger).mod(1);
 
       // Default: draw/undraw window
       const defaultLow = progress.mul(2).sub(1).max(0);
@@ -216,7 +215,11 @@ const Arcs = (props) => {
       });
 
       // Base color: solid windColor or srcColor/tgtColor gradient, controlled by windGradientT
-      const baseColor = mix(u.windColor, mix(u.tgtColor, u.srcColor, t), u.windGradientT);
+      const baseColor = mix(
+        u.windColor,
+        mix(u.tgtColor, u.srcColor, t),
+        u.windGradientT,
+      );
 
       // Wind streaks: directional fade (head bright, tail fades)
       const fadeT = smoothstep(low, high, t);
@@ -224,9 +227,9 @@ const Arcs = (props) => {
 
       // Surface texture: noise driven by UV position and instance seed
       const texCoord = vec3(
-        uv().x.mul(12),       // along the arc
-        uv().y.mul(6),        // around the tube circumference
-        seed.mul(0.1),        // per-instance variation
+        uv().x.mul(12), // along the arc
+        uv().y.mul(6), // around the tube circumference
+        seed.mul(0.1), // per-instance variation
       );
       const surfaceNoise = mx_noise_float(texCoord).mul(0.5).add(0.5);
       // Subtle brightness variation (0.8–1.0 range)
@@ -314,6 +317,8 @@ const Arcs = (props) => {
   useEffect(() => {
     if (!enableMapInteractions) return;
     if (!buffers || !flowsMap) return;
+
+    if (pointsValue[0] !== "absolute") return;
 
     const arr = buffers.progress.array;
     const snapshot = arr.slice();

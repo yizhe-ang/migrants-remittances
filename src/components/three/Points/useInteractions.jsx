@@ -64,15 +64,29 @@ export default function useInteractions({
       // colorTargets = buffers.color.propGdp;
       colorTargets = buffers.color.og;
 
-      // FIXME: d.flow.prop_of_gdp does not exist
-      sizeScale = (d) => propGdpRadiusScale(d.flow.prop_of_gdp);
-
-      colorScale = (d, flowType) => {
+      sizeScale = (d, flowType) => {
         if (flowType === "origin") {
-          return propGdpToColorScale(d.flow.prop_of_gdp);
+          return propGdpRadiusScale(d.flow.origin_prop_of_gdp);
         }
         if (flowType === "destination") {
-          return propGdpFromColorScale(d.flow.prop_of_gdp);
+          return propGdpRadiusScale(d.flow.destination_prop_of_gdp);
+        }
+      };
+
+      // colorScale = (d, flowType) => {
+      //   if (flowType === "origin") {
+      //     return propGdpToColorScale(d.flow.prop_of_gdp);
+      //   }
+      //   if (flowType === "destination") {
+      //     return propGdpFromColorScale(d.flow.prop_of_gdp);
+      //   }
+      // };
+      colorScale = (d, flowType) => {
+        if (flowType === "origin") {
+          return remToColorScale(d.flow.sim_remittances_with);
+        }
+        if (flowType === "destination") {
+          return remFromColorScale(d.flow.sim_remittances_with);
         }
       };
     }
@@ -205,7 +219,7 @@ export default function useInteractions({
 
         const idx = countryTypeToIdx.get(flowType).get(d.flow[flowType]);
 
-        sizeTargetsProcessed[idx] = sizeScale(d);
+        sizeTargetsProcessed[idx] = sizeScale(d, flowType);
 
         colorDummy.setStyle(colorScale(d, flowType));
 

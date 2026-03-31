@@ -60,15 +60,36 @@ export default function useDataPreparation() {
     query: /* sql */ `
       CREATE OR REPLACE VIEW flows_per_year AS
 
+      WITH step_1 AS (
+        SELECT
+          EXTRACT('year' FROM date)::INTEGER AS year,
+          origin,
+          destination,
+          sum(sim_remittances_with) AS sim_remittances_with
+
+        FROM mig_and_rem_derived
+
+        GROUP BY (year, origin, destination)
+      )
+
       SELECT
-        EXTRACT('year' FROM date)::INTEGER AS year,
-        origin,
-        destination,
-        sum(sim_remittances_with) AS sim_remittances_with
+        a.*,
 
-      FROM mig_and_rem_derived
+        b.gdp * b.population AS origin_gdp,
+        c.gdp * c.population AS destination_gdp,
 
-      GROUP BY (year, origin, destination)
+        a.sim_remittances_with / origin_gdp AS origin_prop_of_gdp,
+        a.sim_remittances_with / destination_gdp AS destination_prop_of_gdp,
+
+      FROM step_1 a
+
+      LEFT JOIN countries_stats b
+        ON a.origin = b.country
+          AND a.year = b.year
+
+      LEFT JOIN countries_stats c
+        ON a.destination = c.country
+          AND a.year = c.year
     `,
     enabled: Boolean(migAndRemDerivedReady),
   });

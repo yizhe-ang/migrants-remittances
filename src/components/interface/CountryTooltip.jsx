@@ -13,7 +13,7 @@ const CountryTooltip = () => {
   const incomeColorScale = useRoomStore((state) => state.incomeColorScale);
   const enableMapInteractions = useRoomStore(
     (state) => state.enableMapInteractions,
-  )
+  );
 
   const accessor = useMemo(() => {
     if (pointsValue[0] === "absolute") {
@@ -44,10 +44,16 @@ const CountryTooltip = () => {
     // Sort flows
     const o = flows
       .map((d) => d.flow)
-      .sort((d1, d2) => d2.sim_remittances_with - d1.sim_remittances_with);
+      .sort((d1, d2) => {
+        if (pointsValue[0] === "absolute") {
+          return d2.sim_remittances_with - d1.sim_remittances_with;
+        } else {
+          return d2.sim_remittances_with - d1.sim_remittances_with;
+        }
+      });
 
     return o.slice(0, 5);
-  }, [flowsMap, hoveredCountry]);
+  }, [flowsMap, hoveredCountry, pointsValue]);
 
   return (
     <>
@@ -86,6 +92,7 @@ const CountryTooltip = () => {
                 </span>
               ) : (
                 <>
+                  {/* <span>received remittances amounting to</span>{" "}<br/> */}
                   <span className="font-bold text-xl tabular-nums text-stone-950">
                     {percentFormat(accessor(d))}
                   </span>{" "}
