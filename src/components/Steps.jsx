@@ -291,7 +291,7 @@ const Step = ({ className, children, ...props }) => {
   return (
     <div
       className={cn(
-        "border border-red-300 border-0 h-[100vh] max-w-xl mx-auto pointer-events-none",
+        "border-red-300 border-0 pb-[100vh] max-w-xl mx-auto pointer-events-none",
         className,
       )}
       {...props}
