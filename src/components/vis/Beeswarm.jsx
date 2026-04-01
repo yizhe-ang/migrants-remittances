@@ -38,6 +38,7 @@ const Beeswarm = ({
                         cy={height - marginBottom - padding - d.y}
                         r={d.r}
                         fill={c(d.data)}
+                        fillOpacity={0.4}
                       />
                     );
                   })}
@@ -47,6 +48,7 @@ const Beeswarm = ({
                   top={height - marginBottom}
                   scale={xScale}
                   hideTicks
+                  hideAxisLine
                   axisLineClassName="stroke-2 stroke-stone-500"
                 />
               </svg>

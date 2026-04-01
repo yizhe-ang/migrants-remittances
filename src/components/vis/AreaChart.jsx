@@ -31,7 +31,12 @@ const AreaChart = ({
   return (
     <svg width={width} height={height} className="">
       <g transform={`translate(${0}, ${marginTop})`}>
-        <GridRows scale={yScale} width={width} numTicks={4} />
+        <GridRows
+          scale={yScale}
+          width={width - marginLeft}
+          left={marginLeft}
+          numTicks={4}
+        />
         <AreaClosed
           data={data}
           x={x}
