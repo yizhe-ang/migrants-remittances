@@ -29,7 +29,7 @@ const AreaChart = ({
   }, [dataFull]);
 
   return (
-    <svg width={width} height={height} className="">
+    <svg width={width} height={height} className="area-chart">
       <g transform={`translate(${0}, ${marginTop})`}>
         <GridRows
           scale={yScale}
@@ -39,6 +39,7 @@ const AreaChart = ({
         />
         {/* TODO: Gradient for fill */}
         <AreaClosed
+          className="disaster-area"
           data={data}
           x={x}
           y={(d) => yScale(yAccessor(d))}
@@ -48,6 +49,7 @@ const AreaChart = ({
           fillOpacity={0.2}
         />
         <LinePath
+          className="disaster-line"
           curve={curveMonotoneX}
           data={data}
           // fill={colorScale(data[0].disaster_type.slice(0, -1))}
@@ -57,6 +59,7 @@ const AreaChart = ({
           strokeWidth={3}
         />
         <AxisLeft
+          axisClassName="disaster-area-axis"
           left={marginLeft}
           scale={yScale}
           hideAxisLine

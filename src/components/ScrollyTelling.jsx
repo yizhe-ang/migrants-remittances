@@ -985,13 +985,13 @@ const ScrollyTelling = () => {
           autoAlpha: 0,
           duration: 0.5,
           stagger: {
-            amount: 0.5
+            amount: 0.5,
           },
         },
         0.1,
       );
 
-    beeswarms.forEach((b) => {
+    beeswarms.forEach((b, i) => {
       tl13.from(
         b.querySelectorAll("circle"),
         {
@@ -1001,11 +1001,11 @@ const ScrollyTelling = () => {
             amount: 0.5,
           },
         },
-        0.1,
+        0.1 + i * 0.1,
       );
     });
 
-    gsap
+    const tl14 = gsap
       .timeline({
         scrollTrigger: {
           trigger: "#step-14",
@@ -1015,7 +1015,39 @@ const ScrollyTelling = () => {
         },
         duration: 1,
       })
-
+      .to(
+        ".beeswarm circle",
+        {
+          opacity: 0.4,
+          duration: 0.3,
+        },
+        0,
+      )
+      .from(
+        ".disaster-area-axis",
+        {
+          opacity: 0,
+          duration: 0.3,
+        },
+        0,
+      )
+      .from(
+        ".disaster-line",
+        {
+          drawSVG: 0,
+          duration: 0.4,
+          stagger: 0.05,
+        },
+        0,
+      )
+      .from(
+        ".disaster-area",
+        {
+          opacity: 0,
+          duration: 0.3,
+        },
+        0.4,
+      );
 
     gsap
       .timeline({
