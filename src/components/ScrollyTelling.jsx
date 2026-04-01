@@ -824,36 +824,61 @@ const ScrollyTelling = () => {
         },
         duration: 1,
       })
-      // .to(
-      //   pointsAnim,
-      //   {
-      //     sizePropGdpT: 1,
-      //     duration: 0.1,
-      //     onUpdate: () => {
-      //       for (let i = 0; i < points.buffers.size.buffer.array.length; i++) {
-      //         points.buffers.size.buffer.array[i] =
-      //           pointsAnim.sizePropGdpT * points.buffers.size.propGdp[i];
-      //       }
-      //       points.buffers.size.buffer.needsUpdate = true;
-      //     },
-      //   },
-      //   0,
-      // )
+      .to(
+        "#sankey-income-low .sankey-node-sending",
+        {
+          autoAlpha: 0,
+          duration: 0.2,
+        },
+        0,
+      )
       .to(
         "#sankey-income-all-alt",
         {
           autoAlpha: 0,
-          duration: 0.3,
+          duration: 0.2,
         },
         0,
+      )
+      .to(
+        "#sankey-income-low .sankey-links path",
+        {
+          drawSVG: "100% 100%",
+          duration: 0.4,
+        },
+        0.1,
+      )
+      .to(
+        "#sankey-income-low .sankey-node-receiving",
+        {
+          autoAlpha: 0,
+          duration: 0.2,
+        },
+        0.4,
+      )
+      .to(
+        points.u.opacity,
+        {
+          value: 1,
+          duration: 0.2,
+        },
+        0.4,
+      )
+      .to(
+        points.u.sankeyT,
+        {
+          value: 0,
+          duration: 0.5,
+        },
+        0.5,
       )
       .to(
         "#sankey-income-low",
         {
           autoAlpha: 0,
-          duration: 0.3,
+          duration: 0.2,
         },
-        0,
+        0.4,
       )
       .to(
         "canvas",
@@ -867,41 +892,25 @@ const ScrollyTelling = () => {
         "#show-controls",
         {
           autoAlpha: 1,
-          duration: 0.3,
+          duration: 0.2,
         },
-        0,
+        0.8,
       )
       .to(
         "#color-controls",
         {
           autoAlpha: 1,
-          duration: 0.3,
+          duration: 0.2,
         },
-        0,
+        0.8,
       )
       .to(
         "#size-controls",
         {
           autoAlpha: 1,
-          duration: 0.3,
+          duration: 0.2,
         },
-        0,
-      )
-      .to(
-        points.u.opacity,
-        {
-          value: 1,
-          duration: 0.3,
-        },
-        0,
-      )
-      .to(
-        points.u.sankeyT,
-        {
-          value: 0,
-          duration: 0.5,
-        },
-        0,
+        0.8,
       );
 
     gsap
