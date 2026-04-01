@@ -185,7 +185,7 @@ const Steps = () => {
         </P>
       </Step>
 
-      <Step id="step-12" className="">
+      <Step id="step-12" className="pt-[100vh]">
         <P>
           Many countries receive remittances in amounts that are large relative
           to their gross domestic product (GDP). In over thirty countries,
