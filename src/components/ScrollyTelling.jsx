@@ -620,14 +620,14 @@ const ScrollyTelling = () => {
         },
         0.8,
       )
-      .to(
-        points.u.opacity,
-        {
-          value: 0,
-          duration: 0.3,
-        },
-        0,
-      )
+      // .to(
+      //   points.u.opacity,
+      //   {
+      //     value: 0,
+      //     duration: 0.3,
+      //   },
+      //   0,
+      // )
       .to(
         "canvas",
         {

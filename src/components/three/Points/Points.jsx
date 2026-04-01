@@ -288,7 +288,16 @@ const Points = ({ ...props }) => {
     material.positionNode = Fn(() => {
       const mapPos = positionsBuffer.element(originalIndex);
       const sankeyPos = sankeyPositionsBuffer.element(originalIndex);
-      const offset = mix(mapPos, sankeyPos, u.sankeyT);
+      const sankeyStaggerWidth = float(0.5);
+      const sankeyThreshold = float(originalIndex)
+        .div(float(realCount))
+        .mul(float(1).sub(sankeyStaggerWidth));
+      const sankeyBlend = smoothstep(
+        sankeyThreshold,
+        sankeyThreshold.add(sankeyStaggerWidth),
+        u.sankeyT,
+      );
+      const offset = mix(mapPos, sankeyPos, sankeyBlend);
 
       const threshold = float(originalIndex).div(float(realCount));
       const overlap = float(0.05);
