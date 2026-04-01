@@ -913,7 +913,9 @@ const ScrollyTelling = () => {
         0.8,
       );
 
-    gsap
+    const beeswarms = gsap.utils.toArray(".beeswarm");
+
+    const tl13 = gsap
       .timeline({
         scrollTrigger: {
           trigger: "#step-13",
@@ -933,7 +935,7 @@ const ScrollyTelling = () => {
         "canvas",
         {
           opacity: 0.2,
-          duration: 0.3,
+          duration: 0.2,
         },
         0,
       )
@@ -941,7 +943,7 @@ const ScrollyTelling = () => {
         "#show-controls",
         {
           autoAlpha: 0,
-          duration: 0.3,
+          duration: 0.2,
         },
         0,
       )
@@ -949,7 +951,7 @@ const ScrollyTelling = () => {
         "#color-controls",
         {
           autoAlpha: 0,
-          duration: 0.3,
+          duration: 0.2,
         },
         0,
       )
@@ -957,7 +959,7 @@ const ScrollyTelling = () => {
         "#size-controls",
         {
           autoAlpha: 0,
-          duration: 0.3,
+          duration: 0.2,
         },
         0,
       )
@@ -965,7 +967,7 @@ const ScrollyTelling = () => {
         points.u.opacity,
         {
           value: 0,
-          duration: 0.3,
+          duration: 0.2,
         },
         0,
       )
@@ -973,10 +975,35 @@ const ScrollyTelling = () => {
         "#beeswarm-disasters",
         {
           autoAlpha: 1,
-          duration: 0.3,
+          duration: 0.1,
         },
         0,
+      )
+      .from(
+        ".beeswarm text",
+        {
+          autoAlpha: 0,
+          duration: 0.5,
+          stagger: {
+            amount: 0.5
+          },
+        },
+        0.1,
       );
+
+    beeswarms.forEach((b) => {
+      tl13.from(
+        b.querySelectorAll("circle"),
+        {
+          opacity: 0,
+          duration: 0.5,
+          stagger: {
+            amount: 0.5,
+          },
+        },
+        0.1,
+      );
+    });
 
     gsap
       .timeline({
@@ -988,38 +1015,7 @@ const ScrollyTelling = () => {
         },
         duration: 1,
       })
-      .to(
-        "#beeswarm-disasters-title",
-        {
-          autoAlpha: 0,
-          duration: 0.1,
-        },
-        0,
-      )
-      .from(
-        "#area-disasters-title",
-        {
-          autoAlpha: 0,
-          duration: 0.1,
-        },
-        0,
-      )
-      .to(
-        "#beeswarm-disasters",
-        {
-          autoAlpha: 0.5,
-          duration: 0.3,
-        },
-        0,
-      )
-      .to(
-        "#area-disasters",
-        {
-          autoAlpha: 1,
-          duration: 0.3,
-        },
-        0,
-      );
+
 
     gsap
       .timeline({

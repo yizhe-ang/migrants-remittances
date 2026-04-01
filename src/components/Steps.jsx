@@ -194,7 +194,7 @@ const Steps = () => {
         </P>
       </Step>
 
-      <Step id="step-13" className="">
+      <Step id="step-13" className="pt-[100vh]">
         <P>
           Between 2010 and 2019, there were around 3,000 disaster events
           connected to the occurrence of{" "}

@@ -64,7 +64,7 @@ const MainView = () => {
           >
             <BeeswarmDisastersNew />
           </div>
-          <div
+          {/* <div
             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
             style={{ opacity: 0, visibility: "hidden" }}
             id="area-disasters"
@@ -76,7 +76,7 @@ const MainView = () => {
                 )}
               </ParentSize>
             </div>
-          </div>
+          </div> */}
           <div
             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
             style={{ opacity: 0, visibility: "hidden" }}

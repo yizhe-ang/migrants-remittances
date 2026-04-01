@@ -20,7 +20,9 @@ const Beeswarm = ({
   const dataDodged = useMemo(() => {
     if (!data || !x || !r) return null;
 
-    return dodge(data, x, r, padding);
+    return dodge(data, x, r, padding).sort(
+      (a, b) => xAccessor(a.data) - xAccessor(b.data),
+    );
   }, [data, x, r]);
 
   return (
@@ -29,7 +31,11 @@ const Beeswarm = ({
         {({ width, height }) => (
           <>
             {dataDodged && (
-              <svg width={width} height={height} className="overflow-visible">
+              <svg
+                width={width}
+                height={height}
+                className="overflow-visible beeswarm"
+              >
                 <g>
                   {dataDodged.map((d, i) => {
                     return (
@@ -39,7 +45,7 @@ const Beeswarm = ({
                         cy={height - marginBottom - padding - d.y}
                         r={d.r}
                         fill={c(d.data)}
-                        fillOpacity={0.4}
+                        // fillOpacity={0.4}
                       />
                     );
                   })}
