@@ -70,8 +70,6 @@ const RectDisasters = ({ width = 900, height = 500 }) => {
   useEffect(() => {
     if (!aggData) return;
 
-    console.log(aggData);
-
     const plot = Plot.plot({
       y: {
         tickFormat: "$.0s",

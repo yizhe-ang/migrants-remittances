@@ -9,6 +9,7 @@ import SankeyIncome from "@/components/vis/SankeyIncome";
 import Steps from "@/components/Steps";
 import Controls from "@/components/interface/Controls";
 import BeeswarmDisasters from "@/components/vis/BeeswarmDisasters";
+import BeeswarmDisastersNew from "@/components/vis/BeeswarmDisastersNew";
 import AreaDisasters from "@/components/vis/AreaDisasters";
 import RectDisasters from "@/components/vis/RectDisasters";
 import RectDisastersNew from "./vis/RectDisastersNew";
@@ -22,15 +23,15 @@ const MainView = () => {
   //   (state) => state.setEnableMapInteractions
   // )
 
-  useEffect(() => {
-    const path = window.location.pathname;
+  // useEffect(() => {
+  //   const path = window.location.pathname;
 
-    if (path === "/dashboard") {
-      // setDashboardView(true)
-      // setEnableMapInteractions(true)
-      window.scrollTo(0, document.body.scrollHeight);
-    }
-  }, []);
+  //   if (path === "/dashboard") {
+  //     // setDashboardView(true)
+  //     // setEnableMapInteractions(true)
+  //     window.scrollTo(0, document.body.scrollHeight);
+  //   }
+  // }, []);
 
   useDataPreparation();
 
@@ -40,9 +41,9 @@ const MainView = () => {
 
   return (
     <>
-      <div className="fixed inset-0 bg-stone-100 -z-10">
+      {/* <div className="fixed inset-0 bg-stone-100 -z-10">
         <Three />
-      </div>
+      </div> */}
 
       {/* {!dashboardView && ( */}
       <>
@@ -58,13 +59,14 @@ const MainView = () => {
         <div className="fixed inset-0 grid place-items-center pointer-events-none">
           <div
             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-            style={{ opacity: 0, visibility: "hidden" }}
+            // style={{ opacity: 0, visibility: "hidden" }}
             id="beeswarm-disasters"
           >
             <div className="h-[80vh] w-[700px]">
               <ParentSize>
                 {({ height, width }) => (
-                  <BeeswarmDisasters width={width} height={height} />
+                  // <BeeswarmDisasters width={width} height={height} />
+                  <BeeswarmDisastersNew width={width} height={height} />
                 )}
               </ParentSize>
             </div>
@@ -92,15 +94,15 @@ const MainView = () => {
           </div>
         </div>
 
-        <Steps />
+        {/* <Steps /> */}
 
-        <ScrollyTelling />
+        {/* <ScrollyTelling /> */}
       </>
       {/* )} */}
 
-      <Controls />
+      {/* <Controls /> */}
 
-      <CountryTooltip />
+      {/* <CountryTooltip /> */}
     </>
   );
 };
