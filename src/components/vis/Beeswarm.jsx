@@ -31,8 +31,6 @@ const Beeswarm = ({
               <svg width={width} height={height} className="overflow-visible">
                 <g>
                   {dataDodged.map((d, i) => {
-                    console.log(d)
-
                     return (
                       <circle
                         key={i}
