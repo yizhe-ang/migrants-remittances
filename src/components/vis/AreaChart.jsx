@@ -37,6 +37,7 @@ const AreaChart = ({
           left={marginLeft}
           numTicks={4}
         />
+        {/* TODO: Gradient for fill */}
         <AreaClosed
           data={data}
           x={x}
