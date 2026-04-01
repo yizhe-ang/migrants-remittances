@@ -42,7 +42,7 @@ const BeeswarmDisastersNew = () => {
       scaleSqrt()
         // .domain(extent(disasters, (d) => d.affected))
         .domain([0, max(disasters, (d) => d.affected)])
-        .range([0, 70])
+        .range([0, 65])
     );
   }, [disasters]);
 
