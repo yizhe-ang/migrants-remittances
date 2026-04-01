@@ -41,9 +41,9 @@ const MainView = () => {
 
   return (
     <>
-      {/* <div className="fixed inset-0 bg-stone-100 -z-10">
+      <div className="fixed inset-0 bg-stone-100 -z-10">
         <Three />
-      </div> */}
+      </div>
 
       {/* {!dashboardView && ( */}
       <>
@@ -59,7 +59,7 @@ const MainView = () => {
         <div className="fixed inset-0 grid place-items-center pointer-events-none">
           <div
             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-            // style={{ opacity: 0, visibility: "hidden" }}
+            style={{ opacity: 0, visibility: "hidden" }}
             id="beeswarm-disasters"
           >
             <BeeswarmDisastersNew />
@@ -87,15 +87,15 @@ const MainView = () => {
           </div>
         </div>
 
-        {/* <Steps /> */}
+        <Steps />
 
-        {/* <ScrollyTelling /> */}
+        <ScrollyTelling />
       </>
       {/* )} */}
 
-      {/* <Controls /> */}
+      <Controls />
 
-      {/* <CountryTooltip /> */}
+      <CountryTooltip />
     </>
   );
 };
