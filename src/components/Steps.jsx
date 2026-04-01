@@ -37,13 +37,20 @@ const Steps = () => {
       <Step id="step-3">
         <P>
           Billions of dollars flow back across borders, as these migrants also
-          regularly <C className="bg-[#dea193]/50 border-2 border-black">send</C> back money to
-          support their families and communities.
+          regularly{" "}
+          <C className="bg-[#dea193]/50 border-2 border-black">send</C> back
+          money to support their families and communities.
         </P>
         <P>
-          People who <C className="bg-[#dea193]/50 border-2 border-white">receive</C> them can use the
-          money to pay school fees, make repairs to their homes, or cover
-          medical bills.
+          People who{" "}
+          <C className="bg-[#dea193]/50 border-2 border-white">receive</C> them
+          can use the money to pay school fees, make repairs to their homes, or
+          cover medical bills.
+        </P>
+        <P>
+          The larger the size of the circle{" "}
+          <span className="size-4 inline-block rounded-full bg-[#dea193]/100 translate-y-[2px]" />
+          , the larger the amount of remittances sent or received.
         </P>
       </Step>
 
@@ -84,9 +91,7 @@ const Steps = () => {
         </P>
         <P>
           <ul className="px-5 list-disc">
-            <li>
-              Toggle between countries sending or receiving money
-            </li>
+            <li>Toggle between countries sending or receiving money</li>
           </ul>
         </P>
       </Step>
@@ -277,7 +282,7 @@ const Steps = () => {
             <li>Hover over each country to see the remittance flows</li>
             <li>Show countries sending or receiving remittances</li>
             <li>
-              Size each country by the absolute amount of remittances, or by the
+              Size each country by the absolute value of remittances, or by the
               proportion of its GDP
             </li>
           </ul>
