@@ -555,7 +555,7 @@ const ScrollyTelling = () => {
             setEnableMapInteractions(true);
           },
         },
-        duration: 1.2,
+        duration: 1.4,
       })
       .to(
         "#show-controls",
