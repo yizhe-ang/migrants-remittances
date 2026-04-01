@@ -5,6 +5,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import cameraPositions from "@/components/data/cameraPositions";
 import { sankeyLinkHorizontal } from "@visx/sankey";
 import DrawSVGPlugin from "gsap/DrawSVGPlugin";
+import { screenToWorld } from "@/lib/utils";
 
 gsap.registerPlugin(useGSAP);
 gsap.registerPlugin(ScrollTrigger);
@@ -28,7 +29,8 @@ const ScrollyTelling = () => {
   const setPointsValue = useRoomStore((s) => s.setPointsValue);
 
   useGSAP(() => {
-    if (!cameraControls || !arcs || !points || !flowsMap2019) return;
+    if (!cameraControls || !arcs || !points || !flowsMap2019 || !sankeyIncome)
+      return;
 
     const fromUsaFlows = flowsMap2019.get("destination").get("USA");
 
@@ -462,6 +464,94 @@ const ScrollyTelling = () => {
         0,
       );
 
+    // Populate sankey position buffer
+    // Map each point to its corresponding Sankey node based on income group
+    {
+      const graph = sankeyIncome.graphs.all;
+      const sankeyMargin = { top: 40, left: 70, right: 70, bottom: 10 };
+
+      // Build a map from node id to node (with x0,y0,x1,y1)
+      const nodeMap = new Map();
+      graph.nodes.forEach((n) => nodeMap.set(n.id, n));
+
+      // Group points by their target Sankey node so we can distribute them
+      const nodeGroups = new Map();
+      const countriesGeoSorted = points.countriesGeoSorted;
+      const dataIndex = points.dataIndex;
+
+      for (let i = 0; i < countriesGeoSorted.length; i++) {
+        const c = countriesGeoSorted[i];
+        const d = dataIndex.get(c.type)?.get(c.country);
+        if (!d || !d.income) continue;
+
+        // destination → sending node "<income>-", origin → receiving node "<income>"
+        const nodeId =
+          c.type === "destination" ? `${d.income}-` : d.income;
+        if (!nodeMap.has(nodeId)) continue;
+
+        if (!nodeGroups.has(nodeId)) nodeGroups.set(nodeId, []);
+        nodeGroups.get(nodeId).push(i);
+      }
+
+      // Get the Sankey container's screen position
+      // Container is fixed, centered: h-[80vh] w-screen max-w-[700px]
+      const canvas = document.querySelector("canvas");
+      const canvasRect = canvas.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const sankeyContainerHeight = vh * 0.8;
+      const sankeyContainerWidth = Math.min(window.innerWidth, 700);
+      const sankeyContainerLeft =
+        (window.innerWidth - sankeyContainerWidth) / 2;
+      const sankeyContainerTop = (vh - sankeyContainerHeight) / 2;
+
+      // Use the zoomOutFlat camera position (where the camera will be during the sankey transition)
+      const camera = cameraControls.camera.clone();
+      const zf = cameraPositions.zoomOutFlat;
+      camera.position.set(zf[0], zf[1], zf[2]);
+      camera.lookAt(zf[3], zf[4], zf[5]);
+      camera.updateProjectionMatrix();
+      camera.updateMatrixWorld();
+      const cw = canvasRect.width;
+      const ch = canvasRect.height;
+
+      const sankeyPosArr = points.buffers.sankeyPositions.buffer.array;
+
+      // For each node group, distribute points evenly within the node rect
+      for (const [nodeId, indices] of nodeGroups) {
+        const node = nodeMap.get(nodeId);
+        const count = indices.length;
+
+        for (let j = 0; j < count; j++) {
+          const idx = indices[j];
+
+          // Position within the Sankey node: center horizontally, distribute vertically
+          const screenX =
+            sankeyContainerLeft +
+            sankeyMargin.left +
+            (node.x0 + node.x1) / 2;
+          const screenY =
+            sankeyContainerTop +
+            sankeyMargin.top +
+            node.y0 +
+            ((j + 0.5) / count) * (node.y1 - node.y0);
+
+          const worldPos = screenToWorld(
+            screenX,
+            screenY,
+            camera,
+            cw,
+            ch,
+          );
+
+          sankeyPosArr[idx * 3] = worldPos.x;
+          sankeyPosArr[idx * 3 + 1] = worldPos.y;
+          sankeyPosArr[idx * 3 + 2] = worldPos.z;
+        }
+      }
+
+      points.buffers.sankeyPositions.buffer.needsUpdate = true;
+    }
+
     // Transition to sankey
     gsap
       .timeline({
@@ -481,6 +571,14 @@ const ScrollyTelling = () => {
         },
         duration: 1,
       })
+      .to(
+        points.u.sankeyT,
+        {
+          value: 1,
+          duration: 0.5,
+        },
+        0,
+      )
       .to(
         "#sankey-income-all",
         {
@@ -810,6 +908,14 @@ const ScrollyTelling = () => {
           duration: 0.3,
         },
         0,
+      )
+      .to(
+        points.u.sankeyT,
+        {
+          value: 0,
+          duration: 0.5,
+        },
+        0,
       );
 
     gsap
@@ -1019,7 +1125,7 @@ const ScrollyTelling = () => {
         },
         0,
       );
-  }, [cameraControls, arcs, points, flowsMap2019]);
+  }, [cameraControls, arcs, points, flowsMap2019, sankeyIncome]);
 
   return <></>;
 };

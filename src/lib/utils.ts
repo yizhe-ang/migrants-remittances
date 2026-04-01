@@ -3,6 +3,7 @@ import { twMerge } from "tailwind-merge";
 import { color } from "d3-color";
 import { animate } from "motion";
 import { format } from "d3-format";
+import * as THREE from "three/webgpu";
 
 export const moneyFormat = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -22,6 +23,34 @@ export function latToMercatorY(lat) {
   return (
     (180 / Math.PI) *
     Math.log(Math.tan(Math.PI / 4 + (clamped * Math.PI) / 360))
+  );
+}
+
+/**
+ * Convert screen pixel coordinates to world-space position on the z=0 plane.
+ * screenX/screenY are in CSS pixels relative to the canvas top-left.
+ */
+export function screenToWorld(
+  screenX: number,
+  screenY: number,
+  camera: THREE.PerspectiveCamera,
+  canvasWidth: number,
+  canvasHeight: number,
+): THREE.Vector3 {
+  // Convert to NDC [-1, 1]
+  const ndcX = (screenX / canvasWidth) * 2 - 1;
+  const ndcY = -(screenY / canvasHeight) * 2 + 1;
+
+  const near = new THREE.Vector3(ndcX, ndcY, -1).unproject(camera);
+  const far = new THREE.Vector3(ndcX, ndcY, 1).unproject(camera);
+
+  // Ray-plane intersection at z = 0
+  const dir = far.sub(near);
+  const t = -near.z / dir.z;
+  return new THREE.Vector3(
+    near.x + dir.x * t,
+    near.y + dir.y * t,
+    0,
   );
 }
 

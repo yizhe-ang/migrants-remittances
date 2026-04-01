@@ -33,11 +33,12 @@ const colorDummy = new THREE.Color();
 // Immer (used by @sqlrooms/room-store) deep-freezes the entire Zustand state tree.
 // Wrapping in a class prevents Immer from freezing mutable GPU buffers/uniforms.
 class PointsHandle {
-  constructor({ u, buffers, countryTypeToIdx, dataIndex }) {
+  constructor({ u, buffers, countryTypeToIdx, dataIndex, countriesGeoSorted }) {
     this.u = u;
     this.buffers = buffers;
     this.countryTypeToIdx = countryTypeToIdx;
     this.dataIndex = dataIndex;
+    this.countriesGeoSorted = countriesGeoSorted;
   }
 }
 
@@ -139,6 +140,7 @@ const Points = ({ ...props }) => {
       stripesT: uniform(0), // 0 = off, 1 = stripes
       dotsT: uniform(0), // 0 = off, 1 = polka dots
       opacity: uniform(1),
+      sankeyT: uniform(0), // 0 = map positions, 1 = sankey positions
     };
 
     const geometry = new THREE.PlaneGeometry(1, 1);
@@ -182,6 +184,10 @@ const Points = ({ ...props }) => {
     const colorsIncome = new Array(realCount * 4).fill(0);
 
     const positionsBuffer = instancedArray(new Float32Array(positions), "vec3");
+    const sankeyPositionsBuffer = instancedArray(
+      new Float32Array(positions.length),
+      "vec3",
+    );
     const sizeOgBuffer = instancedArray(new Float32Array(sizesOg), "float");
     const sizeBuffer = instancedArray(realCount, "float");
     // const sizeBuffer = instancedArray(new Float32Array(sizesOg), "float");
@@ -280,7 +286,9 @@ const Points = ({ ...props }) => {
     })();
 
     material.positionNode = Fn(() => {
-      const offset = positionsBuffer.element(originalIndex);
+      const mapPos = positionsBuffer.element(originalIndex);
+      const sankeyPos = sankeyPositionsBuffer.element(originalIndex);
+      const offset = mix(mapPos, sankeyPos, u.sankeyT);
 
       const threshold = float(originalIndex).div(float(realCount));
       const overlap = float(0.05);
@@ -331,6 +339,9 @@ const Points = ({ ...props }) => {
         },
         type: {
           buffer: typeBuffer.value,
+        },
+        sankeyPositions: {
+          buffer: sankeyPositionsBuffer.value,
         },
       },
     };
@@ -458,8 +469,16 @@ const Points = ({ ...props }) => {
   useEffect(() => {
     if (!u || !buffers || !countryTypeToIdx || !dataIndex) return;
 
-    setPoints(new PointsHandle({ u, buffers, countryTypeToIdx, dataIndex }));
-  }, [u, buffers, countryTypeToIdx, dataIndex]);
+    setPoints(
+      new PointsHandle({
+        u,
+        buffers,
+        countryTypeToIdx,
+        dataIndex,
+        countriesGeoSorted,
+      }),
+    );
+  }, [u, buffers, countryTypeToIdx, dataIndex, countriesGeoSorted]);
 
   // Per-frame: sort indices by current size buffer descending (largest first = drawn behind)
   useFrame(() => {
