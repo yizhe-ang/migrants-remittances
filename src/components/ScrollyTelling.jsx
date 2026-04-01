@@ -4,9 +4,11 @@ import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import cameraPositions from "@/components/data/cameraPositions";
 import { sankeyLinkHorizontal } from "@visx/sankey";
+import DrawSVGPlugin from "gsap/DrawSVGPlugin";
 
 gsap.registerPlugin(useGSAP);
 gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(DrawSVGPlugin);
 
 const linkHorizontal = sankeyLinkHorizontal();
 
@@ -129,11 +131,7 @@ const ScrollyTelling = () => {
       })
       .to(usaArcs, { progress: 0.5, duration: 0.7, stagger: 0.01 }, 0)
       .to(usaArcs, { progress: 0, duration: 0.3, stagger: 0.007 }, 0.7)
-      .to(
-        cameraLookAt,
-        { endArray: cameraPositions.usaMid, duration: 0.4 },
-        0,
-      )
+      .to(cameraLookAt, { endArray: cameraPositions.usaMid, duration: 0.4 }, 0)
       .to(
         cameraLookAt,
         { endArray: cameraPositions.usaEnd, duration: 0.5 },
@@ -487,15 +485,48 @@ const ScrollyTelling = () => {
         "#sankey-income-all",
         {
           autoAlpha: 1,
-          duration: 0.5,
+          duration: 0.1,
         },
         0,
+      )
+      .from(
+        "#sankey-income-all .sankey-node-sending",
+        {
+          autoAlpha: 0,
+          duration: 0.2,
+        },
+        0.1,
+      )
+      .from(
+        "#sankey-income-all .sankey-links path",
+        {
+          drawSVG: 0,
+          duration: 0.4,
+          // stagger: 0.005,
+        },
+        0.3,
+      )
+      .from(
+        "#sankey-income-all .sankey-node-receiving",
+        {
+          autoAlpha: 0,
+          duration: 0.2,
+        },
+        0.7,
+      )
+      .from(
+        "#sankey-income-all .sankey-data-texts",
+        {
+          autoAlpha: 0,
+          duration: 0.2,
+        },
+        0.8,
       )
       .to(
         points.u.opacity,
         {
           value: 0,
-          duration: 0.5,
+          duration: 0.3,
         },
         0,
       )
@@ -503,7 +534,7 @@ const ScrollyTelling = () => {
         "canvas",
         {
           opacity: 0.2,
-          duration: 0.5,
+          duration: 0.3,
         },
         0,
       )

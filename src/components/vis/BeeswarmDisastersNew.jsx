@@ -49,7 +49,7 @@ const BeeswarmDisastersNew = () => {
   return (
     <div
       ref={parentRef}
-      className="flex flex-col h-[95vh] w-screen max-w-[800px]"
+      className="flex flex-col h-[95vh] w-screen max-w-[800px] pb-5"
     >
       {disasters &&
         disastersImpactsByMonth &&

@@ -93,6 +93,11 @@ const Sankey = ({ graph, width, height, colorScale, margin, ...props }) => {
           <g className="sankey-nodes">
             {graph.nodes.map(({ y0, y1, x0, x1, id }, i) => (
               <motion.rect
+                className={
+                  id.at(-1) === "-"
+                    ? "sankey-node-sending"
+                    : "sankey-node-receiving"
+                }
                 key={i}
                 width={x1 - x0}
                 height={y1 - y0}
