@@ -493,16 +493,11 @@ const ScrollyTelling = () => {
         nodeGroups.get(nodeId).push(i);
       }
 
-      // Get the Sankey container's screen position
-      // Container is fixed, centered: h-[80vh] w-screen max-w-[700px]
+      // Get the actual Sankey element's screen position
+      const sankeyEl = document.querySelector("#sankey-income-all");
+      const sankeyRect = sankeyEl.getBoundingClientRect();
       const canvas = document.querySelector("canvas");
       const canvasRect = canvas.getBoundingClientRect();
-      const vh = window.innerHeight;
-      const sankeyContainerHeight = vh * 0.8;
-      const sankeyContainerWidth = Math.min(window.innerWidth, 700);
-      const sankeyContainerLeft =
-        (window.innerWidth - sankeyContainerWidth) / 2;
-      const sankeyContainerTop = (vh - sankeyContainerHeight) / 2;
 
       // Use the zoomOutFlat camera position (where the camera will be during the sankey transition)
       const camera = cameraControls.camera.clone();
@@ -524,13 +519,13 @@ const ScrollyTelling = () => {
         for (let j = 0; j < count; j++) {
           const idx = indices[j];
 
-          // Position within the Sankey node: center horizontally, distribute vertically
+          // Position within the Sankey node: use actual DOM rect + margin + node coords
           const screenX =
-            sankeyContainerLeft +
+            sankeyRect.left +
             sankeyMargin.left +
             (node.x0 + node.x1) / 2;
           const screenY =
-            sankeyContainerTop +
+            sankeyRect.top +
             sankeyMargin.top +
             node.y0 +
             ((j + 0.5) / count) * (node.y1 - node.y0);
