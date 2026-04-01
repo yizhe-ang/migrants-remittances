@@ -53,7 +53,7 @@ const AreaChart = ({
           x={x}
           y={(d) => yScale(yAccessor(d))}
           stroke={colorScale(data[0].disaster_type.slice(0, -1))}
-          strokeWidth={2}
+          strokeWidth={3}
         />
         <AxisLeft
           left={marginLeft}
