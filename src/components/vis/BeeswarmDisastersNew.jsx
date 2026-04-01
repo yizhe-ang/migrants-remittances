@@ -4,10 +4,10 @@ import { useRoomStore } from "@/store";
 import { extent, max } from "d3-array";
 import { AxisBottom } from "@visx/axis";
 import Beeswarm from "@/components/vis/Beeswarm";
-import Area from "@/components/vis/Area";
+import AreaChart from "@/components/vis/AreaChart";
 import { ParentSize, useParentSize } from "@visx/responsive";
 
-const marginLeft = 20;
+const marginLeft = 50;
 const marginRight = 20;
 const marginBottom = 30;
 const marginTop = 20;
@@ -55,7 +55,7 @@ const BeeswarmDisastersNew = () => {
         disastersImpactsByMonth &&
         ["earthquake", "storm", "drought", "flood"].map((key) => {
           return (
-            <Fragment key={key}>
+            <div className="relative w-full h-full" key={key}>
               <Beeswarm
                 data={disasters.filter((d) => d.disaster_type === key)}
                 xAccessor={(d) => d["start_date"]}
@@ -69,14 +69,17 @@ const BeeswarmDisastersNew = () => {
               />
               <ParentSize className="absolute top-0 left-0 w-full h-full">
                 {({ width, height }) => (
-                  <Area
+                  <AreaChart
                     key={`area-${key}`}
+                    dataFull={disastersImpactsByMonth}
                     data={disastersImpactsByMonth.filter(
-                      (d) => d["disaster_type"] === key,
+                      (d) => d["disaster_type"] === key + "s",
                     )}
                     width={width}
                     height={height}
-                    yAccessor={(d) => d.remittances}
+                    yAccessor={(d) => d.remittance}
+                    x={(d) => xScale(d["date"])}
+                    colorScale={disasterTypeColorScale}
                     marginTop={marginTop}
                     marginRight={marginRight}
                     marginBottom={marginBottom}
@@ -84,7 +87,7 @@ const BeeswarmDisastersNew = () => {
                   />
                 )}
               </ParentSize>
-            </Fragment>
+            </div>
           );
         })}
     </div>

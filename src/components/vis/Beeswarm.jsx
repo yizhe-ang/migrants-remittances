@@ -24,7 +24,7 @@ const Beeswarm = ({
 
   return (
     <>
-      <ParentSize className="">
+      <ParentSize className="w-full h-full">
         {({ width, height }) => (
           <>
             {dataDodged && (
@@ -43,7 +43,12 @@ const Beeswarm = ({
                   })}
                 </g>
 
-                <AxisBottom top={height - marginBottom} scale={xScale} />
+                <AxisBottom
+                  top={height - marginBottom}
+                  scale={xScale}
+                  hideTicks
+                  axisLineClassName="stroke-2 stroke-stone-500"
+                />
               </svg>
             )}
           </>
