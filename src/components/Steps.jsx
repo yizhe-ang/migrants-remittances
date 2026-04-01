@@ -113,7 +113,7 @@ const Steps = () => {
         </P>
       </Step>
 
-      <Step id="step-7">
+      <Step id="step-7" className="pt-[100vh]">
         <P>
           Aggregating all the flows by income group will make the picture
           clearer.

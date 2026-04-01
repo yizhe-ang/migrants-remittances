@@ -485,8 +485,7 @@ const ScrollyTelling = () => {
         if (!d || !d.income) continue;
 
         // destination → sending node "<income>-", origin → receiving node "<income>"
-        const nodeId =
-          c.type === "destination" ? `${d.income}-` : d.income;
+        const nodeId = c.type === "destination" ? `${d.income}-` : d.income;
         if (!nodeMap.has(nodeId)) continue;
 
         if (!nodeGroups.has(nodeId)) nodeGroups.set(nodeId, []);
@@ -521,22 +520,14 @@ const ScrollyTelling = () => {
 
           // Position within the Sankey node: use actual DOM rect + margin + node coords
           const screenX =
-            sankeyRect.left +
-            sankeyMargin.left +
-            (node.x0 + node.x1) / 2;
+            sankeyRect.left + sankeyMargin.left + (node.x0 + node.x1) / 2;
           const screenY =
             sankeyRect.top +
             sankeyMargin.top +
             node.y0 +
             ((j + 0.5) / count) * (node.y1 - node.y0);
 
-          const worldPos = screenToWorld(
-            screenX,
-            screenY,
-            camera,
-            cw,
-            ch,
-          );
+          const worldPos = screenToWorld(screenX, screenY, camera, cw, ch);
 
           sankeyPosArr[idx * 3] = worldPos.x;
           sankeyPosArr[idx * 3 + 1] = worldPos.y;
@@ -564,13 +555,21 @@ const ScrollyTelling = () => {
             setEnableMapInteractions(true);
           },
         },
-        duration: 1,
+        duration: 1.2,
       })
       .to(
-        points.u.sankeyT,
+        "#show-controls",
         {
-          value: 1,
-          duration: 0.5,
+          autoAlpha: 0,
+          duration: 0.1,
+        },
+        0,
+      )
+      .to(
+        "#color-controls",
+        {
+          autoAlpha: 0,
+          duration: 0.1,
         },
         0,
       )
@@ -582,13 +581,37 @@ const ScrollyTelling = () => {
         },
         0,
       )
+      .to(
+        points.u.sankeyT,
+        {
+          value: 1,
+          duration: 0.5,
+        },
+        0,
+      )
       .from(
         "#sankey-income-all .sankey-node-sending",
         {
           autoAlpha: 0,
           duration: 0.2,
         },
-        0.1,
+        0.3,
+      )
+      .to(
+        points.u.opacity,
+        {
+          value: 0,
+          duration: 0.2,
+        },
+        0.4,
+      )
+      .to(
+        "canvas",
+        {
+          opacity: 0.2,
+          duration: 0.2,
+        },
+        0.4,
       )
       .from(
         "#sankey-income-all .sankey-links path",
@@ -597,7 +620,7 @@ const ScrollyTelling = () => {
           duration: 0.4,
           // stagger: 0.005,
         },
-        0.3,
+        0.4,
       )
       .from(
         "#sankey-income-all .sankey-node-receiving",
@@ -614,38 +637,6 @@ const ScrollyTelling = () => {
           duration: 0.2,
         },
         0.8,
-      )
-      // .to(
-      //   points.u.opacity,
-      //   {
-      //     value: 0,
-      //     duration: 0.3,
-      //   },
-      //   0,
-      // )
-      .to(
-        "canvas",
-        {
-          opacity: 0.2,
-          duration: 0.3,
-        },
-        0,
-      )
-      .to(
-        "#show-controls",
-        {
-          autoAlpha: 0,
-          duration: 0.3,
-        },
-        0,
-      )
-      .to(
-        "#color-controls",
-        {
-          autoAlpha: 0,
-          duration: 0.3,
-        },
-        0,
       );
 
     // Show upper-middle income sankey
