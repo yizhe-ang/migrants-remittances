@@ -13,6 +13,7 @@ const Beeswarm = ({
   marginBottom = 30,
   marginLeft = 20,
   padding = 1.5,
+  showXAxis = false,
 }) => {
   const x = (d) => xScale(xAccessor(d));
 
@@ -44,13 +45,22 @@ const Beeswarm = ({
                   })}
                 </g>
 
-                <AxisBottom
-                  top={height - marginBottom}
-                  scale={xScale}
-                  hideTicks
-                  hideAxisLine
-                  axisLineClassName="stroke-2 stroke-stone-500"
-                />
+                {showXAxis && (
+                  <AxisBottom
+                    top={height - marginBottom}
+                    scale={xScale}
+                    hideTicks
+                    hideAxisLine
+                    axisLineClassName="stroke-2 stroke-stone-500"
+                    tickLabelProps={() => ({
+                      dy: "0.25em",
+                      fill: "#222",
+                      fontSize: 12,
+                      textAnchor: "middle",
+                      fontWeight: 600,
+                    })}
+                  />
+                )}
               </svg>
             )}
           </>

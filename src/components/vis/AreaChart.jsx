@@ -65,6 +65,17 @@ const AreaChart = ({
             const s = format("$.2s")(d);
             return s.replace("G", "B"); // D3 uses "G" (giga) not "B" (billion)
           }}
+          tickLabelProps={() => ({
+            dx: "-0.25em",
+            dy: "0.25em",
+            fill: "#222",
+            fontSize: 10,
+            textAnchor: "end",
+            // your additions
+            stroke: "white",
+            strokeWidth: 3,
+            paintOrder: "stroke",
+          })}
         />
       </g>
     </svg>

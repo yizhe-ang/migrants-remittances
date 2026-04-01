@@ -53,7 +53,7 @@ const BeeswarmDisastersNew = () => {
     >
       {disasters &&
         disastersImpactsByMonth &&
-        ["earthquake", "storm", "drought", "flood"].map((key) => {
+        ["earthquake", "storm", "drought", "flood"].map((key, i) => {
           return (
             <div className="relative w-full h-full" key={key}>
               <Beeswarm
@@ -66,6 +66,7 @@ const BeeswarmDisastersNew = () => {
                 marginRight={marginRight}
                 marginBottom={marginBottom}
                 marginLeft={marginLeft}
+                showXAxis={i === 3}
               />
               <ParentSize className="absolute top-0 left-0 w-full h-full">
                 {({ width, height }) => (
