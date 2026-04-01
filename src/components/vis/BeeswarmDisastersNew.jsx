@@ -40,9 +40,12 @@ const BeeswarmDisastersNew = () => {
   }, [disasters]);
 
   return (
-    <div ref={parentRef} className="flex flex-col h-[90vh] w-screen max-w-[800px]">
+    <div
+      ref={parentRef}
+      className="flex flex-col h-[95vh] w-screen max-w-[800px]"
+    >
       {disasters &&
-        disasterTypeColorScale?.domain().map((key) => {
+        ["earthquake", "storm", "drought", "flood"].map((key) => {
           return (
             <Beeswarm
               key={key}
