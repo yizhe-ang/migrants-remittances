@@ -140,10 +140,12 @@ const SankeyIncome = ({ width, height, margin = defaultMargin }) => {
       {graphs && colorScale && (
         <div
           className="flex gap-10"
-          style={{
-            // opacity: 0,
-            // visibility: "hidden",
-          }}
+          style={
+            {
+              // opacity: 0,
+              // visibility: "hidden",
+            }
+          }
           id="sankey-income"
         >
           <svg>
