@@ -1166,7 +1166,7 @@ const ScrollyTelling = () => {
       gooeyBlurs.push(blur);
     });
 
-    // Animate gooey blur: ramp up then back down
+    // Animate gooey blur: ramp up and keep at final positions
     const gooeyProxy = { stdDeviation: 0 };
     tl151
       .to(
@@ -1181,19 +1181,6 @@ const ScrollyTelling = () => {
           },
         },
         0.2,
-      )
-      .to(
-        gooeyProxy,
-        {
-          stdDeviation: 0,
-          duration: 0.25,
-          onUpdate: () => {
-            gooeyBlurs.forEach((blur) =>
-              blur.setAttribute("stdDeviation", gooeyProxy.stdDeviation),
-            );
-          },
-        },
-        0.45,
       );
 
     // Animate circles' cx to stacked rect x-positions, cy to baseline
