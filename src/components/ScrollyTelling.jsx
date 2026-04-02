@@ -1135,16 +1135,85 @@ const ScrollyTelling = () => {
         duration: 0.2,
       },
       0
-    );
+    )
+    ;
 
-    // Animate circles' cx to stacked rect x-positions
+    // Inject gooey SVG filter into each beeswarm SVG (starts with stdDeviation=0, no visible effect)
+    const gooeyBlurs = [];
+    beeswarms.forEach((b) => {
+      const ns = "http://www.w3.org/2000/svg";
+      const defs = document.createElementNS(ns, "defs");
+      const filter = document.createElementNS(ns, "filter");
+      filter.setAttribute("id", "gooey");
+      const blur = document.createElementNS(ns, "feGaussianBlur");
+      blur.setAttribute("in", "SourceGraphic");
+      blur.setAttribute("stdDeviation", "0");
+      blur.setAttribute("result", "blur");
+      const colorMatrix = document.createElementNS(ns, "feColorMatrix");
+      colorMatrix.setAttribute("in", "blur");
+      colorMatrix.setAttribute("mode", "matrix");
+      colorMatrix.setAttribute(
+        "values",
+        "1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7",
+      );
+      colorMatrix.setAttribute("result", "gooey");
+      filter.appendChild(blur);
+      filter.appendChild(colorMatrix);
+      defs.appendChild(filter);
+      b.prepend(defs);
+      // Apply filter permanently; blur amount controls visibility
+      b.querySelector(".beeswarm-circles").setAttribute("filter", "url(#gooey)");
+      gooeyBlurs.push(blur);
+    });
+
+    // Animate gooey blur: ramp up then back down
+    const gooeyProxy = { stdDeviation: 0 };
+    tl151
+      .to(
+        gooeyProxy,
+        {
+          stdDeviation: 6,
+          duration: 0.25,
+          onUpdate: () => {
+            gooeyBlurs.forEach((blur) =>
+              blur.setAttribute("stdDeviation", gooeyProxy.stdDeviation),
+            );
+          },
+        },
+        0.2,
+      )
+      .to(
+        gooeyProxy,
+        {
+          stdDeviation: 0,
+          duration: 0.25,
+          onUpdate: () => {
+            gooeyBlurs.forEach((blur) =>
+              blur.setAttribute("stdDeviation", gooeyProxy.stdDeviation),
+            );
+          },
+        },
+        0.45,
+      );
+
+    // Animate circles' cx to stacked rect x-positions, cy to baseline
+    const beeswarmPadding = 1.5; // matches Beeswarm default padding prop
     beeswarms.forEach((b, i) => {
       const circles = b.querySelectorAll("circle");
       const originalCx = Array.from(circles, (c) =>
         parseFloat(c.getAttribute("cx")),
       );
+      const originalCy = Array.from(circles, (c) =>
+        parseFloat(c.getAttribute("cy")),
+      );
       const count = circles.length;
       if (count === 0) return;
+
+      // Baseline cy within the <g translate(marginLeft, marginTop)> coordinate system
+      const svgHeight = parseFloat(b.getAttribute("height"));
+      const beeswarmMT = 20;
+      const beeswarmMB = 30;
+      const targetCy = svgHeight - beeswarmMB - beeswarmPadding - beeswarmMT;
 
       const { x0Scaled, x1Scaled } = computedStackedX[i];
       const targetCx = originalCx.map((_, j) => {
@@ -1161,8 +1230,14 @@ const ScrollyTelling = () => {
           duration: 0.5,
           onUpdate: () => {
             for (let j = 0; j < count; j++) {
-              const cx = originalCx[j] + (targetCx[j] - originalCx[j]) * proxy.t;
-              circles[j].setAttribute("cx", cx);
+              circles[j].setAttribute(
+                "cx",
+                originalCx[j] + (targetCx[j] - originalCx[j]) * proxy.t,
+              );
+              circles[j].setAttribute(
+                "cy",
+                originalCy[j] + (targetCy - originalCy[j]) * proxy.t,
+              );
             }
           },
         },
