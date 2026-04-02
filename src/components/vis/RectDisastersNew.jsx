@@ -1,7 +1,12 @@
 import { useEffect, useMemo, useRef } from "react";
-import * as Plot from "@observablehq/plot";
-import { index, mean, rollup, sum } from "d3-array";
+import { index, max, mean, rollup, sum } from "d3-array";
 import { useRoomStore } from "@/store";
+import { scaleLinear } from "d3-scale";
+import { AxisBottom, AxisLeft } from "@visx/axis";
+
+const marginRight = 20;
+const marginBottom = 30;
+const marginTop = 20;
 
 const disasterOrder = ["earthquake", "storm", "flood", "drought"];
 
@@ -17,11 +22,14 @@ const fmt = new Intl.NumberFormat("en", {
   maximumFractionDigits: 1,
 });
 
-const RectDisastersNew = ({ width, height }) => {
+const RectDisastersNew = ({ width, height, marginLeft }) => {
   const disastersImpactsByMonth = useRoomStore(
     (state) => state.disastersImpactsByMonth,
   );
   const disasters = useRoomStore((state) => state.disasters);
+  const disasterTypeColorScale = useRoomStore(
+    (state) => state.disasterTypeColorScale,
+  );
 
   const aggData = useMemo(() => {
     if (!disastersImpactsByMonth || !disasters) return;
@@ -73,11 +81,70 @@ const RectDisastersNew = ({ width, height }) => {
   }, [disastersImpactsByMonth, disasters]);
 
   const xScale = useMemo(() => {
+    if (!aggData) return;
 
-  }, [aggData])
+    return scaleLinear()
+      .domain([0, sum(aggData, (d) => d.affected)])
+      .range([0, width - marginLeft - marginRight]);
+  }, [aggData]);
+
+  const yScale = useMemo(() => {
+    if (!aggData) return;
+
+    return scaleLinear()
+      .domain([0, max(aggData, (d) => d.remittance_per_affected)])
+      .range([height - marginTop - marginBottom, 0]);
+  }, [aggData]);
+
+  const stackedX = useMemo(() => {
+    if (!aggData || !xScale) return;
+
+    let cumulative = 0;
+    return aggData.map((d) => {
+      const x0 = cumulative;
+      cumulative += d.affected;
+      return { ...d, x0, x1: cumulative };
+    });
+  }, [aggData, xScale]);
+
+  console.log(stackedX);
 
   return (
-    <svg width={width} height={height} className="border border-black"></svg>
+    <>
+      {yScale && xScale && (
+        <svg width={width} height={height} className="border border-black">
+          <g transform={`translate(${marginLeft}, ${marginTop})`}>
+            <AxisLeft
+              scale={yScale}
+              tickFormat={(t) => "$" + t}
+              tickLabelProps={() => ({
+                dx: "-0.25em",
+                dy: "0.25em",
+                fill: "#222",
+                fontSize: 10,
+                textAnchor: "end",
+                // your additions
+                // stroke: "white",
+                // strokeWidth: 3,
+                // paintOrder: "stroke",
+              })}
+            />
+            <AxisBottom
+              top={height - marginBottom - marginTop}
+              scale={xScale}
+              tickFormat={(t) => fmt.format(t)}
+              tickLabelProps={() => ({
+                dy: "0.25em",
+                fill: "#222",
+                fontSize: 10,
+                textAnchor: "middle",
+                // fontWeight: 600,
+              })}
+            />
+          </g>
+        </svg>
+      )}
+    </>
   );
 };
 

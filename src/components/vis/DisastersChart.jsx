@@ -94,7 +94,11 @@ const DisastersChart = () => {
         })}
       <ParentSize className="absolute w-full h-full max-h-[500px] top-1/2 left-0 -translate-y-1/2">
         {({ width, height }) => (
-          <RectDisastersNew width={width} height={height} />
+          <RectDisastersNew
+            width={width}
+            height={height}
+            marginLeft={marginLeft}
+          />
         )}
       </ParentSize>
     </div>
