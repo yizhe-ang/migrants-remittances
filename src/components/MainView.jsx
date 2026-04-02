@@ -79,14 +79,13 @@ const MainView = () => {
               </ParentSize>
             </div>
           </div> */}
-          <div
+          {/* <div
             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
             style={{ opacity: 0, visibility: "hidden" }}
             id="rect-disasters"
           >
             <RectDisasters />
-            {/* <RectDisastersNew /> */}
-          </div>
+          </div> */}
         </div>
 
         <Steps />

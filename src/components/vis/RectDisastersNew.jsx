@@ -118,7 +118,12 @@ const RectDisastersNew = ({ width, height, marginLeft, marginRight }) => {
   return (
     <>
       {yScale && xScale && (
-        <svg width={width} height={height} className="border border-black">
+        <svg
+          width={width}
+          height={height}
+          className="border border-black"
+          id="disaster-rects"
+        >
           <g transform={`translate(${marginLeft}, ${marginTop})`}>
             <g>
               {stackedX?.map((d, i) => {

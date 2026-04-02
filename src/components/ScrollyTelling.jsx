@@ -1243,30 +1243,12 @@ const ScrollyTelling = () => {
         },
         duration: 1,
       })
-      .to(
-        "#beeswarm-disasters",
-        {
-          autoAlpha: 0,
-          duration: 0.3,
-        },
-        0,
-      )
-      .to(
-        "#area-disasters",
-        {
-          autoAlpha: 0,
-          duration: 0.3,
-        },
-        0,
-      )
-      .to(
-        "#rect-disasters",
-        {
-          autoAlpha: 1,
-          duration: 0.3,
-        },
-        0,
-      );
+      .from("#disaster-rects rect", {
+        attr: {
+          height: 10,
+          y: 10
+        }
+      })
 
     gsap
       .timeline({
@@ -1284,14 +1266,6 @@ const ScrollyTelling = () => {
         },
         duration: 1,
       })
-      .to(
-        "#rect-disasters",
-        {
-          autoAlpha: 0,
-          duration: 0.3,
-        },
-        0,
-      )
       .to(
         "canvas",
         {
