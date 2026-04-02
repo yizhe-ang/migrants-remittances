@@ -995,6 +995,7 @@ const ScrollyTelling = () => {
       tl13.from(
         b.querySelectorAll("circle"),
         {
+          attr: { r: 0 },
           opacity: 0,
           duration: 0.5,
           stagger: {
