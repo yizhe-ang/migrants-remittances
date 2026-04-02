@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef } from "react";
 import * as Plot from "@observablehq/plot";
-import { mean, rollup, sum } from "d3-array";
+import { index, mean, rollup, sum } from "d3-array";
 import { useRoomStore } from "@/store";
 
 const disasterTypes = ["flood", "earthquake", "drought", "storm"];
@@ -59,15 +59,24 @@ const RectDisasters = ({ width = 900, height = 500 }) => {
       o[k].remittance_per_affected = o[k].remittances / o[k].affected;
     });
 
-    return Object.entries(o).map(([k, v]) => {
+    const aggData = Object.entries(o).map(([k, v]) => {
       return {
         ...v,
         disaster_type: k,
       };
-    });
+    })
+
+    const typeToAggData = index(aggData, (d) => d.disaster_type);
+
+    const thresholds = ["earthquake", "storm", "flood", "drought"].map((type) => {
+      const d = typeToAggData.get(type);
+
+      return d.affected
+    })
+
+    return aggData
   }, [disastersImpactsByMonth, disasters]);
 
-  // TODO: Compute number affected percentage
 
   useEffect(() => {
     if (!aggData) return;

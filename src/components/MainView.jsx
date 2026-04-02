@@ -9,7 +9,7 @@ import SankeyIncome from "@/components/vis/SankeyIncome";
 import Steps from "@/components/Steps";
 import Controls from "@/components/interface/Controls";
 import BeeswarmDisasters from "@/components/vis/BeeswarmDisasters";
-import BeeswarmDisastersNew from "@/components/vis/BeeswarmDisastersNew";
+import DisastersChart from "@/components/vis/DisastersChart";
 import AreaDisasters from "@/components/vis/AreaDisasters";
 import RectDisasters from "@/components/vis/RectDisasters";
 import RectDisastersNew from "./vis/RectDisastersNew";
@@ -51,7 +51,9 @@ const MainView = () => {
         <div className="fixed inset-0 grid place-items-center pointer-events-none">
           <div className="h-[80vh] w-screen max-w-[700px]">
             <ParentSize>
-              {({ height, width }) => <SankeyIncome width={width} height={height} />}
+              {({ height, width }) => (
+                <SankeyIncome width={width} height={height} />
+              )}
             </ParentSize>
           </div>
         </div>
@@ -62,7 +64,7 @@ const MainView = () => {
             style={{ opacity: 0, visibility: "hidden" }}
             id="beeswarm-disasters"
           >
-            <BeeswarmDisastersNew />
+            <DisastersChart />
           </div>
           {/* <div
             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"

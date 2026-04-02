@@ -36,7 +36,7 @@ const Beeswarm = ({
                 height={height}
                 className="overflow-visible beeswarm"
               >
-                <g>
+                <g className="beeswarm-circles">
                   {dataDodged.map((d, i) => {
                     return (
                       <circle
@@ -53,11 +53,12 @@ const Beeswarm = ({
 
                 {showXAxis && (
                   <AxisBottom
+                    axisClassName="beeswarm-axis"
                     top={height - marginBottom}
                     scale={xScale}
                     hideTicks
-                    hideAxisLine
-                    axisLineClassName="stroke-2 stroke-stone-500"
+                    hideAxisLine={true}
+                    axisLineClassName="stroke-2 stroke-stone-400"
                     tickLabelProps={() => ({
                       dy: "0.25em",
                       fill: "#222",

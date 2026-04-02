@@ -443,12 +443,12 @@ const ScrollyTelling = () => {
           end: "bottom bottom",
           scrub: true,
           onEnter: () => {
-            setColorPointsBy(["income"]);
+            // setColorPointsBy(["income"]);
             setShowCountryPoints(["sending"]);
             setEnableControls(false);
           },
           onLeaveBack: () => {
-            setColorPointsBy(["value"]);
+            // setColorPointsBy(["value"]);
             setShowCountryPoints(["receiving"]);
             setEnableControls(true);
           },
@@ -1016,14 +1016,17 @@ const ScrollyTelling = () => {
               const staggerDelay = (j / count) * staggerTotal;
               const localT = Math.max(
                 0,
-                Math.min(1, (proxy.t * (0.5 + staggerTotal) - staggerDelay) / 0.3),
+                Math.min(
+                  1,
+                  (proxy.t * (0.5 + staggerTotal) - staggerDelay) / 0.3,
+                ),
               );
               circles[j].setAttribute("r", localT * originalRadii[j]);
               circles[j].style.opacity = localT;
             }
           },
         },
-        0.1 + i * 0.05,
+        0.1 + i * 0.02,
       );
     });
 
@@ -1038,7 +1041,7 @@ const ScrollyTelling = () => {
         duration: 1,
       })
       .to(
-        ".beeswarm circle",
+        ".beeswarm-circles",
         {
           opacity: 0.4,
           duration: 0.3,
@@ -1070,6 +1073,41 @@ const ScrollyTelling = () => {
         },
         0.4,
       );
+
+    gsap.timeline({
+      scrollTrigger: {
+        trigger: "#step-15-1",
+        start: "top bottom",
+        end: "bottom bottom",
+        scrub: true,
+      },
+      duration: 1,
+    })
+    .to(
+      ".area-chart",
+      {
+        opacity: 0,
+        duration: 0.2,
+      },
+      0
+    )
+    .to(
+      ".beeswarm-axis",
+      {
+        opacity: 0,
+        duration: 0.2,
+      },
+      0
+    )
+    .to(
+      ".beeswarm-circles",
+      {
+        opacity: 1,
+        duration: 0.2,
+      },
+      0
+    )
+
 
     gsap
       .timeline({

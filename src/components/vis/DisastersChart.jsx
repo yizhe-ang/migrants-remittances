@@ -6,13 +6,14 @@ import { AxisBottom } from "@visx/axis";
 import Beeswarm from "@/components/vis/Beeswarm";
 import AreaChart from "@/components/vis/AreaChart";
 import { ParentSize, useParentSize } from "@visx/responsive";
+import RectDisastersNew from "./RectDisastersNew";
 
 const marginLeft = 50;
 const marginRight = 20;
 const marginBottom = 30;
 const marginTop = 20;
 
-const BeeswarmDisastersNew = () => {
+const DisastersChart = () => {
   const { parentRef, width, height } = useParentSize();
 
   const disastersImpactsByMonth = useRoomStore(
@@ -49,11 +50,11 @@ const BeeswarmDisastersNew = () => {
   return (
     <div
       ref={parentRef}
-      className="flex flex-col h-[95vh] w-screen max-w-[800px] pb-5"
+      className="flex flex-col h-[95vh] w-screen max-w-[800px] pb-5 relative"
     >
       {disasters &&
         disastersImpactsByMonth &&
-        ["earthquake", "storm", "drought", "flood"].map((key, i) => {
+        ["earthquake", "storm", "flood", "drought"].map((key, i) => {
           return (
             <div className="relative w-full h-full" key={key}>
               <Beeswarm
@@ -91,8 +92,13 @@ const BeeswarmDisastersNew = () => {
             </div>
           );
         })}
+      <ParentSize className="absolute w-full h-full max-h-[500px] top-1/2 left-0 -translate-y-1/2">
+        {({ width, height }) => (
+          <RectDisastersNew width={width} height={height} />
+        )}
+      </ParentSize>
     </div>
   );
 };
 
-export default BeeswarmDisastersNew;
+export default DisastersChart;

@@ -257,6 +257,10 @@ const Steps = () => {
         </P>
       </Step>
 
+      <Step id="step-15-1" className="">
+        <P></P>
+      </Step>
+
       <Step id="step-15" className="">
         <P>
           Not all disasters generate the same remittances mobilisation.
@@ -272,6 +276,7 @@ const Steps = () => {
           amounts of remittances for events that last long periods.
         </P>
       </Step>
+
       <Step id="step-16" className="">
         <P className="flex gap-2">
           <MousePointer />
