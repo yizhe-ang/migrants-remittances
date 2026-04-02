@@ -28,8 +28,24 @@ const AreaChart = ({
       .range([height - marginTop - marginBottom, 0]);
   }, [dataFull]);
 
+  const fillColor = colorScale(data[0].disaster_type.slice(0, -1));
+  const gradientId = `area-gradient-${data[0].disaster_type}`;
+
   return (
     <svg width={width} height={height} className="area-chart">
+      <defs>
+        <linearGradient
+          id={gradientId}
+          x1="0"
+          y1="0"
+          x2="0"
+          y2={height - marginTop - marginBottom}
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop offset="0%" stopColor={fillColor} stopOpacity={0.8} />
+          <stop offset="100%" stopColor={fillColor} stopOpacity={0} />
+        </linearGradient>
+      </defs>
       <g transform={`translate(${0}, ${marginTop})`}>
         {/* <GridRows
           scale={yScale}
@@ -37,7 +53,6 @@ const AreaChart = ({
           left={marginLeft}
           numTicks={4}
         /> */}
-        {/* TODO: Gradient for fill */}
         <AreaClosed
           className="disaster-area"
           data={data}
@@ -45,8 +60,7 @@ const AreaChart = ({
           y={(d) => yScale(yAccessor(d))}
           yScale={yScale}
           curve={curveMonotoneX}
-          fill={colorScale(data[0].disaster_type.slice(0, -1))}
-          fillOpacity={0.2}
+          fill={`url(#${gradientId})`}
         />
         <LinePath
           className="disaster-line"

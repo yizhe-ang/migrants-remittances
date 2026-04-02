@@ -158,7 +158,8 @@ export const { roomStore, useRoomStore } = createRoomStore(
     // pointsValue: ["propGdp"],
     setPointsValue: (pointsValue) => set({ pointsValue }),
 
-    colorPointsBy: ["value"],
+    // colorPointsBy: ["value"],
+    colorPointsBy: ["income"],
     setColorPointsBy: (colorPointsBy) => set({ colorPointsBy }),
 
     dashboardView: false,

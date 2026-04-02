@@ -32,13 +32,13 @@ const AreaDisasters = ({ width = 700, height = 800 }) => {
         },
         ticks: 3,
         // label: "Disaster-induced Remittances"
-        label: null
+        label: null,
       },
       x: {
-        ticks: 0
+        ticks: 0,
       },
       color: {
-        domain: ["floods", "earthquakes", "droughts", "storms"],
+        domain: ["floods", "earthquakes", "storms", "droughts"],
       },
       marks: [
         Plot.areaY(disastersImpactsByMonth, {
@@ -63,9 +63,13 @@ const AreaDisasters = ({ width = 700, height = 800 }) => {
     return () => plot.remove();
   }, [disastersImpactsByMonth, height, width]);
 
-  return <div ref={containerRef}>
-    <div id="area-disasters-title" className="font-bold">Disaster-induced remittances over time</div>
-  </div>;
+  return (
+    <div ref={containerRef}>
+      <div id="area-disasters-title" className="font-bold">
+        Disaster-induced remittances over time
+      </div>
+    </div>
+  );
 };
 
 export default AreaDisasters;
