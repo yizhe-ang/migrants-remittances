@@ -6,6 +6,8 @@ import cameraPositions from "@/components/data/cameraPositions";
 import { sankeyLinkHorizontal } from "@visx/sankey";
 import DrawSVGPlugin from "gsap/DrawSVGPlugin";
 import { screenToWorld } from "@/lib/utils";
+import { rollup, sum } from "d3-array";
+import { scaleLinear } from "d3-scale";
 
 gsap.registerPlugin(useGSAP);
 gsap.registerPlugin(ScrollTrigger);
@@ -19,6 +21,7 @@ const ScrollyTelling = () => {
   const arcs = useRoomStore((s) => s.arcs);
   const points = useRoomStore((s) => s.points);
   const sankeyIncome = useRoomStore((s) => s.sankeyIncome);
+  const disasters = useRoomStore((s) => s.disasters);
 
   const setShowCountryPoints = useRoomStore((s) => s.setShowCountryPoints);
   const setEnableMapInteractions = useRoomStore(
@@ -29,7 +32,7 @@ const ScrollyTelling = () => {
   const setPointsValue = useRoomStore((s) => s.setPointsValue);
 
   useGSAP(() => {
-    if (!cameraControls || !arcs || !points || !flowsMap2019 || !sankeyIncome)
+    if (!cameraControls || !arcs || !points || !flowsMap2019 || !sankeyIncome || !disasters)
       return;
 
     const fromUsaFlows = flowsMap2019.get("destination").get("USA");
@@ -1074,7 +1077,33 @@ const ScrollyTelling = () => {
         0.4,
       );
 
-    gsap.timeline({
+    // Compute stacked x-ranges matching RectDisastersNew layout
+    const disasterOrder = ["earthquake", "storm", "flood", "drought"];
+    const affectedByType = rollup(
+      disasters,
+      (v) => sum(v, (d) => d.affected),
+      (d) => d.disaster_type,
+    );
+    const totalAffected = sum(affectedByType.values());
+    const beeswarmMarginLeft = 50;
+    const beeswarmMarginRight = 20;
+    const svgWidth = parseFloat(beeswarms[0].getAttribute("width"));
+    const innerWidth = svgWidth - beeswarmMarginLeft - beeswarmMarginRight;
+    const stackedXScale = scaleLinear()
+      .domain([0, totalAffected])
+      .range([0, innerWidth]);
+
+    let cumAffected = 0;
+    const computedStackedX = disasterOrder.map((type) => {
+      const x0 = cumAffected;
+      cumAffected += affectedByType.get(type) || 0;
+      return {
+        x0Scaled: stackedXScale(x0),
+        x1Scaled: stackedXScale(cumAffected),
+      };
+    });
+
+    const tl151 = gsap.timeline({
       scrollTrigger: {
         trigger: "#step-15-1",
         start: "top bottom",
@@ -1106,7 +1135,40 @@ const ScrollyTelling = () => {
         duration: 0.2,
       },
       0
-    )
+    );
+
+    // Animate circles' cx to stacked rect x-positions
+    beeswarms.forEach((b, i) => {
+      const circles = b.querySelectorAll("circle");
+      const originalCx = Array.from(circles, (c) =>
+        parseFloat(c.getAttribute("cx")),
+      );
+      const count = circles.length;
+      if (count === 0) return;
+
+      const { x0Scaled, x1Scaled } = computedStackedX[i];
+      const targetCx = originalCx.map((_, j) => {
+        const t = count > 1 ? j / (count - 1) : 0.5;
+        return x0Scaled + t * (x1Scaled - x0Scaled);
+      });
+
+      const proxy = { t: 0 };
+
+      tl151.to(
+        proxy,
+        {
+          t: 1,
+          duration: 0.5,
+          onUpdate: () => {
+            for (let j = 0; j < count; j++) {
+              const cx = originalCx[j] + (targetCx[j] - originalCx[j]) * proxy.t;
+              circles[j].setAttribute("cx", cx);
+            }
+          },
+        },
+        0.2,
+      );
+    });
 
 
     gsap
@@ -1208,7 +1270,7 @@ const ScrollyTelling = () => {
         },
         0,
       );
-  }, [cameraControls, arcs, points, flowsMap2019, sankeyIncome]);
+  }, [cameraControls, arcs, points, flowsMap2019, sankeyIncome, disasters]);
 
   return <></>;
 };
