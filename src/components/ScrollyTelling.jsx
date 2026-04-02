@@ -1245,8 +1245,10 @@ const ScrollyTelling = () => {
       })
       .from("#disaster-rects rect", {
         attr: {
-          height: 10,
-          y: 10
+          height: 20,
+          y: function(_i, el) {
+            return +el.getAttribute("y") + +el.getAttribute("height") - 20;
+          }
         }
       })
 
