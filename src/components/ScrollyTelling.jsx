@@ -1233,24 +1233,51 @@ const ScrollyTelling = () => {
     });
 
 
-    gsap
-      .timeline({
-        scrollTrigger: {
-          trigger: "#step-15",
-          start: "top bottom",
-          end: "bottom bottom",
-          scrub: true,
+    // Step 15: animate rects FROM beeswarm blob positions TO final positions
+    const rectSvg = document.querySelector("#disaster-rects");
+    const rectSvgTop = rectSvg.getBoundingClientRect().top;
+    const rects = rectSvg.querySelectorAll("rect");
+
+    const tl15 = gsap.timeline({
+      scrollTrigger: {
+        trigger: "#step-15",
+        start: "top bottom",
+        end: "bottom bottom",
+        scrub: true,
+      },
+      duration: 1,
+    });
+
+    // Crossfade: fade out beeswarm blobs, fade in rects
+    tl15
+      .to(".beeswarm-circles", { opacity: 0, duration: 0.3 }, 0)
+      .from("#disaster-rects", { opacity: 0, duration: 0.3 }, 0);
+
+    // Animate each rect from its corresponding beeswarm blob Y position
+    rects.forEach((rect, i) => {
+      const bSvg = beeswarms[i];
+      const bSvgHeight = parseFloat(bSvg.getAttribute("height"));
+      const bSvgTop = bSvg.getBoundingClientRect().top;
+
+      // Where the blob sits in beeswarm inner coords (matches step-15-1 targetCy)
+      const blobCy = bSvgHeight - 30 - beeswarmPadding - 20;
+
+      // Map to rect SVG inner coords
+      const fromY = (bSvgTop - rectSvgTop) + blobCy;
+
+      const fromHeight = 20;
+
+      tl15.from(
+        rect,
+        {
+          attr: {
+            y: fromY - fromHeight / 2,
+            height: fromHeight,
+          },
         },
-        duration: 1,
-      })
-      .from("#disaster-rects rect", {
-        attr: {
-          height: 20,
-          y: function(_i, el) {
-            return +el.getAttribute("y") + +el.getAttribute("height") - 20;
-          }
-        }
-      })
+        0,
+      );
+    });
 
     gsap
       .timeline({

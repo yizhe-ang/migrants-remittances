@@ -121,7 +121,7 @@ const RectDisastersNew = ({ width, height, marginLeft, marginRight }) => {
         <svg
           width={width}
           height={height}
-          // className="border border-black"
+          className="overflow-visible"
           id="disaster-rects"
         >
           <g transform={`translate(${marginLeft}, ${marginTop})`}>
