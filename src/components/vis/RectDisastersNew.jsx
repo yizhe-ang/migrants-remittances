@@ -4,7 +4,6 @@ import { useRoomStore } from "@/store";
 import { scaleLinear } from "d3-scale";
 import { AxisBottom, AxisLeft } from "@visx/axis";
 
-const marginRight = 20;
 const marginBottom = 30;
 const marginTop = 20;
 
@@ -22,7 +21,7 @@ const fmt = new Intl.NumberFormat("en", {
   maximumFractionDigits: 1,
 });
 
-const RectDisastersNew = ({ width, height, marginLeft }) => {
+const RectDisastersNew = ({ width, height, marginLeft, marginRight }) => {
   const disastersImpactsByMonth = useRoomStore(
     (state) => state.disastersImpactsByMonth,
   );
@@ -100,20 +99,44 @@ const RectDisastersNew = ({ width, height, marginLeft }) => {
     if (!aggData || !xScale) return;
 
     let cumulative = 0;
-    return aggData.map((d) => {
+
+    const stacked = aggData.map((d) => {
       const x0 = cumulative;
       cumulative += d.affected;
-      return { ...d, x0, x1: cumulative };
-    });
-  }, [aggData, xScale]);
 
-  console.log(stackedX);
+      return {
+        // x0,
+        // x1: cumulative,
+        x0Scaled: xScale(x0),
+        x1Scaled: xScale(cumulative),
+      };
+    });
+
+    return stacked;
+  }, [aggData, xScale]);
 
   return (
     <>
       {yScale && xScale && (
         <svg width={width} height={height} className="border border-black">
           <g transform={`translate(${marginLeft}, ${marginTop})`}>
+            <g>
+              {stackedX?.map((d, i) => {
+                return (
+                  <rect
+                    key={i}
+                    x={d.x0Scaled}
+                    y={yScale(aggData[i].remittance_per_affected)}
+                    width={d.x1Scaled - d.x0Scaled}
+                    height={
+                      yScale(0) - yScale(aggData[i].remittance_per_affected)
+                    }
+                    fill={disasterTypeColorScale(aggData[i].disaster_type)}
+                  />
+                );
+              })}
+            </g>
+
             <AxisLeft
               scale={yScale}
               tickFormat={(t) => "$" + t}

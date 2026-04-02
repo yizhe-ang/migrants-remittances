@@ -98,6 +98,7 @@ const DisastersChart = () => {
             width={width}
             height={height}
             marginLeft={marginLeft}
+            marginRight={marginRight}
           />
         )}
       </ParentSize>
