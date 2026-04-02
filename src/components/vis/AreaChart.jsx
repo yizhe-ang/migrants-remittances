@@ -46,7 +46,7 @@ const AreaChart = ({
           <stop offset="100%" stopColor={fillColor} stopOpacity={0} />
         </linearGradient>
       </defs>
-      <g transform={`translate(${0}, ${marginTop})`}>
+      <g transform={`translate(${marginLeft}, ${marginTop})`}>
         {/* <GridRows
           scale={yScale}
           width={width - marginLeft}
@@ -74,7 +74,6 @@ const AreaChart = ({
         />
         <AxisLeft
           axisClassName="disaster-area-axis"
-          left={marginLeft}
           scale={yScale}
           hideAxisLine
           hideTicks

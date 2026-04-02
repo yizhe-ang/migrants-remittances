@@ -124,6 +124,8 @@ const RectDisastersNew = ({ width, height, marginLeft, marginRight }) => {
               {stackedX?.map((d, i) => {
                 return (
                   <rect
+                    rx={5}
+                    ry={5}
                     key={i}
                     x={d.x0Scaled}
                     y={yScale(aggData[i].remittance_per_affected)}
@@ -138,6 +140,8 @@ const RectDisastersNew = ({ width, height, marginLeft, marginRight }) => {
             </g>
 
             <AxisLeft
+              hideAxisLine
+              hideTicks
               scale={yScale}
               tickFormat={(t) => "$" + t}
               tickLabelProps={() => ({
@@ -153,6 +157,8 @@ const RectDisastersNew = ({ width, height, marginLeft, marginRight }) => {
               })}
             />
             <AxisBottom
+              // hideTicks
+              hideAxisLine
               top={height - marginBottom - marginTop}
               scale={xScale}
               tickFormat={(t) => fmt.format(t)}

@@ -36,38 +36,40 @@ const Beeswarm = ({
                 height={height}
                 className="overflow-visible beeswarm"
               >
-                <g className="beeswarm-circles">
-                  {dataDodged.map((d, i) => {
-                    return (
-                      <circle
-                        key={i}
-                        cx={d.x}
-                        cy={height - marginBottom - padding - d.y}
-                        r={d.r}
-                        fill={c(d.data)}
-                        // fillOpacity={0.4}
-                      />
-                    );
-                  })}
-                </g>
-
-                {showXAxis && (
-                  <AxisBottom
-                    axisClassName="beeswarm-axis"
-                    top={height - marginBottom}
-                    scale={xScale}
-                    hideTicks
-                    hideAxisLine={true}
-                    axisLineClassName="stroke-2 stroke-stone-400"
-                    tickLabelProps={() => ({
-                      dy: "0.25em",
-                      fill: "#222",
-                      fontSize: 12,
-                      textAnchor: "middle",
-                      fontWeight: 600,
+                <g transform={`translate(${marginLeft}, ${marginTop})`}>
+                  <g className="beeswarm-circles">
+                    {dataDodged.map((d, i) => {
+                      return (
+                        <circle
+                          key={i}
+                          cx={d.x}
+                          cy={height - marginBottom - padding - d.y - marginTop}
+                          r={d.r}
+                          fill={c(d.data)}
+                          // fillOpacity={0.4}
+                        />
+                      );
                     })}
-                  />
-                )}
+                  </g>
+
+                  {showXAxis && (
+                    <AxisBottom
+                      axisClassName="beeswarm-axis"
+                      top={height - marginBottom - marginTop}
+                      scale={xScale}
+                      hideTicks
+                      hideAxisLine={true}
+                      axisLineClassName="stroke-2 stroke-stone-400"
+                      tickLabelProps={() => ({
+                        dy: "0.25em",
+                        fill: "#222",
+                        fontSize: 12,
+                        textAnchor: "middle",
+                        fontWeight: 600,
+                      })}
+                    />
+                  )}
+                </g>
               </svg>
             )}
           </>

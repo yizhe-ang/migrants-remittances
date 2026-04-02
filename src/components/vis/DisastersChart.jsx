@@ -31,7 +31,7 @@ const DisastersChart = () => {
       scaleUtc()
         .domain(extent(disasters, (d) => d["start_date"]))
         // .domain(extent(disastersImpactsByMonth, (d) => d["date"]))
-        .range([marginLeft, width - marginRight])
+        .range([0, width - marginRight - marginLeft])
     );
   }, [disasters, disastersImpactsByMonth, width]);
 
@@ -92,7 +92,7 @@ const DisastersChart = () => {
             </div>
           );
         })}
-      <ParentSize className="absolute w-full h-full max-h-[500px] top-1/2 left-0 -translate-y-1/2">
+      {/* <ParentSize className="absolute w-full h-full max-h-[500px] top-1/2 left-0 -translate-y-1/2">
         {({ width, height }) => (
           <RectDisastersNew
             width={width}
@@ -101,7 +101,7 @@ const DisastersChart = () => {
             marginRight={marginRight}
           />
         )}
-      </ParentSize>
+      </ParentSize> */}
     </div>
   );
 };
