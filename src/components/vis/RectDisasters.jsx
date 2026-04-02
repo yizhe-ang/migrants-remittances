@@ -67,6 +67,8 @@ const RectDisasters = ({ width = 900, height = 500 }) => {
     });
   }, [disastersImpactsByMonth, disasters]);
 
+  // TODO: Compute number affected percentage
+
   useEffect(() => {
     if (!aggData) return;
 

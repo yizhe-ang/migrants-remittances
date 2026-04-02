@@ -31,12 +31,12 @@ const AreaChart = ({
   return (
     <svg width={width} height={height} className="area-chart">
       <g transform={`translate(${0}, ${marginTop})`}>
-        <GridRows
+        {/* <GridRows
           scale={yScale}
           width={width - marginLeft}
           left={marginLeft}
           numTicks={4}
-        />
+        /> */}
         {/* TODO: Gradient for fill */}
         <AreaClosed
           className="disaster-area"
