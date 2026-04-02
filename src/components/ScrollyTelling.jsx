@@ -992,14 +992,35 @@ const ScrollyTelling = () => {
       );
 
     beeswarms.forEach((b, i) => {
-      tl13.from(
-        b.querySelectorAll("circle"),
+      const circles = b.querySelectorAll("circle");
+      const originalRadii = Array.from(circles, (c) =>
+        parseFloat(c.getAttribute("r")),
+      );
+      const count = circles.length;
+      const staggerTotal = 0.5;
+      const proxy = { t: 0 };
+
+      // Hide circles initially
+      circles.forEach((c) => {
+        c.setAttribute("r", 0);
+        c.style.opacity = 0;
+      });
+
+      tl13.to(
+        proxy,
         {
-          attr: { r: 0 },
-          opacity: 0,
-          duration: 0.5,
-          stagger: {
-            amount: 0.5,
+          t: 1,
+          duration: 0.3 + staggerTotal,
+          onUpdate: () => {
+            for (let j = 0; j < count; j++) {
+              const staggerDelay = (j / count) * staggerTotal;
+              const localT = Math.max(
+                0,
+                Math.min(1, (proxy.t * (0.5 + staggerTotal) - staggerDelay) / 0.3),
+              );
+              circles[j].setAttribute("r", localT * originalRadii[j]);
+              circles[j].style.opacity = localT;
+            }
           },
         },
         0.1 + i * 0.1,
