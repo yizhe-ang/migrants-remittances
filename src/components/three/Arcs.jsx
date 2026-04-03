@@ -3,6 +3,7 @@ import { useEffect, useLayoutEffect, useMemo, useRef } from "react";
 import {
   Fn,
   instancedArray,
+  uniformArray,
   positionLocal,
   instanceIndex,
   vec3,
@@ -94,6 +95,18 @@ const Arcs = (props) => {
     const radiusBuffer = instancedArray(maxFlowCount, "float");
     const srcTypeBuffer = instancedArray(maxFlowCount, "float");
     const tgtTypeBuffer = instancedArray(maxFlowCount, "float");
+
+    // 4-entry color lookup table indexed by income group (matches incomeColorScale domain order):
+    // 0=High income, 1=Upper middle income, 2=Lower middle income, 3=Low income
+    const incomeColors = uniformArray(
+      [
+        new THREE.Color("#7fc97f"),
+        new THREE.Color("#beaed4"),
+        new THREE.Color("#fdc086"),
+        new THREE.Color("#ffed6f"),
+      ],
+      "color",
+    );
 
     // Canonical arc: height baked into curve so we can scale uniformly
     const curve = new THREE.QuadraticBezierCurve3(
@@ -226,10 +239,12 @@ const Arcs = (props) => {
         Discard();
       });
 
-      // Base color: solid windColor or srcColor/tgtColor gradient, controlled by windGradientT
+      // Base color: solid windColor or per-instance income colors gradient, controlled by windGradientT
+      const srcColorInst = incomeColors.element(srcTypeBuffer.element(instanceIndex).toInt().clamp(0, 3));
+      const tgtColorInst = incomeColors.element(tgtTypeBuffer.element(instanceIndex).toInt().clamp(0, 3));
       const baseColor = mix(
         u.windColor,
-        mix(u.tgtColor, u.srcColor, t),
+        mix(tgtColorInst, srcColorInst, t),
         u.windGradientT,
       );
 
