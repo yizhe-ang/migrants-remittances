@@ -1241,7 +1241,7 @@ const ScrollyTelling = () => {
     });
 
     tl151
-      .to(".beeswarm-circles", { opacity: 0, duration: 0.3 }, 0.7)
+      .to(".beeswarm-circles circle", { attr: { r: 0 }, duration: 0.3 }, 0.7)
       .from("#disaster-rects", { opacity: 0, duration: 0.3 }, 0.7);
 
     // Step 15: animate rects FROM beeswarm blob positions TO final positions
