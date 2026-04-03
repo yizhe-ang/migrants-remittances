@@ -158,10 +158,16 @@ const Arcs = (props) => {
       // Scale arc shape by distance, cross-section by per-instance radius
       const radius = radiusBuffer.element(instanceIndex);
       const effectiveRadius = mix(radius, radius.mul(0.4), u.windStreaksT);
+      const arcT = positionLocal.x.add(0.5);
+      // const edgeWidth = float(0.12);
+      const edgeWidth = float(0.5);
+      const taper = smoothstep(float(0), edgeWidth, arcT)
+        .mul(smoothstep(float(1), float(1).sub(edgeWidth), arcT));
+      const taperFactor = mix(taper, float(1), u.windStreaksT);
       const scaled = vec3(
         positionLocal.x.mul(dist),
         positionLocal.y.mul(dist),
-        positionLocal.z.mul(effectiveRadius),
+        positionLocal.z.mul(effectiveRadius).mul(taperFactor),
       );
 
       // Rotate around Z axis so X aligns with source→target direction
