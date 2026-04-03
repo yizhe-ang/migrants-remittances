@@ -277,6 +277,10 @@ const Steps = () => {
         </P>
       </Step>
 
+      <Step id="step-15-2" className="">
+        <P></P>
+      </Step>
+
       <Step id="step-16" className="">
         <P className="flex gap-2">
           <MousePointer />

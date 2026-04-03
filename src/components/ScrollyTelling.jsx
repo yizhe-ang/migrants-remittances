@@ -1316,6 +1316,16 @@ const ScrollyTelling = () => {
       );
     });
 
+    const tl152 = gsap.timeline({
+      scrollTrigger: {
+        trigger: "#step-15-2",
+        start: "top bottom",
+        end: "bottom bottom",
+        scrub: true,
+      },
+      duration: 1,
+    });
+
     gsap
       .timeline({
         scrollTrigger: {
