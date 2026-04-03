@@ -257,7 +257,7 @@ const Steps = () => {
         </P>
       </Step>
 
-      <Step id="step-15-1" className="">
+      <Step id="step-15-1" className="pt-[100vh]">
         <P></P>
       </Step>
 

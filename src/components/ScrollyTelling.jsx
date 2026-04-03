@@ -1281,7 +1281,7 @@ const ScrollyTelling = () => {
     });
 
     tl151
-      .to(".beeswarm-circles circle", { attr: { r: 0 }, duration: 0.3 }, 0.7)
+      .to(".beeswarm-circles circle", { attr: { r: 0 }, duration: 0.2 }, 0.8)
       .from("#disaster-rects rect", { scale: 0, transformOrigin: "50% 50%", duration: 0.3 }, 0.7);
 
     const tl15 = gsap.timeline({
@@ -1293,11 +1293,6 @@ const ScrollyTelling = () => {
       },
       duration: 1,
     });
-
-    // Crossfade: fade out beeswarm blobs, fade in rects
-    // tl15
-    //   .to(".beeswarm-circles", { opacity: 0, duration: 0.3 }, 0)
-    //   .from("#disaster-rects", { opacity: 0, duration: 0.3 }, 0);
 
     // Step 1: slide thin rect from blob Y to final bottom position
     rectProxies.forEach(({ proxy, applyProxy, midY }) => {
