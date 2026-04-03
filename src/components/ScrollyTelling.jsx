@@ -1282,7 +1282,11 @@ const ScrollyTelling = () => {
 
     tl151
       .to(".beeswarm-circles circle", { attr: { r: 0 }, duration: 0.2 }, 0.8)
-      .from("#disaster-rects rect", { scale: 0, transformOrigin: "50% 50%", duration: 0.3 }, 0.7);
+      .from(
+        "#disaster-rects rect",
+        { scale: 0, transformOrigin: "50% 50%", duration: 0.3 },
+        0.7,
+      );
 
     const tl15 = gsap.timeline({
       scrollTrigger: {
@@ -1307,6 +1311,15 @@ const ScrollyTelling = () => {
       );
     });
 
+    tl15.from(
+      ".rect-disasters-axis-bottom",
+      {
+        autoAlpha: 0,
+        duration: 0.3,
+      },
+      0.2,
+    );
+
     const tl152 = gsap.timeline({
       scrollTrigger: {
         trigger: "#step-15-2",
@@ -1330,6 +1343,16 @@ const ScrollyTelling = () => {
         0,
       );
     });
+
+    tl152.from(
+      ".rect-disasters-axis-left",
+      {
+        autoAlpha: 0,
+        y: 50,
+        duration: 0.3,
+      },
+      0,
+    );
 
     gsap
       .timeline({

@@ -145,6 +145,7 @@ const RectDisastersNew = ({ width, height, marginLeft, marginRight }) => {
             </g>
 
             <AxisLeft
+              axisClassName="rect-disasters-axis-left"
               hideAxisLine
               hideTicks
               scale={yScale}
@@ -162,6 +163,7 @@ const RectDisastersNew = ({ width, height, marginLeft, marginRight }) => {
               })}
             />
             <AxisBottom
+              axisClassName="rect-disasters-axis-bottom"
               // hideTicks
               hideAxisLine
               top={height - marginBottom - marginTop}
