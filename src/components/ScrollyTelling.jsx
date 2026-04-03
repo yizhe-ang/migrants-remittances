@@ -1240,29 +1240,10 @@ const ScrollyTelling = () => {
       );
     });
 
-    tl151
-      .to(".beeswarm-circles circle", { attr: { r: 0 }, duration: 0.3 }, 0.7)
-      .from("#disaster-rects", { opacity: 0, duration: 0.3 }, 0.7);
-
     // Step 15: animate rects FROM beeswarm blob positions TO final positions
     const rectSvg = document.querySelector("#disaster-rects");
     const rectSvgTop = rectSvg.getBoundingClientRect().top;
     const rects = rectSvg.querySelectorAll("rect");
-
-    const tl15 = gsap.timeline({
-      scrollTrigger: {
-        trigger: "#step-15",
-        start: "top bottom",
-        end: "bottom bottom",
-        scrub: true,
-      },
-      duration: 1,
-    });
-
-    // Crossfade: fade out beeswarm blobs, fade in rects
-    // tl15
-    //   .to(".beeswarm-circles", { opacity: 0, duration: 0.3 }, 0)
-    //   .from("#disaster-rects", { opacity: 0, duration: 0.3 }, 0);
 
     // Animate via proxy to avoid conflicting GSAP tweens on same attributes
     const fromHeight = 20;
@@ -1293,9 +1274,33 @@ const ScrollyTelling = () => {
         rect.setAttribute("height", proxy.height);
       };
 
-      rectProxies.push({ proxy, applyProxy, finalY, finalHeight });
+      // Set initial state so tl151's scale animation starts from the correct position
+      applyProxy();
 
-      // Step 1: slide thin rect from blob Y to final bottom position
+      rectProxies.push({ proxy, applyProxy, midY, finalY, finalHeight });
+    });
+
+    tl151
+      .to(".beeswarm-circles circle", { attr: { r: 0 }, duration: 0.3 }, 0.7)
+      .from("#disaster-rects rect", { scale: 0, transformOrigin: "50% 50%", duration: 0.3 }, 0.7);
+
+    const tl15 = gsap.timeline({
+      scrollTrigger: {
+        trigger: "#step-15",
+        start: "top bottom",
+        end: "bottom bottom",
+        scrub: true,
+      },
+      duration: 1,
+    });
+
+    // Crossfade: fade out beeswarm blobs, fade in rects
+    // tl15
+    //   .to(".beeswarm-circles", { opacity: 0, duration: 0.3 }, 0)
+    //   .from("#disaster-rects", { opacity: 0, duration: 0.3 }, 0);
+
+    // Step 1: slide thin rect from blob Y to final bottom position
+    rectProxies.forEach(({ proxy, applyProxy, midY }) => {
       tl15.to(
         proxy,
         {
