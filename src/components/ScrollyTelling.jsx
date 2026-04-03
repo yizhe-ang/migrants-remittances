@@ -1253,7 +1253,9 @@ const ScrollyTelling = () => {
       .to(".beeswarm-circles", { opacity: 0, duration: 0.3 }, 0)
       .from("#disaster-rects", { opacity: 0, duration: 0.3 }, 0);
 
-    // Animate each rect from its corresponding beeswarm blob Y position
+    // Animate via proxy to avoid conflicting GSAP tweens on same attributes
+    const fromHeight = 20;
+
     rects.forEach((rect, i) => {
       const bSvg = beeswarms[i];
       const bSvgHeight = parseFloat(bSvg.getAttribute("height"));
@@ -1263,19 +1265,43 @@ const ScrollyTelling = () => {
       const blobCy = bSvgHeight - 30 - beeswarmPadding - 20;
 
       // Map to rect SVG inner coords
-      const fromY = (bSvgTop - rectSvgTop) + blobCy;
+      const startY = (bSvgTop - rectSvgTop) + blobCy - fromHeight / 2;
 
-      const fromHeight = 20;
+      // Final rect position (read from DOM)
+      const finalY = parseFloat(rect.getAttribute("y"));
+      const finalHeight = parseFloat(rect.getAttribute("height"));
 
-      tl15.from(
-        rect,
+      // Intermediate: thin bar bottom-aligned with final rect
+      const midY = finalY + finalHeight - fromHeight;
+
+      const proxy = { y: startY, height: fromHeight };
+
+      const applyProxy = () => {
+        rect.setAttribute("y", proxy.y);
+        rect.setAttribute("height", proxy.height);
+      };
+
+      // Step 1: slide thin rect from blob Y to final bottom position
+      tl15.to(
+        proxy,
         {
-          attr: {
-            y: fromY - fromHeight / 2,
-            height: fromHeight,
-          },
+          y: midY,
+          duration: 0.5,
+          onUpdate: applyProxy,
         },
         0,
+      );
+
+      // Step 2: grow upward from thin to full height
+      tl15.to(
+        proxy,
+        {
+          y: finalY,
+          height: finalHeight,
+          duration: 0.5,
+          onUpdate: applyProxy,
+        },
+        0.5,
       );
     });
 
