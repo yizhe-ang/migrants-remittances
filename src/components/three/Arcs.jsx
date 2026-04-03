@@ -46,6 +46,7 @@ const Arcs = (props) => {
     (state) => state.enableMapInteractions,
   );
   const pointsValue = useRoomStore((state) => state.pointsValue);
+  const countriesAggStatsMap = useRoomStore((state) => state.countriesAggStatsMap);
 
   const setArcs = useRoomStore((state) => state.setArcs);
 
@@ -91,6 +92,8 @@ const Arcs = (props) => {
     const tgtBuffer = instancedArray(maxFlowCount, "vec3");
     const progressBuffer = instancedArray(maxFlowCount, "float");
     const radiusBuffer = instancedArray(maxFlowCount, "float");
+    const srcTypeBuffer = instancedArray(maxFlowCount, "float");
+    const tgtTypeBuffer = instancedArray(maxFlowCount, "float");
 
     // Canonical arc: height baked into curve so we can scale uniformly
     const curve = new THREE.QuadraticBezierCurve3(
@@ -247,7 +250,7 @@ const Arcs = (props) => {
 
       // Color is shared across modes; opacity differentiates them
       // const c = baseColor.mul(textureFactor);
-      const c = baseColor
+      const c = baseColor;
       const alpha = mix(u.opacity, windOpacity.mul(u.opacity), u.windStreaksT);
 
       return vec4(c, alpha);
@@ -261,19 +264,25 @@ const Arcs = (props) => {
         tgt: tgtBuffer.value,
         radius: radiusBuffer.value,
         progress: progressBuffer.value,
+        srcType: srcTypeBuffer.value,
+        tgtType: tgtTypeBuffer.value,
       },
     };
   }, [maxFlowCount, flowRadiusScale]);
 
   // Imperatively update buffers when selectedFlows changes (year change)
   useLayoutEffect(() => {
-    if (!flows || !mesh || !buffers || !countriesGeoMap || !flowRadiusScale)
+    if (!flows || !mesh || !buffers || !countriesGeoMap || !flowRadiusScale || !countriesAggStatsMap)
       return;
 
     const srcArr = buffers.src.array;
     const tgtArr = buffers.tgt.array;
     const radiusArr = buffers.radius.array;
     const progressArr = buffers.progress.array;
+    const srcTypeArr = buffers.srcType.array;
+    const tgtTypeArr = buffers.tgtType.array;
+
+    const incomeGroups = ["High income", "Upper middle income", "Lower middle income", "Low income"];
 
     let count = 0;
     for (const flow of flows) {
@@ -293,6 +302,11 @@ const Arcs = (props) => {
       radiusArr[count] = flowRadiusScale(flow.sim_remittances_with);
       progressArr[count] = 0;
 
+      const originStats = countriesAggStatsMap.get(flow.origin);
+      const destStats = countriesAggStatsMap.get(flow.destination);
+      srcTypeArr[count] = incomeGroups.indexOf(originStats?.group ?? "");
+      tgtTypeArr[count] = incomeGroups.indexOf(destStats?.group ?? "");
+
       count++;
     }
 
@@ -302,7 +316,9 @@ const Arcs = (props) => {
     buffers.tgt.needsUpdate = true;
     buffers.radius.needsUpdate = true;
     buffers.progress.needsUpdate = true;
-  }, [flows, mesh, buffers, countriesGeoMap, flowRadiusScale]);
+    buffers.srcType.needsUpdate = true;
+    buffers.tgtType.needsUpdate = true;
+  }, [flows, mesh, buffers, countriesGeoMap, flowRadiusScale, countriesAggStatsMap]);
 
   useEffect(() => {
     if (!u || !buffers || !flowsMap) return;
