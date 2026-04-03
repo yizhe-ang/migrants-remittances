@@ -32,7 +32,14 @@ const ScrollyTelling = () => {
   const setPointsValue = useRoomStore((s) => s.setPointsValue);
 
   useGSAP(() => {
-    if (!cameraControls || !arcs || !points || !flowsMap2019 || !sankeyIncome || !disasters)
+    if (
+      !cameraControls ||
+      !arcs ||
+      !points ||
+      !flowsMap2019 ||
+      !sankeyIncome ||
+      !disasters
+    )
       return;
 
     const fromUsaFlows = flowsMap2019.get("destination").get("USA");
@@ -1103,41 +1110,40 @@ const ScrollyTelling = () => {
       };
     });
 
-    const tl151 = gsap.timeline({
-      scrollTrigger: {
-        trigger: "#step-15-1",
-        start: "top bottom",
-        end: "bottom bottom",
-        scrub: true,
-      },
-      duration: 1,
-    })
-    .to(
-      ".area-chart",
-      {
-        opacity: 0,
-        duration: 0.2,
-      },
-      0
-    )
-    .to(
-      ".beeswarm-axis",
-      {
-        opacity: 0,
-        duration: 0.2,
-      },
-      0
-    )
-    .to(
-      ".beeswarm-circles",
-      {
-        opacity: 1,
-        duration: 0.2,
-      },
-      0
-    )
-    ;
-
+    const tl151 = gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: "#step-15-1",
+          start: "top bottom",
+          end: "bottom bottom",
+          scrub: true,
+        },
+        duration: 1,
+      })
+      .to(
+        ".area-chart",
+        {
+          opacity: 0,
+          duration: 0.2,
+        },
+        0,
+      )
+      .to(
+        ".beeswarm-axis",
+        {
+          opacity: 0,
+          duration: 0.2,
+        },
+        0,
+      )
+      .to(
+        ".beeswarm-circles",
+        {
+          opacity: 1,
+          duration: 0.2,
+        },
+        0,
+      );
     // Inject gooey SVG filter into each beeswarm SVG (starts with stdDeviation=0, no visible effect)
     const gooeyBlurs = [];
     beeswarms.forEach((b) => {
@@ -1162,26 +1168,28 @@ const ScrollyTelling = () => {
       defs.appendChild(filter);
       b.prepend(defs);
       // Apply filter permanently; blur amount controls visibility
-      b.querySelector(".beeswarm-circles").setAttribute("filter", "url(#gooey)");
+      b.querySelector(".beeswarm-circles").setAttribute(
+        "filter",
+        "url(#gooey)",
+      );
       gooeyBlurs.push(blur);
     });
 
     // Animate gooey blur: ramp up and keep at final positions
     const gooeyProxy = { stdDeviation: 0 };
-    tl151
-      .to(
-        gooeyProxy,
-        {
-          stdDeviation: 6,
-          duration: 0.25,
-          onUpdate: () => {
-            gooeyBlurs.forEach((blur) =>
-              blur.setAttribute("stdDeviation", gooeyProxy.stdDeviation),
-            );
-          },
+    tl151.to(
+      gooeyProxy,
+      {
+        stdDeviation: 6,
+        duration: 0.25,
+        onUpdate: () => {
+          gooeyBlurs.forEach((blur) =>
+            blur.setAttribute("stdDeviation", gooeyProxy.stdDeviation),
+          );
         },
-        0.2,
-      );
+      },
+      0.2,
+    );
 
     // Animate circles' cx to stacked rect x-positions, cy to baseline
     const beeswarmPadding = 1.5; // matches Beeswarm default padding prop
@@ -1232,6 +1240,9 @@ const ScrollyTelling = () => {
       );
     });
 
+    tl151
+      .to(".beeswarm-circles", { opacity: 0, duration: 0.3 }, 0.7)
+      .from("#disaster-rects", { opacity: 0, duration: 0.3 }, 0.7);
 
     // Step 15: animate rects FROM beeswarm blob positions TO final positions
     const rectSvg = document.querySelector("#disaster-rects");
@@ -1249,9 +1260,9 @@ const ScrollyTelling = () => {
     });
 
     // Crossfade: fade out beeswarm blobs, fade in rects
-    tl15
-      .to(".beeswarm-circles", { opacity: 0, duration: 0.3 }, 0)
-      .from("#disaster-rects", { opacity: 0, duration: 0.3 }, 0);
+    // tl15
+    //   .to(".beeswarm-circles", { opacity: 0, duration: 0.3 }, 0)
+    //   .from("#disaster-rects", { opacity: 0, duration: 0.3 }, 0);
 
     // Animate via proxy to avoid conflicting GSAP tweens on same attributes
     const fromHeight = 20;
@@ -1265,7 +1276,7 @@ const ScrollyTelling = () => {
       const blobCy = bSvgHeight - 30 - beeswarmPadding - 20;
 
       // Map to rect SVG inner coords
-      const startY = (bSvgTop - rectSvgTop) + blobCy - fromHeight / 2;
+      const startY = bSvgTop - rectSvgTop + blobCy - fromHeight / 2;
 
       // Final rect position (read from DOM)
       const finalY = parseFloat(rect.getAttribute("y"));
