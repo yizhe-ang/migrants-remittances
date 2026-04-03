@@ -154,6 +154,50 @@ export default function useInteractions({
   //   return () => animRef.current?.stop();
   // }, [dataIndex, buffers, sizeTargets, colorTargets]);
 
+  // Apply sending/receiving filter when map interactions are disabled
+  // (when enabled, the hover effect below handles this as part of its logic)
+  useEffect(() => {
+    if (enableMapInteractions) return;
+    if (!buffers || !sizeTargets || !countryTypeToIdx) return;
+
+    const sizeArr = buffers.size.buffer.array;
+    const sizeSnapshot = sizeArr.slice();
+    const sizeTargetsProcessed = sizeTargets.slice();
+
+    if (showCountryPoints[0] === "receiving") {
+      for (const idx of countryTypeToIdx.get("destination").values()) {
+        sizeTargetsProcessed[idx] = 0;
+      }
+    }
+
+    if (showCountryPoints[0] === "sending") {
+      for (const idx of countryTypeToIdx.get("origin").values()) {
+        sizeTargetsProcessed[idx] = 0;
+      }
+    }
+
+    animRef.current?.stop();
+    animRef.current = animate(0, 1, {
+      duration: 0.3,
+      ease: "easeOut",
+      onUpdate: (t) => {
+        for (let i = 0; i < sizeArr.length; i++) {
+          sizeArr[i] =
+            sizeSnapshot[i] + (sizeTargetsProcessed[i] - sizeSnapshot[i]) * t;
+        }
+        buffers.size.buffer.needsUpdate = true;
+      },
+    });
+
+    return () => animRef.current?.stop();
+  }, [
+    enableMapInteractions,
+    showCountryPoints,
+    sizeTargets,
+    buffers,
+    countryTypeToIdx,
+  ]);
+
   // Animate on hovered country change
   useEffect(() => {
     if (!enableMapInteractions) return;
