@@ -11,12 +11,16 @@ const Steps = () => {
   return (
     <div className="w-full z-10 pointer-events-none">
       <div className="h-screen pointer-events-none flex justify-center mt-10">
-        <h1 className="font-bold text-7xl">
+        {/* <h1 className="font-bold text-7xl">
           Migrants,
           <br />
           Remittances<span className="font-normal text-4xl"> and </span>
           <br />
           Disasters
+        </h1> */}
+        <h1 className="font-bold font-display text-7xl">
+          Global Remittances <br />
+          <span className="text-6xl text-stone-400"> and </span> Disasters Atlas
         </h1>
       </div>
 
