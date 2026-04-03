@@ -1266,6 +1266,7 @@ const ScrollyTelling = () => {
 
     // Animate via proxy to avoid conflicting GSAP tweens on same attributes
     const fromHeight = 20;
+    const rectProxies = [];
 
     rects.forEach((rect, i) => {
       const bSvg = beeswarms[i];
@@ -1292,6 +1293,8 @@ const ScrollyTelling = () => {
         rect.setAttribute("height", proxy.height);
       };
 
+      rectProxies.push({ proxy, applyProxy, finalY, finalHeight });
+
       // Step 1: slide thin rect from blob Y to final bottom position
       tl15.to(
         proxy,
@@ -1301,18 +1304,6 @@ const ScrollyTelling = () => {
           onUpdate: applyProxy,
         },
         0,
-      );
-
-      // Step 2: grow upward from thin to full height
-      tl15.to(
-        proxy,
-        {
-          y: finalY,
-          height: finalHeight,
-          duration: 0.5,
-          onUpdate: applyProxy,
-        },
-        0.5,
       );
     });
 
@@ -1324,6 +1315,20 @@ const ScrollyTelling = () => {
         scrub: true,
       },
       duration: 1,
+    });
+
+    // Step 2: grow upward from thin to full height
+    rectProxies.forEach(({ proxy, applyProxy, finalY, finalHeight }) => {
+      tl152.to(
+        proxy,
+        {
+          y: finalY,
+          height: finalHeight,
+          duration: 0.5,
+          onUpdate: applyProxy,
+        },
+        0,
+      );
     });
 
     gsap
