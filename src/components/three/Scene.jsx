@@ -5,6 +5,7 @@ import Arcs from "@/components/three/Arcs";
 import CameraControls from "@/components/three/CameraControls";
 import colors from "tailwindcss/colors";
 import chroma from "chroma-js";
+import DisasterPoints from "./DisasterPoints";
 
 const Scene = () => {
   return (
@@ -22,6 +23,8 @@ const Scene = () => {
       <WorldMap position={[0, 0, -1]} />
 
       <Points position={[0, 0, 0]} />
+
+      <DisasterPoints position={[0, 0, 0]} />
 
       <Arcs position={[0, 0, 0]} />
 
