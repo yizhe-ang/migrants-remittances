@@ -1,11 +1,15 @@
 import { useEffect, useMemo } from "react";
 import { useRoomStore } from "@/store";
 import {
+  float,
   Fn,
   instancedArray,
   instanceIndex,
+  mix,
   positionLocal,
   smoothstep,
+  time,
+  uniform,
   uniformArray,
   uv,
   vec2,
@@ -76,15 +80,26 @@ const DisasterPoints = () => {
     })();
 
     material.colorNode = Fn(() => {
-      const opacity = 0.9;
+      const opacity = 0.7;
       const type = typesBuffer.element(instanceIndex);
 
-      const distUV = uv().sub(vec2(0.5, 0.5)).length();
-      const circle = smoothstep(0.5, 0.49, distUV);
+      const dist = uv().sub(vec2(0.5)).length();
 
-      const color = colors.element(type.toInt());
+      // Wave animation
+      const waveT = time.mul(0.3).mod(1);
+      // const waveT = 1.0
+      const distGrow = dist.add(mix(0.5, 0, waveT));
 
-      return vec4(color, circle.mul(opacity));
+      // Circle
+      const wave = smoothstep(0.5, 0.45, distGrow);
+      // Inner transparent circle
+      wave.mulAssign(smoothstep(0.01, 0.45, distGrow))
+      // Fade out at the end
+      wave.mulAssign(smoothstep(1, 0.9, waveT))
+
+      const color = colors.element(type.toInt().clamp(0, 3));
+
+      return vec4(color, wave.mul(opacity));
     })();
 
     return {
@@ -133,6 +148,7 @@ const DisasterPoints = () => {
 
     buffers.positions.needsUpdate = true;
     buffers.sizes.needsUpdate = true;
+    buffers.types.needsUpdate = true;
   }, [disasters, buffers, disastersRadiusScale, disasterTypeColorScale]);
 
   return <>{mesh && <primitive object={mesh} />}</>;
