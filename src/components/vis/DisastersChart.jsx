@@ -23,6 +23,9 @@ const DisastersChart = () => {
   const disasterTypeColorScale = useRoomStore(
     (state) => state.disasterTypeColorScale,
   );
+  const disastersRadiusScale = useRoomStore(
+    (state) => state.disastersRadiusScale,
+  );
 
   const xScale = useMemo(() => {
     if (!disasters || !disastersImpactsByMonth) return null;
@@ -35,18 +38,6 @@ const DisastersChart = () => {
     );
   }, [disasters, disastersImpactsByMonth, width]);
 
-  const rScale = useMemo(() => {
-    if (!disasters) return null;
-
-    return (
-      // FIXME:
-      scaleSqrt()
-        // .domain(extent(disasters, (d) => d.affected))
-        .domain([0, max(disasters, (d) => d.affected)])
-        .range([0, 65])
-    );
-  }, [disasters]);
-
   return (
     <div
       ref={parentRef}
@@ -54,6 +45,7 @@ const DisastersChart = () => {
     >
       {disasters &&
         disastersImpactsByMonth &&
+        disastersRadiusScale &&
         ["earthquake", "storm", "flood", "drought"].map((key, i) => {
           return (
             <div className="relative w-full h-full" key={key}>
@@ -61,7 +53,7 @@ const DisastersChart = () => {
                 data={disasters.filter((d) => d.disaster_type === key)}
                 xAccessor={(d) => d["start_date"]}
                 xScale={xScale}
-                r={(d) => rScale(d.affected)}
+                r={(d) => disastersRadiusScale(d.affected)}
                 c={(d) => disasterTypeColorScale(d["disaster_type"])}
                 marginTop={marginTop}
                 marginRight={marginRight}

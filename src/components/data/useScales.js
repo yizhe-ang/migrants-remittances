@@ -23,6 +23,7 @@ export default function useScales() {
   const flowsByOrigin = useRoomStore((state) => state.flowsByOrigin);
   const flowsByDestination = useRoomStore((state) => state.flowsByDestination);
   const flowsPerYear = useRoomStore((state) => state.flowsPerYear);
+  const disasters = useRoomStore((state) => state.disasters);
 
   const setRemRadiusScale = useRoomStore((state) => state.setRemRadiusScale);
   const setPropGdpRadiusScale = useRoomStore(
@@ -44,6 +45,9 @@ export default function useScales() {
   );
   const setDisasterTypeColorScale = useRoomStore(
     (state) => state.setDisasterTypeColorScale,
+  );
+  const setDisastersRadiusScale = useRoomStore(
+    (state) => state.setDisastersRadiusScale,
   );
 
   useEffect(() => {
@@ -139,19 +143,18 @@ export default function useScales() {
       // .range(["#7fc97f", "#beaed4", "#fdc086", "#ffff99"]);
       // .range(["#7fc97f", "#beaed4", "#fdc086", schemeSet2[5]]);
       .range(["#7fc97f", "#beaed4", "#fdc086", schemeSet3[11]]);
-      // .range([
-      //   "#ffd700",
-      //   "#fa8775",
-      //   "#cd34b5",
-      //   "#0000ff",
-      // ]);
+    // .range([
+    //   "#ffd700",
+    //   "#fa8775",
+    //   "#cd34b5",
+    //   "#0000ff",
+    // ]);
 
     setIncomeColorScale(incomeColorScale);
   }, []);
 
   // Disaster type color scale
   useEffect(() => {
-
     const disasterTypeColorScale = scaleOrdinal()
       .domain(["flood", "earthquake", "drought", "storm"])
       // .range(schemeObservable10);
@@ -164,4 +167,16 @@ export default function useScales() {
 
     setDisasterTypeColorScale(disasterTypeColorScale);
   }, []);
+
+  useEffect(() => {
+    if (!disasters) return;
+
+    // FIXME:
+    const scale = scaleSqrt()
+      // .domain(extent(disasters, (d) => d.affected))
+      .domain([0, max(disasters, (d) => d.affected)])
+      .range([0, 65]);
+
+    setDisastersRadiusScale(scale);
+  }, [disasters]);
 }

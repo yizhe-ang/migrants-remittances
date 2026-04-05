@@ -127,6 +127,9 @@ export const { roomStore, useRoomStore } = createRoomStore(
     setDisasterTypeColorScale: (scale) =>
       set({ disasterTypeColorScale: scale }),
 
+    disastersRadiusScale: null,
+    setDisastersRadiusScale: (scale) => set({ disastersRadiusScale: scale }),
+
     // Data vis ########################################################
     sankeyIncome: null,
     setSankeyIncome: (sankeyIncome) => set({ sankeyIncome }),
