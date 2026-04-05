@@ -76,6 +76,7 @@ const DisasterPoints = () => {
     })();
 
     material.colorNode = Fn(() => {
+      const opacity = 0.9;
       const type = typesBuffer.element(instanceIndex);
 
       const distUV = uv().sub(vec2(0.5, 0.5)).length();
@@ -83,7 +84,7 @@ const DisasterPoints = () => {
 
       const color = colors.element(type.toInt());
 
-      return vec4(color, circle.mul(0.9));
+      return vec4(color, circle.mul(opacity));
     })();
 
     return {
