@@ -32,6 +32,7 @@ const WorldMap = ({ ...props }) => {
     const mesh = new THREE.Mesh(geometry, material);
     mesh.renderOrder = -1;
 
+    // TODO: Textured look?
     material.colorNode = Fn(() => {
       // Remap v from Mercator space back to equirectangular
       // UV v (0→1) maps to Mercator y (-180→+180)
