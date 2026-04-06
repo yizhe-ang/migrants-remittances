@@ -18,6 +18,7 @@ import {
 } from "three/tsl";
 import * as THREE from "three/webgpu";
 import { latToMercatorY } from "@/lib/utils";
+import { folder, useControls } from "leva";
 
 const DATE_RANGE_START = Date.UTC(2010, 0, 1);
 const DATE_RANGE_END = Date.UTC(2020, 0, 1);
@@ -171,6 +172,20 @@ const DisasterPoints = () => {
     buffers.starts.needsUpdate = true;
     buffers.ends.needsUpdate = true;
   }, [disasters, buffers, disastersRadiusScale, disasterTypeColorScale]);
+
+  useControls({
+    "disaster points": folder({
+      dateT: {
+        value: 0,
+        min: 0,
+        max: 1,
+        step: 0.001,
+        onChange: (v) => {
+          u.dateT.value = v;
+        },
+      },
+    }),
+  });
 
   return <>{mesh && <primitive object={mesh} />}</>;
 };
