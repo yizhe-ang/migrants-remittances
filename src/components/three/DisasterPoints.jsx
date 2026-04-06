@@ -18,7 +18,20 @@ import {
 } from "three/tsl";
 import * as THREE from "three/webgpu";
 import { latToMercatorY } from "@/lib/utils";
-import { index } from "d3-array";
+
+const DATE_RANGE_START = Date.UTC(2010, 0, 1);
+const DATE_RANGE_END = Date.UTC(2020, 0, 1);
+const DATE_RANGE_SPAN = DATE_RANGE_END - DATE_RANGE_START;
+
+const normalizeDateToRange = (date) => {
+  if (!(date instanceof Date) || Number.isNaN(date.getTime())) return 0;
+
+  return THREE.MathUtils.clamp(
+    (date.getTime() - DATE_RANGE_START) / DATE_RANGE_SPAN,
+    0,
+    1,
+  );
+};
 
 const DisasterPoints = () => {
   const disasters = useRoomStore((state) => state.disasters);
@@ -50,15 +63,21 @@ const DisasterPoints = () => {
     const positionsBuffer = instancedArray(numPoints, "vec3");
     const sizesBuffer = instancedArray(numPoints, "float");
     const typesBuffer = instancedArray(numPoints, "float");
+    const startsBuffer = instancedArray(numPoints, "float");
+    const endsBuffer = instancedArray(numPoints, "float");
 
     const buffers = {
       positions: positionsBuffer.value,
       sizes: sizesBuffer.value,
       types: typesBuffer.value,
+      starts: startsBuffer.value,
+      ends: endsBuffer.value,
     };
 
     // Nodes
-    const u = {};
+    const u = {
+      dateT: uniform(0),
+    };
 
     const disasterColors = disasterTypeColorScale.range();
 
@@ -93,9 +112,9 @@ const DisasterPoints = () => {
       // Circle
       const wave = smoothstep(0.5, 0.45, distGrow);
       // Inner transparent circle
-      wave.mulAssign(smoothstep(0.01, 0.45, distGrow))
+      wave.mulAssign(smoothstep(0.01, 0.45, distGrow));
       // Fade out at the end
-      wave.mulAssign(smoothstep(1, 0.9, waveT))
+      wave.mulAssign(smoothstep(1, 0.9, waveT));
 
       const color = colors.element(type.toInt().clamp(0, 3));
 
@@ -130,8 +149,6 @@ const DisasterPoints = () => {
       (a, b) => b.affected - a.affected,
     );
 
-    console.log(disastersSorted);
-
     for (let i = 0; i < numPoints; i++) {
       const d = disastersSorted[i];
 
@@ -144,11 +161,15 @@ const DisasterPoints = () => {
       buffers.sizes.array[i] = rScale(d.affected) * 2;
 
       buffers.types.array[i] = disasterTypeIdx.get(d.disaster_type);
+      buffers.starts.array[i] = normalizeDateToRange(d.start_date);
+      buffers.ends.array[i] = normalizeDateToRange(d.end_date);
     }
 
     buffers.positions.needsUpdate = true;
     buffers.sizes.needsUpdate = true;
     buffers.types.needsUpdate = true;
+    buffers.starts.needsUpdate = true;
+    buffers.ends.needsUpdate = true;
   }, [disasters, buffers, disastersRadiusScale, disasterTypeColorScale]);
 
   return <>{mesh && <primitive object={mesh} />}</>;
