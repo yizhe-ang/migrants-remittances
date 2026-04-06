@@ -23,6 +23,8 @@ import { folder, useControls } from "leva";
 const DATE_RANGE_START = Date.UTC(2010, 0, 1);
 const DATE_RANGE_END = Date.UTC(2020, 0, 1);
 const DATE_RANGE_SPAN = DATE_RANGE_END - DATE_RANGE_START;
+const COORDINATE_JITTER_STEP = 0.2;
+const MAX_COORDINATE_JITTER = 0.6;
 
 const normalizeDateToRange = (date) => {
   if (!(date instanceof Date) || Number.isNaN(date.getTime())) return 0;
@@ -32,6 +34,32 @@ const normalizeDateToRange = (date) => {
     0,
     1,
   );
+};
+
+const getCoordinateKey = ({ latitude, longitude }) => `${latitude}|${longitude}`;
+
+const getJitteredCoordinate = (d, duplicateIndex) => {
+  if (duplicateIndex === 0) {
+    return {
+      latitude: d.latitude,
+      longitude: d.longitude,
+    };
+  }
+
+  const angle = duplicateIndex * 2.399963229728653;
+  const radius = Math.min(
+    Math.ceil(duplicateIndex / 6) * COORDINATE_JITTER_STEP,
+    MAX_COORDINATE_JITTER,
+  );
+
+  return {
+    latitude: THREE.MathUtils.clamp(
+      d.latitude + Math.sin(angle) * radius,
+      -85,
+      85,
+    ),
+    longitude: d.longitude + Math.cos(angle) * radius,
+  };
 };
 
 const DisasterPoints = () => {
@@ -164,13 +192,19 @@ const DisasterPoints = () => {
     const disastersSorted = [...disasters].sort(
       (a, b) => b.affected - a.affected,
     );
+    const duplicateCounts = new Map();
 
     for (let i = 0; i < numPoints; i++) {
       const d = disastersSorted[i];
+      const coordinateKey = getCoordinateKey(d);
+      const duplicateIndex = duplicateCounts.get(coordinateKey) ?? 0;
+      const { latitude, longitude } = getJitteredCoordinate(d, duplicateIndex);
 
-      const mercatorY = latToMercatorY(d.latitude);
+      duplicateCounts.set(coordinateKey, duplicateIndex + 1);
 
-      buffers.positions.array[i * 3] = d.longitude;
+      const mercatorY = latToMercatorY(latitude);
+
+      buffers.positions.array[i * 3] = longitude;
       buffers.positions.array[i * 3 + 1] = mercatorY;
       buffers.positions.array[i * 3 + 2] = 0;
 
