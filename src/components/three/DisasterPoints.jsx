@@ -101,13 +101,25 @@ const DisasterPoints = () => {
 
     material.colorNode = Fn(() => {
       const opacity = 0.7;
+
       const type = typesBuffer.element(instanceIndex);
+      const start = startsBuffer.element(instanceIndex);
+      const end = endsBuffer.element(instanceIndex);
+
+      const buffer = 0.05;
+      const startBuffered = start.sub(buffer);
+      const endBuffered = end.add(buffer);
 
       const dist = uv().sub(vec2(0.5)).length();
+      const circle = smoothstep(0.5, 0.45, dist);
 
       // Wave animation
-      const waveT = time.mul(0.3).mod(1);
-      // const waveT = 1.0
+      // const waveT = time.mul(0.3).mod(1);
+      const waveT = u.dateT
+        .sub(startBuffered)
+        .div(endBuffered.sub(startBuffered))
+        .saturate();
+
       const distGrow = dist.add(mix(0.5, 0, waveT));
 
       // Circle
@@ -119,7 +131,10 @@ const DisasterPoints = () => {
 
       const color = colors.element(type.toInt().clamp(0, 3));
 
-      return vec4(color, wave.mul(opacity));
+      // const alpha = circle.mul(opacity)
+      const alpha = wave.mul(opacity);
+
+      return vec4(color, alpha);
     })();
 
     return {
@@ -173,19 +188,23 @@ const DisasterPoints = () => {
     buffers.ends.needsUpdate = true;
   }, [disasters, buffers, disastersRadiusScale, disasterTypeColorScale]);
 
-  useControls({
-    "disaster points": folder({
-      dateT: {
-        value: 0,
-        min: 0,
-        max: 1,
-        step: 0.001,
-        onChange: (v) => {
-          u.dateT.value = v;
+  useControls(
+    {
+      "disaster points": folder({
+        dateT: {
+          value: 0,
+          min: 0,
+          max: 1,
+          step: 0.001,
+          onChange: (v) => {
+            if (!u) return;
+            u.dateT.value = v;
+          },
         },
-      },
-    }),
-  });
+      }),
+    },
+    [u],
+  );
 
   return <>{mesh && <primitive object={mesh} />}</>;
 };
