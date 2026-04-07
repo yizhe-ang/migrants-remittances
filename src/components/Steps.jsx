@@ -51,10 +51,9 @@ const Steps = () => {
           money to support their families and communities.
         </P>
         <P>
-          People who{" "}
-          <C className="bg-[#dea193]/50">receive</C> them
-          can use the money to pay school fees, make repairs to their homes, or
-          cover medical bills.
+          People who <C className="bg-[#dea193]/50">receive</C> them can use the
+          money to pay school fees, make repairs to their homes, or cover
+          medical bills.
         </P>
         <P>
           The US, for example, has consistently been the top remittance-sending
@@ -111,6 +110,66 @@ const Steps = () => {
       <Step id="step-3-1" className="pb-[200vh]">
         <P>
           External shocks such as natural disasters threaten such development.
+        </P>
+        <P>
+          <P>
+            Between 2010 and 2019, there were around 3,000 disaster events
+            connected to the occurrence of{" "}
+            <C
+              className="text-white font-normal"
+              style={{
+                background: colorWithAlpha(
+                  disasterTypeColorScale,
+                  "flood",
+                  "FF",
+                ),
+              }}
+            >
+              floods
+            </C>
+            ,{" "}
+            <C
+              className="text-white font-normal"
+              style={{
+                background: colorWithAlpha(
+                  disasterTypeColorScale,
+                  "storm",
+                  "FF",
+                ),
+              }}
+            >
+              storms
+            </C>
+            ,{" "}
+            <C
+              className="text-white font-normal"
+              style={{
+                background: colorWithAlpha(
+                  disasterTypeColorScale,
+                  "earthquake",
+                  "FF",
+                ),
+              }}
+            >
+              earthquakes
+            </C>
+            , and{" "}
+            <C
+              className="text-white font-normal"
+              style={{
+                background: colorWithAlpha(
+                  disasterTypeColorScale,
+                  "drought",
+                  "FF",
+                ),
+              }}
+            >
+              droughts
+            </C>
+            . These events affected a total of 1.74 billion people, the vast
+            majority of whom lived in lower-middle-income and
+            upper-middle-income countries.
+          </P>
         </P>
         <P>
           Remittance flows have thus been seen as a form of informal insurance,
