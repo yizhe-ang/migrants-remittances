@@ -1,6 +1,6 @@
 import { useFrame } from "@react-three/fiber";
 import { folder, useControls } from "leva";
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import {
   attribute,
   cross,
@@ -49,47 +49,46 @@ export default function () {
     return setupCloth();
   }, []);
 
-  useControls({
+  const { stiffness, wind, simulationMix } = useControls({
     verlet: folder({
       stiffness: {
         value: 0.9,
         min: 0.1,
         max: 1,
         step: 0.01,
-        onChange: (v) => {
-          if (stiffnessUniform) {
-            stiffnessUniform.value = v;
-          }
-        },
       },
       wind: {
         value: 1,
         min: 0,
         max: 5,
         step: 0.1,
-        onChange: (v) => {
-          if (windUniform) {
-            windUniform.value = v;
-          }
-        },
       },
       simulationMix: {
         value: 0,
         min: 0,
         max: 1,
         step: 0.01,
-        onChange: (v) => {
-          if (simulationMixUniform) {
-            simulationMixUniform.value = v;
-          }
-        },
       },
     }),
   });
 
+  useEffect(() => {
+    if (stiffnessUniform) {
+      stiffnessUniform.value = stiffness;
+    }
+
+    if (windUniform) {
+      windUniform.value = wind;
+    }
+
+    if (simulationMixUniform) {
+      simulationMixUniform.value = simulationMix;
+    }
+  }, [simulationMix, stiffness, wind]);
+
   useFrame(({ gl: renderer }, delta) => {
-    const simulationMix = simulationMixUniform?.value ?? 1;
-    const simulationActive = simulationMix > 0;
+    const currentSimulationMix = simulationMixUniform?.value ?? simulationMix;
+    const simulationActive = currentSimulationMix > 0;
 
     if (!simulationActive) {
       timeSinceLastStep = 0;
@@ -120,7 +119,7 @@ export default function () {
     }
   });
 
-  return mesh;
+  return { mesh, simulationMix };
 }
 
 function setupVerletGeometry() {
