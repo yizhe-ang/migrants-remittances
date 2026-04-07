@@ -119,8 +119,6 @@ export default function () {
 
       renderer.compute(computeSpringForces);
       renderer.compute(computeVertexForces);
-
-      console.log('yo')
     }
   });
 

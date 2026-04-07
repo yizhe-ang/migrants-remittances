@@ -179,7 +179,6 @@ const DisasterPoints = () => {
     if (!u) return;
 
     setDisasterPoints({ u });
-    console.log(u.opacity.value)
   }, [u]);
 
   useEffect(() => {

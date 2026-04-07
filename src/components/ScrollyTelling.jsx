@@ -41,8 +41,9 @@ const ScrollyTelling = () => {
       !flowsMap2019 ||
       !sankeyIncome ||
       !disasters ||
-      !disasterPoints ||
-      !worldMap
+      !disasterPoints
+      // !worldMap // FIXME: For some reason including this breaks the scrolly
+      // FIXME: Have to make sure this doesn't re-render unnecesarily
     )
       return;
 
@@ -319,9 +320,9 @@ const ScrollyTelling = () => {
         disasterPoints.u.dateT,
         {
           value: 1,
-          duration: 0.8,
+          duration: 0.9,
         },
-        0.2,
+        0.1,
       )
       .to(
         disasterPoints.u.opacity,
@@ -1481,7 +1482,7 @@ const ScrollyTelling = () => {
     sankeyIncome,
     disasters,
     disasterPoints,
-    worldMap,
+    // worldMap,
   ]);
 
   return <></>;
