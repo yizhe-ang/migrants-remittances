@@ -1161,35 +1161,36 @@ const ScrollyTelling = () => {
       );
     // Inject gooey SVG filter into each beeswarm SVG (starts with stdDeviation=0, no visible effect)
     const gooeyBlurs = [];
-    beeswarms.forEach((b) => {
-      const ns = "http://www.w3.org/2000/svg";
-      const defs = document.createElementNS(ns, "defs");
-      const filter = document.createElementNS(ns, "filter");
-      filter.setAttribute("id", "gooey");
-      const blur = document.createElementNS(ns, "feGaussianBlur");
-      blur.setAttribute("in", "SourceGraphic");
-      blur.setAttribute("stdDeviation", "0");
-      blur.setAttribute("result", "blur");
-      const colorMatrix = document.createElementNS(ns, "feColorMatrix");
-      colorMatrix.setAttribute("in", "blur");
-      colorMatrix.setAttribute("mode", "matrix");
-      colorMatrix.setAttribute(
-        "values",
-        "1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7",
-      );
-      colorMatrix.setAttribute("result", "gooey");
-      filter.appendChild(blur);
-      filter.appendChild(colorMatrix);
-      defs.appendChild(filter);
-      b.prepend(defs);
-      // Apply filter permanently; blur amount controls visibility
-      b.querySelector(".beeswarm-circles").setAttribute(
-        "filter",
-        "url(#gooey)",
-      );
-      gooeyBlurs.push(blur);
-    });
+    // beeswarms.forEach((b) => {
+    //   const ns = "http://www.w3.org/2000/svg";
+    //   const defs = document.createElementNS(ns, "defs");
+    //   const filter = document.createElementNS(ns, "filter");
+    //   filter.setAttribute("id", "gooey");
+    //   const blur = document.createElementNS(ns, "feGaussianBlur");
+    //   blur.setAttribute("in", "SourceGraphic");
+    //   blur.setAttribute("stdDeviation", "0");
+    //   blur.setAttribute("result", "blur");
+    //   const colorMatrix = document.createElementNS(ns, "feColorMatrix");
+    //   colorMatrix.setAttribute("in", "blur");
+    //   colorMatrix.setAttribute("mode", "matrix");
+    //   colorMatrix.setAttribute(
+    //     "values",
+    //     "1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7",
+    //   );
+    //   colorMatrix.setAttribute("result", "gooey");
+    //   filter.appendChild(blur);
+    //   filter.appendChild(colorMatrix);
+    //   defs.appendChild(filter);
+    //   b.prepend(defs);
+    //   // Apply filter permanently; blur amount controls visibility
+    //   b.querySelector(".beeswarm-circles").setAttribute(
+    //     "filter",
+    //     "url(#gooey)",
+    //   );
+    //   gooeyBlurs.push(blur);
+    // });
 
+    // TODO: Can remove gooey
     // Animate gooey blur: ramp up and keep at final positions
     const gooeyProxy = { stdDeviation: 0 };
     tl151.to(
