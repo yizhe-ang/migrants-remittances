@@ -1190,22 +1190,22 @@ const ScrollyTelling = () => {
     //   gooeyBlurs.push(blur);
     // });
 
-    // TODO: Can remove gooey
+    // TODO: To remove gooey?
     // Animate gooey blur: ramp up and keep at final positions
-    const gooeyProxy = { stdDeviation: 0 };
-    tl151.to(
-      gooeyProxy,
-      {
-        stdDeviation: 6,
-        duration: 0.25,
-        onUpdate: () => {
-          gooeyBlurs.forEach((blur) =>
-            blur.setAttribute("stdDeviation", gooeyProxy.stdDeviation),
-          );
-        },
-      },
-      0.2,
-    );
+    // const gooeyProxy = { stdDeviation: 0 };
+    // tl151.to(
+    //   gooeyProxy,
+    //   {
+    //     stdDeviation: 6,
+    //     duration: 0.25,
+    //     onUpdate: () => {
+    //       gooeyBlurs.forEach((blur) =>
+    //         blur.setAttribute("stdDeviation", gooeyProxy.stdDeviation),
+    //       );
+    //     },
+    //   },
+    //   0.2,
+    // );
 
     // Animate circles' cx to stacked rect x-positions, cy to baseline
     const beeswarmPadding = 1.5; // matches Beeswarm default padding prop
