@@ -14,7 +14,7 @@ import {
 import useVerletSystem from "./useVerletSystem";
 import { useRoomStore } from "@/store";
 
-const BLEND_START = 0.3;
+const BLEND_START = 0.4;
 
 const createMapColorNode = (dayTexture) =>
   Fn(() => {
