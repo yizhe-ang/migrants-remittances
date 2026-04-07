@@ -187,7 +187,8 @@ const Steps = () => {
         </P>
         <P>
           But where do these transfers actually end up in? Do they flow to
-          countries in need, such as low-income and middle-income countries?
+          countries in need, such as low-income and middle-income countries? To
+          what extent is money mobilised in response to disasters?
         </P>
         <P>
           Despite the importance of remittances, there is a lack of a
@@ -201,7 +202,8 @@ const Steps = () => {
           To answer these questions and more, researchers from CSH built a novel
           model to better understand the dynamics and structure of remittance
           flows, simulating and providing new estimates of remittance flows
-          between countries from 2010 to 2019 at a monthly level.
+          between countries from 2010 to 2019 at a monthly level, including
+          remittances in response to disasters.
         </P>
       </Step>
 

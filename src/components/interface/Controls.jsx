@@ -1,23 +1,16 @@
 import { useRoomStore } from "@/store";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { LegendOrdinal, LegendLinear } from "@visx/legend";
+import { LegendOrdinal } from "@visx/legend";
 import { AnimatePresence, motion } from "motion/react";
 import DateSlider from "@/components/interface/DateSlider";
-import SizeScale from "@/components/interface/SizeScale";
-import { moneyFormat } from "@/lib/utils";
-import { ArrowRight } from "lucide-react";
-import { pointer } from "@observablehq/plot";
+import CountryToggle from "./CountryToggle";
+import { Toggle } from "@/components/ui/toggle";
 
 const Controls = () => {
-  const showCountryPoints = useRoomStore((state) => state.showCountryPoints);
-  const setShowCountryPoints = useRoomStore(
-    (state) => state.setShowCountryPoints,
-  );
   const pointsValue = useRoomStore((state) => state.pointsValue);
   const setPointsValue = useRoomStore((state) => state.setPointsValue);
   const colorPointsBy = useRoomStore((state) => state.colorPointsBy);
   const setColorPointsBy = useRoomStore((state) => state.setColorPointsBy);
-  const enableControls = useRoomStore((state) => state.enableControls);
 
   const incomeColorScale = useRoomStore((state) => state.incomeColorScale);
   const remFromColorScale = useRoomStore((state) => state.remFromColorScale);
@@ -25,152 +18,46 @@ const Controls = () => {
 
   return (
     <div className="fixed inset-0 pointer-events-none">
-      <div className="w-full px-10 py-4 pointer-events-auto flex gap-5">
-        <div
-          className="flex flex-col gap-1"
-          id="show-controls"
-          style={{
-            opacity: 0,
-            visibility: "hidden",
-          }}
-        >
-          <div className="text-sm pl-1 text-stone-500">show countries</div>
-          <ToggleGroup
-            value={showCountryPoints}
-            onValueChange={(val) => {
-              if (val.length > 0) setShowCountryPoints(val);
-            }}
-            style={{
-              pointerEvents: enableControls ? "auto" : "none",
-            }}
-          >
-            <ToggleGroupItem
-              value="sending"
-              aria-label=""
-              // className="flex gap-2 items-center border-2 border-black"
-              className="flex gap-2 items-center"
-            >
-              {/* <div className="size-4 rounded-full bg-[#dea193]"></div> */}
-              <div>Sending</div>
-            </ToggleGroupItem>
-            <ArrowRight className="stroke-stone-500" />
-            <ToggleGroupItem
-              value="receiving"
-              aria-label=""
-              // className="flex gap-2 items-center border-2 border-white"
-              className="flex gap-2 items-center"
-            >
-              <div>Receiving</div>
-              {/* <div className="size-4 rounded-full bg-[#dea193]"></div> */}
-            </ToggleGroupItem>
-          </ToggleGroup>
-        </div>
-
-        <div
-          className="flex flex-col gap-1 w-[180px]"
-          id="color-controls"
-          style={{
-            opacity: 0,
-            visibility: "hidden",
-          }}
-        >
-          <div className="text-sm pl-1 text-stone-500 invisible">color by</div>
-          <ToggleGroup
-            className="invisible"
-            value={colorPointsBy}
-            onValueChange={(val) => {
-              if (val.length > 0) setColorPointsBy(val);
-            }}
-          >
-            <ToggleGroupItem value="value" aria-label="">
-              $
-            </ToggleGroupItem>
-            <ToggleGroupItem value="income" aria-label="">
-              Income
-            </ToggleGroupItem>
-          </ToggleGroup>
-
-          {/* Color scale */}
-          <div className="mt-2 pl-1">
-            <AnimatePresence mode="popLayout">
-              {incomeColorScale && colorPointsBy[0] === "income" && (
-                <motion.div
-                  key="income"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                >
+      <div className="w-full max-w-4xl mx-auto px-10 py-4 pointer-events-auto flex flex-col gap-5">
+        <div className="flex gap-2 w-full text-lg pt-5 items-center">
+          <div className="">Money</div>
+          <CountryToggle />
+          <div>
+            by{" "}
+            <div className="relative inline-block">
+              <span className="font-bold">countries</span>
+              {/* Color scale */}
+              {incomeColorScale && (
+                <div className="absolute top-8 left-0 w-max">
                   <LegendOrdinal
                     scale={incomeColorScale}
                     className="text-sm"
                   ></LegendOrdinal>
-                </motion.div>
+                </div>
               )}
-              {/* {remFromColorScale &&
-                remToColorScale &&
-                colorPointsBy[0] === "value" && (
-                  <motion.div
-                    key="value"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="flex gap-2"
-                  >
-                    <LegendLinear
-                      scale={remFromColorScale}
-                      className="text-sm"
-                      labelFormat={(l) => moneyFormat.format(l)}
-                    ></LegendLinear>
-                    <LegendLinear
-                      scale={remToColorScale}
-                      className="text-sm"
-                      labelFormat={(l) => moneyFormat.format(l)}
-                    ></LegendLinear>
-                  </motion.div>
-                )} */}
-            </AnimatePresence>
+            </div>{" "}
+            around the world in 2019
+          </div>
+          <div
+            className="flex gap-1"
+            id="size-controls"
+            // style={{
+            //   opacity: 0,
+            //   visibility: "hidden",
+            // }}
+          >
+            {/* <div className="text-sm pl-1 text-stone-500">size represents</div> */}
+            <Toggle
+              className="text-lg"
+              pressed={pointsValue[0] === "propGdp"}
+              onPressedChange={(val) => {
+                setPointsValue(val ? ["propGdp"] : ["absolute"]);
+              }}
+            >
+              as % of GDP
+            </Toggle>
           </div>
         </div>
-
-        <div
-          className="flex flex-col gap-1"
-          id="size-controls"
-          style={{
-            opacity: 0,
-            visibility: "hidden",
-          }}
-        >
-          <div className="text-sm pl-1 text-stone-500">size represents</div>
-
-          <ToggleGroup
-            value={pointsValue}
-            onValueChange={(val) => {
-              if (val.length > 0) setPointsValue(val);
-            }}
-          >
-            <ToggleGroupItem value="absolute" aria-label="">
-              Absolute
-            </ToggleGroupItem>
-            <ToggleGroupItem value="propGdp" aria-label="">
-              % of GDP
-            </ToggleGroupItem>
-          </ToggleGroup>
-
-          {/* <div>
-            <SizeScale />
-          </div> */}
-        </div>
-      </div>
-
-      <div
-        className="absolute top-30 w-full pb-10 pointer-events-auto"
-        id="date-slider"
-        style={{
-          opacity: 0,
-          visibility: "hidden",
-        }}
-      >
-        <DateSlider />
       </div>
     </div>
   );
