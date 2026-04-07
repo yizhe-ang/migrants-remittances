@@ -11,10 +11,13 @@ import {
   vec2,
   vec3,
 } from "three/tsl";
+import useVerletSystem from "./useVerletSystem";
 
 const WorldMap = ({ ...props }) => {
   const dayTexture = useTexture("/textures/earth/day.jpg");
   dayTexture.colorSpace = THREE.SRGBColorSpace;
+
+  useVerletSystem()
 
   const { mesh, uniforms } = useMemo(() => {
     const geometry = new THREE.PlaneGeometry(360, 360);

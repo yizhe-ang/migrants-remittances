@@ -1,17 +1,19 @@
 import { useFrame } from "@react-three/fiber";
 import { folder, useControls } from "leva";
-import { useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import {
   cross,
   Fn,
   If,
   instancedArray,
+  instanceIndex,
   Loop,
   Return,
   select,
   transformNormalToView,
   triNoise3D,
   uint,
+  uniform,
 } from "three/tsl";
 import * as THREE from "three/webgpu";
 
@@ -21,7 +23,6 @@ const clothHeight = 1;
 
 const clothNumSegmentsX = 30;
 const clothNumSegmentsY = 30;
-const sphereRadius = 0.15;
 
 let vertexPositionBuffer, vertexForceBuffer, vertexParamsBuffer;
 let springVertexIdBuffer, springRestLengthBuffer, springForceBuffer;
@@ -39,6 +40,10 @@ export default function () {
   const params = useRef({
     wind: 1.0,
   });
+
+  useMemo(() => {
+    setupCloth();
+  }, []);
 
   useControls(
     "verlet",
@@ -66,7 +71,7 @@ export default function () {
     }),
   );
 
-  useFrame((_, delta) => {
+  useFrame(({ gl: renderer }, delta) => {
     const deltaTime = Math.min(delta, 1 / 60); // don't advance the time too far, for example when the window is out of focus
     const stepsPerSecond = 360; // ensure the same amount of simulation steps per second on all systems, independent of refresh rate
     const timePerStep = 1 / stepsPerSecond;
@@ -214,8 +219,6 @@ function setupVerletSpringBuffers() {
 
 function setupUniforms() {
   dampeningUniform = uniform(0.99);
-  spherePositionUniform = uniform(new THREE.Vector3(0, 0, 0));
-  sphereUniform = uniform(1.0);
   windUniform = uniform(1.0);
   stiffnessUniform = uniform(0.2);
 }
