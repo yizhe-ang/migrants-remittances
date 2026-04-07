@@ -47,11 +47,7 @@ export function screenToWorld(
   // Ray-plane intersection at z = 0
   const dir = far.sub(near);
   const t = -near.z / dir.z;
-  return new THREE.Vector3(
-    near.x + dir.x * t,
-    near.y + dir.y * t,
-    0,
-  );
+  return new THREE.Vector3(near.x + dir.x * t, near.y + dir.y * t, 0);
 }
 
 export function transitionBuffer(

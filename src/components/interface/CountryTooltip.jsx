@@ -62,7 +62,7 @@ const CountryTooltip = () => {
           <motion.div
             key="country-tooltip"
             ref={ref}
-            className="pointer-events-none fixed z-50 w-fit rounded-xl bg-stone-50 px-6 py-2 text-sm text-stone-900 shadow-lg left-1/2 bottom-0 -translate-x-1/2 pb-4"
+            className="pointer-events-none fixed z-50 w-fit rounded-lg bg-stone-50 px-6 py-2 text-sm text-stone-900 shadow-lg left-1/2 bottom-0 -translate-x-1/2 pb-4"
             initial={{ opacity: 0, y: 200 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 200 }}
@@ -70,7 +70,7 @@ const CountryTooltip = () => {
           >
             <div className="">
               <span
-                className="font-bold text-2xl px-2"
+                className="font-bold text-2xl px-2 rounded"
                 style={{
                   background: incomeColorScale
                     ? `${incomeColorScale(d.income)}80`
@@ -104,19 +104,56 @@ const CountryTooltip = () => {
 
             {pointsValue[0] !== "propGdp" && (
               <div className="mt-2 grid w-fit grid-cols-[auto_auto] gap-x-4">
-                {flows?.map((d, i) => (
-                  <div key={i} className="contents">
-                    <div>
-                      <span className="text-stone-400">{i + 1}.</span>{" "}
-                      {hoveredCountry.type === "origin"
-                        ? d.destination
-                        : d.origin}{" "}
+                {flows?.map((d, i) => {
+                  console.log(flows);
+                  console.log(hoveredCountry);
+
+                  const income =
+                    hoveredCountry.type === "origin"
+                      ? points.dataIndex.get("destination").get(d.destination)
+                          .income
+                      : points.dataIndex.get("origin").get(d.origin).income;
+
+                  console.log(income);
+
+                  return (
+                    <div key={i} className="contents">
+                      <div
+                        className="flex gap-1"
+                        style={
+                          {
+                            // background: incomeColorScale
+                            //   ? `${incomeColorScale(d.income)}80`
+                            //   : "transparent",
+                            // background: "gray",
+                          }
+                        }
+                      >
+                        <span className="text-stone-400 tabular-nums">
+                          {i + 1}.
+                        </span>{" "}
+                        <span
+                          // className="px-1 py-0 w-full inline-block"
+                          className="px-1 py-0 inline-block font-medium rounded"
+                          style={{
+                            // background: "gray",
+                            background: `${incomeColorScale(income)}80`,
+                            // background: incomeColorScale
+                            //     ? `${incomeColorScale(income)}80`
+                            //     : "transparent",
+                          }}
+                        >
+                          {hoveredCountry.type === "origin"
+                            ? d.destination
+                            : d.origin}{" "}
+                        </span>
+                      </div>
+                      <div className="font-medium text-stone-950 tabular-nums text-right">
+                        {moneyFormat.format(accessor(d))}
+                      </div>
                     </div>
-                    <div className="font-medium text-stone-950 tabular-nums text-right">
-                      {moneyFormat.format(accessor(d))}
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </motion.div>
