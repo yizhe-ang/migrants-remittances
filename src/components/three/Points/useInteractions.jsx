@@ -34,6 +34,15 @@ export default function useInteractions({
 
   const animRef = useRef(null);
 
+  useEffect(() => {
+    // animate(u.dotsT, {
+    //   value: pointsValue[0] === "absolute" ? 0 : 1,
+    // });
+    animate(u.stripesT, {
+      value: pointsValue[0] === "absolute" ? 0 : 1,
+    });
+  }, [pointsValue]);
+
   // Get target sizes and colors ###############################################
   const { sizeTargets, colorTargets, sizeScale, colorScale } = useMemo(() => {
     if (!buffers) return {};

@@ -105,16 +105,11 @@ const CountryTooltip = () => {
             {pointsValue[0] !== "propGdp" && (
               <div className="mt-2 grid w-fit grid-cols-[auto_auto] gap-x-4">
                 {flows?.map((d, i) => {
-                  console.log(flows);
-                  console.log(hoveredCountry);
-
                   const income =
                     hoveredCountry.type === "origin"
                       ? points.dataIndex.get("destination").get(d.destination)
                           .income
                       : points.dataIndex.get("origin").get(d.origin).income;
-
-                  console.log(income);
 
                   return (
                     <div key={i} className="contents">

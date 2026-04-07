@@ -42,8 +42,10 @@ class PointsHandle {
   }
 }
 
-const STRIPE_FREQUENCY = 0.05;
-const STRIPE_THRESHOLD = 0.7;
+// const STRIPE_FREQUENCY = 0.05;
+// const STRIPE_THRESHOLD = 0.7;
+const STRIPE_FREQUENCY = 0.08;
+const STRIPE_THRESHOLD = 0.8;
 const DOTS_SPACING = 10;
 const DOTS_RADIUS = 0.3;
 
@@ -272,14 +274,15 @@ const Points = ({ ...props }) => {
 
       // Per-point pattern: type 0 = stripes (destination), type 1 = dots (origin)
 
-      const patternColor = mix(stripeColor, dotsColor, pointType);
+      // const patternColor = mix(stripeColor, dotsColor, pointType);
+      // const patternColor = mix(fillColor, dotsColor, u.dotsT);
+      const patternColor = mix(fillColor, stripeColor, u.stripesT);
 
-      // const color = patternColor.mul(fill).add(strokeColor.mul(stroke));
-      const color = fillColor.mul(fill).add(strokeColor.mul(stroke));
+      const color = patternColor.mul(fill).add(strokeColor.mul(stroke));
+      // const color = fillColor.mul(fill).add(strokeColor.mul(stroke));
 
       const opacity = opacityBuffer.element(originalIndex);
 
-      // return vec4(color, outer.mul(0.995).mul(opacity).mul(u.opacity));
       return vec4(color, outer.mul(1).mul(opacity).mul(u.opacity));
     })();
 
