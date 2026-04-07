@@ -209,6 +209,7 @@ const Points = ({ ...props }) => {
     const originalIndex = sortBuffer.element(instanceIndex);
 
     // TODO: Should have a different style when showing prop-of-gdp?
+    // Give it the polka-dot pattern
     material.colorNode = Fn(() => {
       const pointType = typeBuffer.element(originalIndex);
 
@@ -240,11 +241,7 @@ const Points = ({ ...props }) => {
       const fillColor = dataColor;
 
       // const strokeColor = vec3(0.2);
-      const strokeColor = mix(
-        vec3(0),
-        vec3(1),
-        pointType
-      )
+      const strokeColor = mix(vec3(0), vec3(1), pointType);
 
       // Diagonal stripe pattern (screen-space for uniform sizing)
       const sc = screenCoordinate;

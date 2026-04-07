@@ -36,7 +36,8 @@ const normalizeDateToRange = (date) => {
   );
 };
 
-const getCoordinateKey = ({ latitude, longitude }) => `${latitude}|${longitude}`;
+const getCoordinateKey = ({ latitude, longitude }) =>
+  `${latitude}|${longitude}`;
 
 const getJitteredCoordinate = (d, duplicateIndex) => {
   if (duplicateIndex === 0) {
@@ -106,6 +107,7 @@ const DisasterPoints = () => {
     // Nodes
     const u = {
       dateT: uniform(0),
+      opacity: uniform(0),
     };
 
     const disasterColors = disasterTypeColorScale.range();
@@ -128,7 +130,7 @@ const DisasterPoints = () => {
     })();
 
     material.colorNode = Fn(() => {
-      const opacity = 0.7;
+      // const opacity = 0.7;
 
       const type = typesBuffer.element(instanceIndex);
       const start = startsBuffer.element(instanceIndex);
@@ -160,7 +162,7 @@ const DisasterPoints = () => {
       const color = colors.element(type.toInt().clamp(0, 3));
 
       // const alpha = circle.mul(opacity)
-      const alpha = wave.mul(opacity);
+      const alpha = wave.mul(u.opacity);
 
       return vec4(color, alpha);
     })();
