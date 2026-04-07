@@ -12,6 +12,7 @@ import {
   vec3,
 } from "three/tsl";
 import useVerletSystem from "./useVerletSystem";
+import { useRoomStore } from "@/store";
 
 // const BLEND_START = 0.08;
 const BLEND_START = 0.2;
@@ -20,7 +21,9 @@ const VISIBILITY_EPSILON = 0.001;
 const createMapColorNode = (dayTexture) =>
   Fn(() => {
     const mercY = uv().y.mul(2.0).sub(1.0).mul(Math.PI);
-    const lat = float(2.0).mul(mercY.exp().atan()).sub(Math.PI / 2);
+    const lat = float(2.0)
+      .mul(mercY.exp().atan())
+      .sub(Math.PI / 2);
     const equirectV = lat.div(Math.PI).add(0.5);
 
     const correctedUV = vec2(uv().x, equirectV);
@@ -48,8 +51,15 @@ const createMapOpacityNode = (fadeX, fadeY, blendAlpha) =>
 const WorldMap = ({ ...props }) => {
   const dayTexture = useTexture("/textures/earth/day.jpg");
   dayTexture.colorSpace = THREE.SRGBColorSpace;
+  const setWorldMap = useRoomStore((state) => state.setWorldMap);
 
-  const { mesh: verletMesh, simulationMix } = useVerletSystem();
+  const { mesh: verletMesh, u } = useVerletSystem();
+
+  useEffect(() => {
+    setWorldMap({
+      u,
+    });
+  }, [u]);
 
   const { legacyMesh, legacyBlendUniform, verletBlendUniform } = useMemo(() => {
     const fadeX = uniform(0.15);
@@ -89,7 +99,7 @@ const WorldMap = ({ ...props }) => {
 
   useEffect(() => {
     const blendAlpha = THREE.MathUtils.smoothstep(
-      simulationMix,
+      u.simulationMix.value,
       0,
       BLEND_START,
     );
@@ -100,13 +110,7 @@ const WorldMap = ({ ...props }) => {
 
     legacyMesh.visible = legacyAlpha > VISIBILITY_EPSILON;
     verletMesh.visible = blendAlpha > VISIBILITY_EPSILON;
-  }, [
-    legacyBlendUniform,
-    legacyMesh,
-    simulationMix,
-    verletBlendUniform,
-    verletMesh,
-  ]);
+  }, [legacyBlendUniform, legacyMesh, u, verletBlendUniform, verletMesh]);
 
   return (
     <group {...props}>

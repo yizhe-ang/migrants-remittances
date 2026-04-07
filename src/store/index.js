@@ -177,6 +177,9 @@ export const { roomStore, useRoomStore } = createRoomStore(
 
     arcs: null,
     setArcs: (arcs) => set({ arcs }),
+
+    worldMap: null,
+    setWorldMap: (worldMap) => set({ worldMap }),
   }),
   // ),
 );

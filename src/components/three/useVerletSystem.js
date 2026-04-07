@@ -30,7 +30,10 @@ const clothHeight = 1;
 const clothNumSegmentsX = 30;
 const clothNumSegmentsY = 30;
 
-let flatVertexPositionBuffer, vertexPositionBuffer, vertexForceBuffer, vertexParamsBuffer;
+let flatVertexPositionBuffer,
+  vertexPositionBuffer,
+  vertexForceBuffer,
+  vertexParamsBuffer;
 let springVertexIdBuffer, springRestLengthBuffer, springForceBuffer;
 let springListBuffer;
 let computeSpringForces, computeVertexForces, resetVertexForces;
@@ -119,7 +122,7 @@ export default function () {
     }
   });
 
-  return { mesh, simulationMix };
+  return { mesh, u: { simulationMix: simulationMixUniform } };
 }
 
 function setupVerletGeometry() {
