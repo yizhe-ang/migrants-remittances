@@ -20,10 +20,10 @@ import {
 import * as THREE from "three/webgpu";
 
 // TODO: To change these?
-// const clothWidth = 1;
-// const clothHeight = 1;
-const clothWidth = 360;
-const clothHeight = 360;
+const clothWidth = 1;
+const clothHeight = 1;
+// const clothWidth = 360;
+// const clothHeight = 360;
 
 const clothNumSegmentsX = 30;
 const clothNumSegmentsY = 30;
@@ -393,7 +393,7 @@ function setupClothMesh() {
   // clothMaterial = new THREE.MeshPhysicalNodeMaterial({
   clothMaterial = new THREE.MeshBasicNodeMaterial({
     // color: new THREE.Color().setHex(API.color),
-    // side: THREE.DoubleSide,
+    side: THREE.DoubleSide,
     transparent: true,
     // opacity: 0.85,
     // sheen: 1.0,
