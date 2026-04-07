@@ -18,8 +18,8 @@ const Steps = () => {
           <br />
           Disasters
         </h1> */}
-        <h1 className="font-bold font-display text-7xl rotate-y-[5deg] pointer-events-auto">
-          {/* <h1 className="font-bold font-display text-7xl pointer-events-auto"> */}
+        {/* <h1 className="font-bold font-display text-7xl rotate-y-[5deg] pointer-events-auto"> */}
+          <h1 className="font-bold font-display text-7xl pointer-events-auto">
           Global Remittances <br />
           <span className="text-6xl text-stone-400"> and </span> Disasters Atlas
         </h1>

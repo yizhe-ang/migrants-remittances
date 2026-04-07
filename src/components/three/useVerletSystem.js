@@ -61,7 +61,7 @@ export default function () {
         step: 0.01,
       },
       wind: {
-        value: 1,
+        value: 2,
         min: 0,
         max: 5,
         step: 0.1,
@@ -445,15 +445,19 @@ function setupClothMesh() {
   geometry.setIndex(indices);
 
   // FIXME:
-  // clothMaterial = new THREE.MeshPhysicalNodeMaterial({
-  clothMaterial = new THREE.MeshBasicNodeMaterial({
-    // color: new THREE.Color().setHex(API.color),
-    side: THREE.DoubleSide,
+  clothMaterial = new THREE.MeshPhysicalNodeMaterial({
+  // clothMaterial = new THREE.MeshBasicNodeMaterial({
+    color: new THREE.Color("white"),
+    // side: THREE.DoubleSide,
     transparent: true,
     // opacity: 0.85,
     // sheen: 1.0,
+    sheen: 2.0,
     // sheenRoughness: 0.5,
+    sheenRoughness: 0.5,
     // sheenColor: new THREE.Color().setHex(API.sheenColor),
+    sheenColor: new THREE.Color("white")
+    // sheenColor: new THREE.Color(0.9, 0.9, 0.9)
   });
 
   clothMaterial.positionNode = Fn(({ material }) => {

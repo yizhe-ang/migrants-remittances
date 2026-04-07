@@ -19,7 +19,7 @@ const Scene = () => {
 
       <color attach="background" args={[chroma(colors.stone[50]).hex()]} />
 
-      <ambientLight intensity={2} />
+      <ambientLight intensity={3} />
 
       <WorldMap position={[0, 0, -1]} />
       {/* <WorldMapOld position={[0, 0, -1]} /> */}
