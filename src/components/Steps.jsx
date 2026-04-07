@@ -7,6 +7,10 @@ const Steps = () => {
   const disasterTypeColorScale = useRoomStore(
     (state) => state.disasterTypeColorScale,
   );
+  const colorWithAlpha = (scale, value, alpha) => {
+    const color = scale?.(value);
+    return color ? `${color}${alpha}` : "transparent";
+  };
 
   return (
     <div className="w-full z-10 pointer-events-none">
@@ -19,7 +23,7 @@ const Steps = () => {
           Disasters
         </h1> */}
         {/* <h1 className="font-bold font-display text-7xl rotate-y-[5deg] pointer-events-auto"> */}
-          <h1 className="font-bold font-display text-7xl pointer-events-auto">
+        <h1 className="font-bold font-display text-7xl pointer-events-auto">
           Global Remittances <br />
           <span className="text-6xl text-stone-400"> and </span> Disasters Atlas
         </h1>
@@ -51,6 +55,20 @@ const Steps = () => {
           <C className="bg-[#dea193]/50 border-2 border-white">receive</C> them
           can use the money to pay school fees, make repairs to their homes, or
           cover medical bills.
+        </P>
+        <P>
+          The US, for example, has consistently been the top remittance-sending
+          country, with a total outflow of $232.1 billion in 2019. As a
+          high-income country, this money is also being sent to other
+          upper-middle, low-middle, and{" "}
+          <C
+            style={{
+              background: colorWithAlpha(incomeColorScale, "Low income", "80"),
+            }}
+          >
+            low-income
+          </C>{" "}
+          countries.
         </P>
         <P>
           The larger the size of the circle{" "}
@@ -118,9 +136,11 @@ const Steps = () => {
           If we were to group countries by their income level, we can see that{" "}
           <C
             style={{
-              background: incomeColorScale
-                ? `${incomeColorScale("High income")}80`
-                : "transparent",
+              background: colorWithAlpha(
+                incomeColorScale,
+                "High income",
+                "80",
+              ),
             }}
           >
             high-income countries
@@ -138,9 +158,11 @@ const Steps = () => {
           In 2019, these{" "}
           <C
             style={{
-              background: incomeColorScale
-                ? `${incomeColorScale("High income")}80`
-                : "transparent",
+              background: colorWithAlpha(
+                incomeColorScale,
+                "High income",
+                "80",
+              ),
             }}
           >
             high-income countries
@@ -171,9 +193,7 @@ const Steps = () => {
           where people need it the most.{" "}
           <C
             style={{
-              background: incomeColorScale
-                ? `${incomeColorScale("Low income")}80`
-                : "transparent",
+              background: colorWithAlpha(incomeColorScale, "Low income", "80"),
             }}
           >
             low-income countries
@@ -190,9 +210,7 @@ const Steps = () => {
           relative to the wealth of countries. For{" "}
           <C
             style={{
-              background: incomeColorScale
-                ? `${incomeColorScale("Low income")}80`
-                : "transparent",
+              background: colorWithAlpha(incomeColorScale, "Low income", "80"),
             }}
           >
             low-income countries
@@ -216,9 +234,11 @@ const Steps = () => {
           connected to the occurrence of{" "}
           <C
             style={{
-              background: disasterTypeColorScale
-                ? `${disasterTypeColorScale("flood")}60`
-                : "transparent",
+              background: colorWithAlpha(
+                disasterTypeColorScale,
+                "flood",
+                "60",
+              ),
             }}
           >
             floods
@@ -226,9 +246,11 @@ const Steps = () => {
           ,{" "}
           <C
             style={{
-              background: disasterTypeColorScale
-                ? `${disasterTypeColorScale("storm")}60`
-                : "transparent",
+              background: colorWithAlpha(
+                disasterTypeColorScale,
+                "storm",
+                "60",
+              ),
             }}
           >
             storms
@@ -236,9 +258,11 @@ const Steps = () => {
           ,{" "}
           <C
             style={{
-              background: disasterTypeColorScale
-                ? `${disasterTypeColorScale("earthquake")}60`
-                : "transparent",
+              background: colorWithAlpha(
+                disasterTypeColorScale,
+                "earthquake",
+                "60",
+              ),
             }}
           >
             earthquakes
@@ -246,9 +270,11 @@ const Steps = () => {
           , and{" "}
           <C
             style={{
-              background: disasterTypeColorScale
-                ? `${disasterTypeColorScale("drought")}60`
-                : "transparent",
+              background: colorWithAlpha(
+                disasterTypeColorScale,
+                "drought",
+                "60",
+              ),
             }}
           >
             droughts
