@@ -17,26 +17,24 @@ const WorldMap = ({ ...props }) => {
   const dayTexture = useTexture("/textures/earth/day.jpg");
   dayTexture.colorSpace = THREE.SRGBColorSpace;
 
-  useVerletSystem()
+  const mesh = useVerletSystem();
 
-  const { mesh, uniforms } = useMemo(() => {
-    const geometry = new THREE.PlaneGeometry(360, 360);
+  const { uniforms } = useMemo(() => {
+    // const geometry = new THREE.PlaneGeometry(360, 360);
 
     const fadeX = uniform(0.15);
     const fadeY = uniform(0.15);
 
     // const material = new THREE.MeshPhysicalNodeMaterial({
-    const material = new THREE.MeshBasicNodeMaterial({
-      // roughness: 0.5,
-      // metalness: 0.5,
-      transparent: true,
-    });
+    // const material = new THREE.MeshBasicNodeMaterial({
+    // transparent: true,
+    // });
+    // const mesh = new THREE.Mesh(geometry, material);
 
-    const mesh = new THREE.Mesh(geometry, material);
     mesh.renderOrder = -1;
 
     // TODO: Textured look?
-    material.colorNode = Fn(() => {
+    mesh.material.colorNode = Fn(() => {
       // Remap v from Mercator space back to equirectangular
       // UV v (0→1) maps to Mercator y (-180→+180)
       const mercY = uv().y.mul(2.0).sub(1.0).mul(Math.PI); // -π to π
@@ -57,7 +55,7 @@ const WorldMap = ({ ...props }) => {
       return stone.mul(luminance).mul(38).saturate();
     })();
 
-    material.opacityNode = Fn(() => {
+    mesh.material.opacityNode = Fn(() => {
       const alphaX = smoothstep(0.0, fadeX, uv().x).mul(
         smoothstep(0.0, fadeX, float(1.0).sub(uv().x)),
       );
@@ -67,8 +65,8 @@ const WorldMap = ({ ...props }) => {
       return alphaX.mul(alphaY);
     })();
 
-    return { mesh, uniforms: { fadeX, fadeY } };
-  }, []);
+    return { uniforms: { fadeX, fadeY } };
+  }, [mesh]);
 
   return (
     <>

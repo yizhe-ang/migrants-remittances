@@ -126,7 +126,7 @@ const Arcs = (props) => {
     const material = new THREE.MeshBasicNodeMaterial({
       // const material = new THREE.MeshPhysicalNodeMaterial({
       side: THREE.DoubleSide,
-      roughness: 0.5,
+      // roughness: 0.5,
       transparent: true,
       depthWrite: false,
       // metalness: 0.3,

@@ -2,6 +2,7 @@ import { useFrame } from "@react-three/fiber";
 import { folder, useControls } from "leva";
 import { useEffect, useMemo, useRef } from "react";
 import {
+  attribute,
   cross,
   Fn,
   If,
@@ -10,6 +11,7 @@ import {
   Loop,
   Return,
   select,
+  time,
   transformNormalToView,
   triNoise3D,
   uint,
@@ -18,8 +20,10 @@ import {
 import * as THREE from "three/webgpu";
 
 // TODO: To change these?
-const clothWidth = 1;
-const clothHeight = 1;
+// const clothWidth = 1;
+// const clothHeight = 1;
+const clothWidth = 360;
+const clothHeight = 360;
 
 const clothNumSegmentsX = 30;
 const clothNumSegmentsY = 30;
@@ -41,13 +45,12 @@ export default function () {
     wind: 1.0,
   });
 
-  useMemo(() => {
-    setupCloth();
+  const mesh = useMemo(() => {
+    return setupCloth();
   }, []);
 
-  useControls(
-    "verlet",
-    folder({
+  useControls({
+    verlet: folder({
       stiffness: {
         value: 0.1,
         min: 0.1,
@@ -69,7 +72,7 @@ export default function () {
         },
       },
     }),
-  );
+  });
 
   useFrame(({ gl: renderer }, delta) => {
     const deltaTime = Math.min(delta, 1 / 60); // don't advance the time too far, for example when the window is out of focus
@@ -87,6 +90,8 @@ export default function () {
       renderer.compute(computeVertexForces);
     }
   });
+
+  return mesh;
 }
 
 function setupVerletGeometry() {
@@ -379,7 +384,8 @@ function setupClothMesh() {
   geometry.setIndex(indices);
 
   // FIXME:
-  clothMaterial = new THREE.MeshPhysicalNodeMaterial({
+  // clothMaterial = new THREE.MeshPhysicalNodeMaterial({
+  clothMaterial = new THREE.MeshBasicNodeMaterial({
     // color: new THREE.Color().setHex(API.color),
     // side: THREE.DoubleSide,
     transparent: true,
@@ -415,7 +421,6 @@ function setupClothMesh() {
 
   clothMesh = new THREE.Mesh(geometry, clothMaterial);
 
-  // TODO: Return node functions too
   return clothMesh;
 }
 
@@ -425,5 +430,7 @@ function setupCloth() {
   setupVerletSpringBuffers();
   setupUniforms();
   setupComputeShaders();
-  setupClothMesh();
+  const mesh = setupClothMesh();
+
+  return mesh;
 }
