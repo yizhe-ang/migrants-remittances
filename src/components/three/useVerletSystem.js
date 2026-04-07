@@ -41,10 +41,6 @@ const verletSprings = [];
 const verletVertexColumns = [];
 
 export default function () {
-  const params = useRef({
-    wind: 1.0,
-  });
-
   const mesh = useMemo(() => {
     return setupCloth();
   }, []);
@@ -68,7 +64,9 @@ export default function () {
         max: 5,
         step: 0.1,
         onChange: (v) => {
-          params.current.wind = v;
+          if (windUniform) {
+            windUniform.value = v;
+          }
         },
       },
     }),
@@ -429,7 +427,7 @@ function setupClothMesh() {
 
   clothMesh = new THREE.Mesh(geometry, clothMaterial);
 
-  clothMesh.frustumCulled = false
+  clothMesh.frustumCulled = false;
 
   return clothMesh;
 }
