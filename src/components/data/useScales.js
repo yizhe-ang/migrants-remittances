@@ -16,6 +16,7 @@ import {
   schemeSet1,
   schemeSet2,
   schemeSet3,
+  schemeTableau10,
 } from "d3-scale-chromatic";
 import { useEffect } from "react";
 
@@ -137,18 +138,8 @@ export default function useScales() {
         "Lower middle income",
         "Low income",
       ])
-      // .range(schemeObservable10.slice(6));
-      // .range(schemeAccent);
-      // .range(schemeSet3);
-      // .range(["#7fc97f", "#beaed4", "#fdc086", "#ffff99"]);
-      // .range(["#7fc97f", "#beaed4", "#fdc086", schemeSet2[5]]);
-      .range(["#7fc97f", "#beaed4", "#fdc086", schemeSet3[11]]);
-    // .range([
-    //   "#ffd700",
-    //   "#fa8775",
-    //   "#cd34b5",
-    //   "#0000ff",
-    // ]);
+      .range(["#7fc97f", "#beaed4", "#fdc086", schemeSet3[11]])
+      // .range(["#7fc97f", "#beaed4", "#fdc086", schemeTableau10[8]])
 
     setIncomeColorScale(incomeColorScale);
   }, []);

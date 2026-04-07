@@ -19,7 +19,7 @@ const Steps = () => {
           Disasters
         </h1> */}
         <h1 className="font-bold font-display text-7xl rotate-y-[5deg] pointer-events-auto">
-        {/* <h1 className="font-bold font-display text-7xl pointer-events-auto"> */}
+          {/* <h1 className="font-bold font-display text-7xl pointer-events-auto"> */}
           Global Remittances <br />
           <span className="text-6xl text-stone-400"> and </span> Disasters Atlas
         </h1>
@@ -315,7 +315,8 @@ const Step = ({ className, children, ...props }) => {
       )}
       {...props}
     >
-      <div className="px-4 py-4 bg-white rounded shadow-xl flex flex-col gap-4 pointer-events-auto">
+      {/* <div className="px-4 py-4 bg-white rounded shadow-xl flex flex-col gap-4 pointer-events-auto"> */}
+      <div className="px-4 py-4 bg-white rounded border-2 border-stone-300 flex flex-col gap-4 pointer-events-auto">
         {children}
       </div>
     </div>
