@@ -64,7 +64,7 @@ export default function () {
         step: 0.1,
       },
       simulationMix: {
-        value: 0,
+        value: 1,
         min: 0,
         max: 1,
         step: 0.01,
