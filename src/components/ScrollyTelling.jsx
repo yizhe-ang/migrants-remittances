@@ -22,6 +22,7 @@ const ScrollyTelling = () => {
   const points = useRoomStore((s) => s.points);
   const sankeyIncome = useRoomStore((s) => s.sankeyIncome);
   const disasters = useRoomStore((s) => s.disasters);
+  const worldMap = useRoomStore((s) => s.worldMap);
 
   const setShowCountryPoints = useRoomStore((s) => s.setShowCountryPoints);
   const setEnableMapInteractions = useRoomStore(
@@ -116,13 +117,27 @@ const ScrollyTelling = () => {
           end: "bottom bottom",
           scrub: true,
         },
+        duration: 1,
       })
-      .to(cameraLookAt, {
-        endArray: cameraPositions.usaStart,
-        onUpdate: () => {
-          cameraControls.setLookAt(...cameraLookAt, false);
+      .to(
+        cameraLookAt,
+        {
+          endArray: cameraPositions.usaStart,
+          duration: 1,
+          onUpdate: () => {
+            cameraControls.setLookAt(...cameraLookAt, false);
+          },
         },
-      });
+        0,
+      )
+      .to(
+        worldMap.u.simulationMix,
+        {
+          value: 0,
+          duration: 1,
+        },
+        0,
+      );
 
     gsap
       .timeline({
