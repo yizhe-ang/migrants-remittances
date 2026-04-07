@@ -34,6 +34,7 @@ export default function useInteractions({
 
   const animRef = useRef(null);
 
+  // Change point pattern on `pointsValue` change
   useEffect(() => {
     if (!u) return;
 
@@ -258,8 +259,8 @@ export default function useInteractions({
 
     // If hovered, change target values
     if (hoveredCountry) {
-      // NOTE: Don't handle propGdp first
-      if (pointsValue[0] === "propGdp") return;
+      // FIXME: Don't handle propGdp first
+      // if (pointsValue[0] === "propGdp") return;
 
       const { type, country } = hoveredCountry;
       const highlightFlows = flowsMap.get(type).get(country);

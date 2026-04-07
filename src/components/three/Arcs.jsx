@@ -367,7 +367,7 @@ const Arcs = (props) => {
     if (!enableMapInteractions) return;
     if (!buffers || !flowsMap) return;
 
-    if (pointsValue[0] !== "absolute") return;
+    // if (pointsValue[0] !== "absolute") return;
 
     const arr = buffers.progress.array;
     const snapshot = arr.slice();
