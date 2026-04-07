@@ -28,7 +28,7 @@ export function App() {
           space: { colGap: 0 },
           sizes: { rootWidth: "300px", controlWidth: "150px" },
         }}
-        // hidden
+        hidden
       />
 
       <RoomShell className="h-screen" roomStore={roomStore}>
