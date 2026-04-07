@@ -19,8 +19,16 @@ const Controls = () => {
   return (
     <div className="fixed inset-0 pointer-events-none">
       <div className="w-full max-w-4xl mx-auto px-10 py-4 pointer-events-auto flex flex-col gap-5">
-        <div className="flex gap-2 w-full text-lg pt-5 items-center">
-          <div className="">Money</div>
+        {/* Map title */}
+        <div
+          className="flex gap-2 w-full text-lg pt-5 items-center"
+          id="show-controls"
+          style={{
+            opacity: 0,
+            visibility: "hidden",
+          }}
+        >
+          <div className="font-bold">Money</div>
           <CountryToggle />
           <div>
             by{" "}
@@ -41,10 +49,10 @@ const Controls = () => {
           <div
             className="flex gap-1"
             id="size-controls"
-            // style={{
-            //   opacity: 0,
-            //   visibility: "hidden",
-            // }}
+            style={{
+              opacity: 0,
+              visibility: "hidden",
+            }}
           >
             {/* <div className="text-sm pl-1 text-stone-500">size represents</div> */}
             <Toggle

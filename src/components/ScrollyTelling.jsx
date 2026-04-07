@@ -43,7 +43,7 @@ const ScrollyTelling = () => {
       !disasters ||
       !disasterPoints
       // !worldMap // FIXME: For some reason including this breaks the scrolly
-      // FIXME: Have to make sure this doesn't re-render unnecesarily
+      // FIXME: Have to make sure this hook doesn't re-render unnecesarily
     )
       return;
 
