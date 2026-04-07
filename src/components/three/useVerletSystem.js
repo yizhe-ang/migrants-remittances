@@ -48,9 +48,9 @@ export default function () {
   useControls({
     verlet: folder({
       stiffness: {
-        value: 0.5,
+        value: 0.9,
         min: 0.1,
-        max: 0.5,
+        max: 1,
         step: 0.01,
         onChange: (v) => {
           if (stiffnessUniform) {
@@ -59,7 +59,7 @@ export default function () {
         },
       },
       wind: {
-        value: 1,
+        value: 0,
         min: 0,
         max: 5,
         step: 0.1,
