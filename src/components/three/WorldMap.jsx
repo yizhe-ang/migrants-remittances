@@ -14,9 +14,7 @@ import {
 import useVerletSystem from "./useVerletSystem";
 import { useRoomStore } from "@/store";
 
-// const BLEND_START = 0.08;
-const BLEND_START = 0.2;
-const VISIBILITY_EPSILON = 0.001;
+const BLEND_START = 0.3;
 
 const createMapColorNode = (dayTexture) =>
   Fn(() => {
@@ -61,11 +59,10 @@ const WorldMap = ({ ...props }) => {
     });
   }, [u]);
 
-  const { legacyMesh, legacyBlendUniform, verletBlendUniform } = useMemo(() => {
+  const { legacyMesh } = useMemo(() => {
     const fadeX = uniform(0.15);
     const fadeY = uniform(0.15);
-    const legacyBlend = uniform(1.0);
-    const verletBlend = uniform(0.0);
+    const blendAlpha = smoothstep(0.0, BLEND_START, u.simulationMix);
 
     const legacyGeometry = new THREE.PlaneGeometry(360, 360);
     const legacyMaterial = new THREE.MeshBasicNodeMaterial({
@@ -78,7 +75,7 @@ const WorldMap = ({ ...props }) => {
     legacyMaterial.opacityNode = createMapOpacityNode(
       fadeX,
       fadeY,
-      legacyBlend,
+      float(1.0).sub(blendAlpha),
     )();
 
     verletMesh.scale.set(360, 360, 360);
@@ -87,30 +84,13 @@ const WorldMap = ({ ...props }) => {
     verletMesh.material.opacityNode = createMapOpacityNode(
       fadeX,
       fadeY,
-      verletBlend,
+      blendAlpha,
     )();
 
     return {
       legacyMesh,
-      legacyBlendUniform: legacyBlend,
-      verletBlendUniform: verletBlend,
     };
-  }, [dayTexture, verletMesh]);
-
-  useEffect(() => {
-    const blendAlpha = THREE.MathUtils.smoothstep(
-      u.simulationMix.value,
-      0,
-      BLEND_START,
-    );
-    const legacyAlpha = 1 - blendAlpha;
-
-    legacyBlendUniform.value = legacyAlpha;
-    verletBlendUniform.value = blendAlpha;
-
-    legacyMesh.visible = legacyAlpha > VISIBILITY_EPSILON;
-    verletMesh.visible = blendAlpha > VISIBILITY_EPSILON;
-  }, [legacyBlendUniform, legacyMesh, u, verletBlendUniform, verletMesh]);
+  }, [dayTexture, u.simulationMix, verletMesh]);
 
   return (
     <group {...props}>
