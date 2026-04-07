@@ -180,6 +180,9 @@ export const { roomStore, useRoomStore } = createRoomStore(
 
     worldMap: null,
     setWorldMap: (worldMap) => set({ worldMap }),
+
+    disasterPoints: null,
+    setDisasterPoints: (disasterPoints) => set({ disasterPoints }),
   }),
   // ),
 );

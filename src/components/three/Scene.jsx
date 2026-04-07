@@ -26,7 +26,7 @@ const Scene = () => {
 
       <Points position={[0, 0, 0]} />
 
-      {/* <DisasterPoints position={[0, 0, 0]} /> */}
+      <DisasterPoints position={[0, 0, 0]} />
 
       <Arcs position={[0, 0, 0]} />
 

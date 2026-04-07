@@ -59,6 +59,17 @@ const Steps = () => {
         </P>
       </Step>
 
+      <Step id="step-3-1" className="pb-[200vh]">
+        <P>
+          External shocks such as natural disasters threaten such development.
+        </P>
+        <P>
+          Remittance flows have thus been seen as a form of informal insurance,
+          surging in the aftermath of natural disasters, and often arriving
+          faster and more directly than official aid.
+        </P>
+      </Step>
+
       <Step id="step-4">
         <P>
           These remittances - estimated in 2023 to total about $857 billion –
@@ -316,7 +327,7 @@ const Step = ({ className, children, ...props }) => {
       {...props}
     >
       {/* <div className="px-4 py-4 bg-white rounded shadow-xl flex flex-col gap-4 pointer-events-auto"> */}
-      <div className="px-4 py-4 bg-white rounded border-2 border-stone-300 flex flex-col gap-4 pointer-events-auto">
+      <div className="px-4 py-4 bg-white rounded-sm border-2 border-stone-300 flex flex-col gap-4 pointer-events-auto">
         {children}
       </div>
     </div>

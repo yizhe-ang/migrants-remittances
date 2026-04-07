@@ -71,6 +71,7 @@ const DisasterPoints = () => {
   const disasterTypeColorScale = useRoomStore(
     (state) => state.disasterTypeColorScale,
   );
+  const setDisasterPoints = useRoomStore((state) => state.setDisasterPoints);
 
   const numPoints = disasters?.length;
 
@@ -173,6 +174,13 @@ const DisasterPoints = () => {
       buffers,
     };
   }, [disasters]);
+
+  useEffect(() => {
+    if (!u) return;
+
+    setDisasterPoints({ u });
+    console.log(u.opacity.value)
+  }, [u]);
 
   useEffect(() => {
     if (

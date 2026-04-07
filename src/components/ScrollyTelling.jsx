@@ -23,6 +23,7 @@ const ScrollyTelling = () => {
   const sankeyIncome = useRoomStore((s) => s.sankeyIncome);
   const disasters = useRoomStore((s) => s.disasters);
   const worldMap = useRoomStore((s) => s.worldMap);
+  const disasterPoints = useRoomStore((s) => s.disasterPoints);
 
   const setShowCountryPoints = useRoomStore((s) => s.setShowCountryPoints);
   const setEnableMapInteractions = useRoomStore(
@@ -39,7 +40,9 @@ const ScrollyTelling = () => {
       !points ||
       !flowsMap2019 ||
       !sankeyIncome ||
-      !disasters
+      !disasters ||
+      !disasterPoints ||
+      !worldMap
     )
       return;
 
@@ -269,18 +272,18 @@ const ScrollyTelling = () => {
     gsap
       .timeline({
         scrollTrigger: {
-          trigger: "#step-4",
+          trigger: "#step-3-1",
           start: "top bottom",
           end: "bottom bottom",
           scrub: true,
         },
+        duration: 1,
       })
-      // Hide all points
       .to(
         fromUsaPoints,
         {
           sizeT: 0,
-          duration: 0.2,
+          duration: 0.1,
           onUpdate: () => {
             fromUsaPointsIndices.forEach((idx, i) => {
               points.buffers.size.buffer.array[idx] =
@@ -289,21 +292,84 @@ const ScrollyTelling = () => {
             points.buffers.size.buffer.needsUpdate = true;
           },
         },
-        0.2,
+        0,
       )
       .to(
         usaPoint,
         {
           size: 0,
-          duration: 0.2,
+          duration: 0.1,
           onUpdate: () => {
             points.buffers.size.buffer.array[destinationUsaPointIdx] =
               usaPoint.size;
             points.buffers.size.buffer.needsUpdate = true;
           },
         },
-        0.2,
+        0,
       )
+      .to(
+        disasterPoints.u.opacity,
+        {
+          value: 0.7,
+          duration: 0.1,
+        },
+        0,
+      )
+      .to(
+        disasterPoints.u.dateT,
+        {
+          value: 1,
+          duration: 0.8,
+        },
+        0.1,
+      )
+      .to(
+        disasterPoints.u.opacity,
+        {
+          value: 0,
+          duration: 0.1,
+        },
+        0.9,
+      );
+
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: "#step-4",
+          start: "top bottom",
+          end: "bottom bottom",
+          scrub: true,
+        },
+      })
+      // Hide all points
+      // .to(
+      //   fromUsaPoints,
+      //   {
+      //     sizeT: 0,
+      //     duration: 0.2,
+      //     onUpdate: () => {
+      //       fromUsaPointsIndices.forEach((idx, i) => {
+      //         points.buffers.size.buffer.array[idx] =
+      //           fromUsaPoints[i].sizeT * points.buffers.size.og[idx];
+      //       });
+      //       points.buffers.size.buffer.needsUpdate = true;
+      //     },
+      //   },
+      //   0.2,
+      // )
+      // .to(
+      //   usaPoint,
+      //   {
+      //     size: 0,
+      //     duration: 0.2,
+      //     onUpdate: () => {
+      //       points.buffers.size.buffer.array[destinationUsaPointIdx] =
+      //         usaPoint.size;
+      //       points.buffers.size.buffer.needsUpdate = true;
+      //     },
+      //   },
+      //   0.2,
+      // )
       .to(
         arcs.u.opacity,
         {
@@ -312,25 +378,6 @@ const ScrollyTelling = () => {
         },
         0.1,
       );
-    // .to(
-    //   arcs.u.opacity,
-    //   {
-    //     value: 1,
-    //     duration: 0.5,
-    //   },
-    //   0.3,
-    // );
-
-    // gsap
-    //   .timeline({
-    //     scrollTrigger: {
-    //       trigger: "#step-5",
-    //       start: "top bottom",
-    //       end: "bottom bottom",
-    //       scrub: true,
-    //     },
-    //     duration: 1,
-    //   })
 
     gsap
       .timeline({
@@ -1426,7 +1473,16 @@ const ScrollyTelling = () => {
         },
         0,
       );
-  }, [cameraControls, arcs, points, flowsMap2019, sankeyIncome, disasters]);
+  }, [
+    cameraControls,
+    arcs,
+    points,
+    flowsMap2019,
+    sankeyIncome,
+    disasters,
+    disasterPoints,
+    worldMap,
+  ]);
 
   return <></>;
 };
