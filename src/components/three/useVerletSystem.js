@@ -48,7 +48,7 @@ export default function () {
   useControls({
     verlet: folder({
       stiffness: {
-        value: 0.1,
+        value: 0.5,
         min: 0.1,
         max: 0.5,
         step: 0.01,
@@ -125,9 +125,14 @@ function setupVerletGeometry() {
     const column = [];
     for (let y = 0; y <= clothNumSegmentsY; y++) {
       const posX = x * (clothWidth / clothNumSegmentsX) - clothWidth * 0.5;
-      const posZ = y * (clothHeight / clothNumSegmentsY);
-      const isFixed = y === 0 && x % 5 === 0; // make some of the top vertices' positions fixed
-      const vertex = addVerletVertex(posX, clothHeight * 0.5, posZ, isFixed);
+      // const posZ = y * (clothHeight / clothNumSegmentsY);
+      const posY = y * (clothHeight / clothNumSegmentsY) - clothHeight * 0.5;
+
+      // const isFixed = y === 0 && x % 5 === 0; // make some of the top vertices' positions fixed
+      const isFixed = y === clothNumSegmentsY && x % 5 === 0; // make some of the top vertices' positions fixed
+
+      // const vertex = addVerletVertex(posX, clothHeight * 0.5, posZ, isFixed);
+      const vertex = addVerletVertex(posX, posY, 0, isFixed);
       column.push(vertex);
     }
 
@@ -314,7 +319,8 @@ function setupComputeShaders() {
     // wind
     const noise = triNoise3D(position, 1, time).sub(0.2).mul(0.0001);
     const windForce = noise.mul(windUniform);
-    force.z.subAssign(windForce);
+    // force.z.subAssign(windForce);
+    force.z.addAssign(windForce);
 
     // collision with sphere
     // const deltaSphere = position.add( force ).sub( spherePositionUniform );

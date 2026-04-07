@@ -45,14 +45,14 @@ const CameraControls = (props) => {
       makeDefault
       ref={ref}
       mouseButtons={{
-        // left: ACTION.TRUCK,
-        // middle: ACTION.DOLLY,
-        // right: ACTION.ROTATE,
-        // wheel: ACTION.DOLLY,
-        left: ACTION.NONE,
-        middle: ACTION.NONE,
-        right: ACTION.NONE,
-        wheel: ACTION.NONE,
+        left: ACTION.TRUCK,
+        middle: ACTION.DOLLY,
+        right: ACTION.ROTATE,
+        wheel: ACTION.DOLLY,
+        // left: ACTION.NONE,
+        // middle: ACTION.NONE,
+        // right: ACTION.NONE,
+        // wheel: ACTION.NONE,
       }}
       touches={{
         // one: ACTION.TOUCH_ROTATE,

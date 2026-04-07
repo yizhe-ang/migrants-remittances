@@ -31,7 +31,7 @@ const WorldMap = ({ ...props }) => {
     // });
     // const mesh = new THREE.Mesh(geometry, material);
 
-    mesh.scale.set(360, 1, 360);
+    mesh.scale.set(360, 360, 360);
 
     mesh.renderOrder = -1;
 
@@ -74,8 +74,8 @@ const WorldMap = ({ ...props }) => {
     <>
       <primitive
         object={mesh}
-        rotation={[-Math.PI / 2, 0, 0]}
-        position={[0, -180, 0.5]}
+        // rotation={[-Math.PI / 2, 0, 0]}
+        // position={[0, -180, 0.5]}
         {...props}
       />
     </>
