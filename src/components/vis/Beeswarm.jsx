@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useId, useMemo } from "react";
 import { AxisBottom } from "@visx/axis";
 import { ParentSize } from "@visx/responsive";
 
@@ -15,6 +15,7 @@ const Beeswarm = ({
   padding = 1.5,
   showXAxis = false,
 }) => {
+  const gradientPrefix = useId().replace(/:/g, "");
   const x = (d) => xScale(xAccessor(d));
 
   const dataDodged = useMemo(() => {
@@ -24,6 +25,21 @@ const Beeswarm = ({
       (a, b) => xAccessor(a.data) - xAccessor(b.data),
     );
   }, [data, x, r]);
+
+  const gradientIds = useMemo(() => {
+    if (!dataDodged) return new Map();
+
+    const ids = new Map();
+
+    dataDodged.forEach((d) => {
+      const color = c(d.data);
+      if (!ids.has(color)) {
+        ids.set(color, `${gradientPrefix}-${ids.size}`);
+      }
+    });
+
+    return ids;
+  }, [c, dataDodged, gradientPrefix]);
 
   return (
     <>
@@ -36,17 +52,25 @@ const Beeswarm = ({
                 height={height}
                 className="overflow-visible beeswarm"
               >
+                <defs>
+                  {[...gradientIds.entries()].map(([color, id]) => (
+                    <radialGradient key={id} id={id}>
+                      <stop offset="0%" stopColor={color} stopOpacity={0} />
+                      <stop offset="100%" stopColor={color} stopOpacity={1} />
+                    </radialGradient>
+                  ))}
+                </defs>
                 <g transform={`translate(${marginLeft}, ${marginTop})`}>
                   <g className="beeswarm-circles">
                     {dataDodged.map((d, i) => {
+                      const color = c(d.data);
                       return (
                         <circle
                           key={i}
                           cx={d.x}
                           cy={height - marginBottom - padding - d.y - marginTop}
                           r={d.r}
-                          fill={c(d.data)}
-                          // fillOpacity={0.4}
+                          fill={`url(#${gradientIds.get(color)})`}
                         />
                       );
                     })}
