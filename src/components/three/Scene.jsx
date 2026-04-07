@@ -20,7 +20,7 @@ const Scene = () => {
 
       <ambientLight intensity={2} />
 
-      <WorldMap position={[0, 0, -1]} />
+      <WorldMap />
 
       <Points position={[0, 0, 0]} />
 

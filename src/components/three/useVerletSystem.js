@@ -342,13 +342,19 @@ function setupClothMesh() {
   const verletVertexIdArray = new Uint32Array(vertexCount * 4);
   const indices = [];
 
+  const uvArray = new Float32Array(vertexCount * 2);
+
   const getIndex = (x, y) => {
     return y * clothNumSegmentsX + x;
   };
 
   for (let x = 0; x < clothNumSegmentsX; x++) {
-    for (let y = 0; y < clothNumSegmentsX; y++) {
+    for (let y = 0; y < clothNumSegmentsY; y++) {
       const index = getIndex(x, y);
+
+      uvArray[index * 2 + 0] = x / (clothNumSegmentsX - 1); // u: 0 -> 1
+      uvArray[index * 2 + 1] = y / (clothNumSegmentsY - 1); // v: 0 -> 1
+
       verletVertexIdArray[index * 4] = verletVertexColumns[x][y].id;
       verletVertexIdArray[index * 4 + 1] = verletVertexColumns[x + 1][y].id;
       verletVertexIdArray[index * 4 + 2] = verletVertexColumns[x][y + 1].id;
@@ -381,6 +387,8 @@ function setupClothMesh() {
   );
   geometry.setAttribute("position", positionBuffer);
   geometry.setAttribute("vertexIds", verletVertexIdBuffer);
+  geometry.setAttribute("uv", new THREE.BufferAttribute(uvArray, 2));
+
   geometry.setIndex(indices);
 
   // FIXME:
@@ -420,6 +428,8 @@ function setupClothMesh() {
   })();
 
   clothMesh = new THREE.Mesh(geometry, clothMaterial);
+
+  clothMesh.frustumCulled = false
 
   return clothMesh;
 }

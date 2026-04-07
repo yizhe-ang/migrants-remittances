@@ -33,6 +33,7 @@ const WorldMap = ({ ...props }) => {
 
     mesh.renderOrder = -1;
 
+
     // TODO: Textured look?
     mesh.material.colorNode = Fn(() => {
       // Remap v from Mercator space back to equirectangular
@@ -70,7 +71,12 @@ const WorldMap = ({ ...props }) => {
 
   return (
     <>
-      <primitive object={mesh} {...props} />
+      <primitive
+        object={mesh}
+        rotation={[-Math.PI / 2, 0, 0]}
+        position={[0, -180, 179]}
+        {...props}
+      />
     </>
   );
 };
