@@ -313,7 +313,7 @@ const ScrollyTelling = () => {
           value: 0.7,
           duration: 0.1,
         },
-        0,
+        0.1,
       )
       .to(
         disasterPoints.u.dateT,
@@ -321,7 +321,7 @@ const ScrollyTelling = () => {
           value: 1,
           duration: 0.8,
         },
-        0.1,
+        0.2,
       )
       .to(
         disasterPoints.u.opacity,

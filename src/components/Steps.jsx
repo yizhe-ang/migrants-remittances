@@ -52,15 +52,46 @@ const Steps = () => {
         </P>
         <P>
           People who{" "}
-          <C className="bg-[#dea193]/50 border-2 border-white">receive</C> them
+          <C className="bg-[#dea193]/50">receive</C> them
           can use the money to pay school fees, make repairs to their homes, or
           cover medical bills.
         </P>
         <P>
           The US, for example, has consistently been the top remittance-sending
-          country, with a total outflow of $232.1 billion in 2019. As a
-          high-income country, this money is also being sent to other
-          upper-middle, low-middle, and{" "}
+          country, with a total outflow of $232.1 billion in 2019. As a{" "}
+          <C
+            style={{
+              background: colorWithAlpha(incomeColorScale, "High income", "80"),
+            }}
+            className="border-2 border-black"
+          >
+            high-income
+          </C>{" "}
+          country, this money is also being sent to other{" "}
+          <C
+            style={{
+              background: colorWithAlpha(
+                incomeColorScale,
+                "Upper middle income",
+                "80",
+              ),
+            }}
+          >
+            upper-middle
+          </C>
+          ,{" "}
+          <C
+            style={{
+              background: colorWithAlpha(
+                incomeColorScale,
+                "Lower middle income",
+                "80",
+              ),
+            }}
+          >
+            lower-middle
+          </C>
+          , and{" "}
           <C
             style={{
               background: colorWithAlpha(incomeColorScale, "Low income", "80"),
@@ -136,11 +167,7 @@ const Steps = () => {
           If we were to group countries by their income level, we can see that{" "}
           <C
             style={{
-              background: colorWithAlpha(
-                incomeColorScale,
-                "High income",
-                "80",
-              ),
+              background: colorWithAlpha(incomeColorScale, "High income", "80"),
             }}
           >
             high-income countries
@@ -158,11 +185,7 @@ const Steps = () => {
           In 2019, these{" "}
           <C
             style={{
-              background: colorWithAlpha(
-                incomeColorScale,
-                "High income",
-                "80",
-              ),
+              background: colorWithAlpha(incomeColorScale, "High income", "80"),
             }}
           >
             high-income countries
@@ -234,11 +257,7 @@ const Steps = () => {
           connected to the occurrence of{" "}
           <C
             style={{
-              background: colorWithAlpha(
-                disasterTypeColorScale,
-                "flood",
-                "60",
-              ),
+              background: colorWithAlpha(disasterTypeColorScale, "flood", "60"),
             }}
           >
             floods
@@ -246,11 +265,7 @@ const Steps = () => {
           ,{" "}
           <C
             style={{
-              background: colorWithAlpha(
-                disasterTypeColorScale,
-                "storm",
-                "60",
-              ),
+              background: colorWithAlpha(disasterTypeColorScale, "storm", "60"),
             }}
           >
             storms
