@@ -51,6 +51,9 @@ const WorldMap = ({ ...props }) => {
   dayTexture.colorSpace = THREE.SRGBColorSpace;
   const setWorldMap = useRoomStore((state) => state.setWorldMap);
 
+  // TODO: Still can include bump map, etc.
+  // Give a terrain feel to the world map
+  // https://www.youtube.com/watch?v=-U8VoJusPhs&list=PLKWUX7aMnlEKTmkBqwjc-tZgULJdNBjEd&index=76
   const { mesh: verletMesh, u } = useVerletSystem();
 
   useEffect(() => {
