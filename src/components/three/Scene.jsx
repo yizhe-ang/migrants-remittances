@@ -21,12 +21,12 @@ const Scene = () => {
 
       <ambientLight intensity={2} />
 
-      <WorldMap position={[0, 0, -1]} />
-      {/* <WorldMapOld position={[0, 0, -1]} /> */}
+      {/* <WorldMap position={[0, 0, -1]} /> */}
+      <WorldMapOld position={[0, 0, -1]} />
 
       <Points position={[0, 0, 0]} />
 
-      <DisasterPoints position={[0, 0, 0]} />
+      {/* <DisasterPoints position={[0, 0, 0]} /> */}
 
       <Arcs position={[0, 0, 0]} />
 

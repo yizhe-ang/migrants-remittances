@@ -1,6 +1,6 @@
 import { useFrame } from "@react-three/fiber";
 import { folder, useControls } from "leva";
-import { useEffect, useMemo, useRef } from "react";
+import { useMemo, useRef } from "react";
 import {
   attribute,
   cross,
@@ -9,6 +9,7 @@ import {
   instancedArray,
   instanceIndex,
   Loop,
+  mix,
   Return,
   select,
   time,
@@ -16,6 +17,7 @@ import {
   triNoise3D,
   uint,
   uniform,
+  vec3,
 } from "three/tsl";
 import * as THREE from "three/webgpu";
 
@@ -28,11 +30,11 @@ const clothHeight = 1;
 const clothNumSegmentsX = 30;
 const clothNumSegmentsY = 30;
 
-let vertexPositionBuffer, vertexForceBuffer, vertexParamsBuffer;
+let flatVertexPositionBuffer, vertexPositionBuffer, vertexForceBuffer, vertexParamsBuffer;
 let springVertexIdBuffer, springRestLengthBuffer, springForceBuffer;
 let springListBuffer;
-let computeSpringForces, computeVertexForces;
-let dampeningUniform, stiffnessUniform, windUniform;
+let computeSpringForces, computeVertexForces, resetVertexForces;
+let dampeningUniform, stiffnessUniform, windUniform, simulationMixUniform;
 let clothMesh, clothMaterial;
 let timeSinceLastStep = 0;
 let timestamp = 0;
@@ -41,6 +43,8 @@ const verletSprings = [];
 const verletVertexColumns = [];
 
 export default function () {
+  const simulationWasActiveRef = useRef(true);
+
   const mesh = useMemo(() => {
     return setupCloth();
   }, []);
@@ -59,7 +63,7 @@ export default function () {
         },
       },
       wind: {
-        value: 0,
+        value: 1,
         min: 0,
         max: 5,
         step: 0.1,
@@ -69,10 +73,37 @@ export default function () {
           }
         },
       },
+      simulationMix: {
+        value: 0,
+        min: 0,
+        max: 1,
+        step: 0.01,
+        onChange: (v) => {
+          if (simulationMixUniform) {
+            simulationMixUniform.value = v;
+          }
+        },
+      },
     }),
   });
 
   useFrame(({ gl: renderer }, delta) => {
+    const simulationMix = simulationMixUniform?.value ?? 1;
+    const simulationActive = simulationMix > 0;
+
+    if (!simulationActive) {
+      timeSinceLastStep = 0;
+
+      if (simulationWasActiveRef.current && resetVertexForces) {
+        renderer.compute(resetVertexForces);
+      }
+
+      simulationWasActiveRef.current = false;
+      return;
+    }
+
+    simulationWasActiveRef.current = true;
+
     const deltaTime = Math.min(delta, 1 / 60); // don't advance the time too far, for example when the window is out of focus
     const stepsPerSecond = 360; // ensure the same amount of simulation steps per second on all systems, independent of refresh rate
     const timePerStep = 1 / stepsPerSecond;
@@ -189,9 +220,14 @@ function setupVerletVertexBuffers() {
     }
   }
 
-  vertexPositionBuffer = instancedArray(vertexPositionArray, "vec3").setPBO(
-    true,
-  ); // setPBO(true) is only important for the WebGL Fallback
+  flatVertexPositionBuffer = instancedArray(
+    new Float32Array(vertexPositionArray),
+    "vec3",
+  ).setPBO(true);
+  vertexPositionBuffer = instancedArray(
+    new Float32Array(vertexPositionArray),
+    "vec3",
+  ).setPBO(true); // setPBO(true) is only important for the WebGL Fallback
   vertexForceBuffer = instancedArray(vertexCount, "vec3");
   vertexParamsBuffer = instancedArray(vertexParamsArray, "uvec3");
 
@@ -229,6 +265,7 @@ function setupUniforms() {
   dampeningUniform = uniform(0.99);
   windUniform = uniform(1.0);
   stiffnessUniform = uniform(0.2);
+  simulationMixUniform = uniform(1.0);
 }
 
 function setupComputeShaders() {
@@ -333,6 +370,16 @@ function setupComputeShaders() {
   })()
     .compute(vertexCount)
     .setName("Vertex Forces");
+
+  resetVertexForces = new Fn(() => {
+    If(instanceIndex.greaterThanEqual(uint(vertexCount)), () => {
+      Return();
+    });
+
+    vertexForceBuffer.element(instanceIndex).assign(vec3(0, 0, 0));
+  })()
+    .compute(vertexCount)
+    .setName("Reset Vertex Forces");
 }
 
 function setupClothMesh() {
@@ -410,10 +457,19 @@ function setupClothMesh() {
   clothMaterial.positionNode = Fn(({ material }) => {
     // gather the position of the 4 verlet vertices and calculate the center position and normal from that
     const vertexIds = attribute("vertexIds");
-    const v0 = vertexPositionBuffer.element(vertexIds.x).toVar();
-    const v1 = vertexPositionBuffer.element(vertexIds.y).toVar();
-    const v2 = vertexPositionBuffer.element(vertexIds.z).toVar();
-    const v3 = vertexPositionBuffer.element(vertexIds.w).toVar();
+    const flatV0 = flatVertexPositionBuffer.element(vertexIds.x).toVar();
+    const flatV1 = flatVertexPositionBuffer.element(vertexIds.y).toVar();
+    const flatV2 = flatVertexPositionBuffer.element(vertexIds.z).toVar();
+    const flatV3 = flatVertexPositionBuffer.element(vertexIds.w).toVar();
+    const simV0 = vertexPositionBuffer.element(vertexIds.x).toVar();
+    const simV1 = vertexPositionBuffer.element(vertexIds.y).toVar();
+    const simV2 = vertexPositionBuffer.element(vertexIds.z).toVar();
+    const simV3 = vertexPositionBuffer.element(vertexIds.w).toVar();
+
+    const v0 = mix(flatV0, simV0, simulationMixUniform).toVar();
+    const v1 = mix(flatV1, simV1, simulationMixUniform).toVar();
+    const v2 = mix(flatV2, simV2, simulationMixUniform).toVar();
+    const v3 = mix(flatV3, simV3, simulationMixUniform).toVar();
 
     const top = v0.add(v1);
     const right = v1.add(v3);
@@ -439,6 +495,11 @@ function setupClothMesh() {
 }
 
 function setupCloth() {
+  verletVertices.length = 0;
+  verletSprings.length = 0;
+  verletVertexColumns.length = 0;
+  timeSinceLastStep = 0;
+  timestamp = 0;
   setupVerletGeometry();
   setupVerletVertexBuffers();
   setupVerletSpringBuffers();
