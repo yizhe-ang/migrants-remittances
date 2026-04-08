@@ -208,19 +208,7 @@ const Steps = () => {
       </Step>
 
       {/* <div id="step-dashboard" className="h-[100vh]"></div> */}
-      <Step id="step-dashboard-1">
-        <P className="flex gap-2">
-          <MousePointer />
-          <span>
-            Hover over the circles to see the remittance flows for each country!
-          </span>
-        </P>
-        <P>
-          <ul className="px-5 list-disc">
-            <li>Toggle between countries sending or receiving money</li>
-          </ul>
-        </P>
-      </Step>
+      <Step id="step-dashboard-1" empty></Step>
 
       <Step id="step-7-1">
         <H>Money flows from rich countries to poorer ones</H>
@@ -233,7 +221,7 @@ const Steps = () => {
           >
             high-income countries
           </C>{" "}
-          dominate the sending of money.
+          seem to dominate the sending of money.
         </P>
       </Step>
 
@@ -375,7 +363,7 @@ const Steps = () => {
   );
 };
 
-const Step = ({ className, children, ...props }) => {
+const Step = ({ className, empty = false, children, ...props }) => {
   return (
     <div
       className={cn(
@@ -384,10 +372,11 @@ const Step = ({ className, children, ...props }) => {
       )}
       {...props}
     >
-      {/* <div className="px-4 py-4 bg-white rounded shadow-xl flex flex-col gap-4 pointer-events-auto"> */}
-      <div className="px-4 py-4 bg-white rounded-sm border-2 border-stone-300 flex flex-col gap-4 pointer-events-auto">
-        {children}
-      </div>
+      {!empty && (
+        <div className="px-4 py-4 bg-white rounded-sm border-2 border-stone-300 flex flex-col gap-4 pointer-events-auto">
+          {children}
+        </div>
+      )}
     </div>
   );
 };

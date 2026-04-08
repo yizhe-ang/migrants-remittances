@@ -33,7 +33,7 @@ const Controls = () => {
           }}
         >
           <AnimatePresence>
-            {true && (
+            {showHoverCountryPrompt && (
               <motion.div
                 className="absolute right-5 top-40 font-cursive w-60 text-shadow-lg/20 text-shadow-stone-900 text-sm"
                 initial={{ opacity: 0 }}
