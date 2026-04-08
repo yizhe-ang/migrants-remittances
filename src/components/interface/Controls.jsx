@@ -58,8 +58,10 @@ const Controls = () => {
           >
             {/* <div className="text-sm pl-1 text-stone-500">size represents</div> */}
             <Toggle
+              // className="text-lg
+              // aria-pressed:bg-[repeating-linear-gradient(-45deg,#f5f5f4_0px,#f5f5f4_6px,#d6d3d1_4px,#d6d3d1_8px)]
+              // "
               className="text-lg
-              aria-pressed:bg-[repeating-linear-gradient(-45deg,#f5f5f4_0px,#f5f5f4_6px,#d6d3d1_4px,#d6d3d1_8px)]
               "
               pressed={pointsValue[0] === "propGdp"}
               onPressedChange={(val) => {
