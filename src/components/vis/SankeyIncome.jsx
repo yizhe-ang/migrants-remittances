@@ -139,7 +139,7 @@ const SankeyIncome = ({ width, height, margin = defaultMargin }) => {
     <>
       {graphs && colorScale && (
         <div
-          className="flex gap-10"
+          className="flex gap-10 pointer-events-auto"
           style={
             {
               // opacity: 0,

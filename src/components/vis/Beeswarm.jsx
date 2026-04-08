@@ -73,6 +73,9 @@ const Beeswarm = ({
                           cy={height - marginBottom - padding - d.y - marginTop}
                           r={d.r}
                           fill={`url(#${gradientIds.get(color)})`}
+                          onClick={() => {
+                            console.log(d)
+                          }}
                         />
                       );
                     })}
