@@ -502,7 +502,6 @@ const ScrollyTelling = () => {
           onEnter: () => {
             setEnableMapInteractions(true);
             scrollIndicator.removeAttribute("data-animate");
-            console.log(scrollIndicator);
           },
           onLeaveBack: () => {
             setEnableMapInteractions(false);
@@ -551,6 +550,22 @@ const ScrollyTelling = () => {
       })
       .to(
         "#scroll-indicator",
+        {
+          autoAlpha: 0,
+          duration: 0.3,
+        },
+        0,
+      )
+      .to(
+        "#toggle-country-prompt",
+        {
+          autoAlpha: 0,
+          duration: 0.3,
+        },
+        0,
+      )
+      .to(
+        "#hover-country-prompt",
         {
           autoAlpha: 0,
           duration: 0.3,
@@ -1008,6 +1023,22 @@ const ScrollyTelling = () => {
       // )
       .to(
         "#size-controls",
+        {
+          autoAlpha: 1,
+          duration: 0.2,
+        },
+        0.8,
+      )
+      .to(
+        "#toggle-country-prompt",
+        {
+          autoAlpha: 1,
+          duration: 0.2,
+        },
+        0.8,
+      )
+      .to(
+        "#hover-country-prompt",
         {
           autoAlpha: 1,
           duration: 0.2,

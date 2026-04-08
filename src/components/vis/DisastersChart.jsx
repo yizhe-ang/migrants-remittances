@@ -43,6 +43,12 @@ const DisastersChart = () => {
       ref={parentRef}
       className="flex flex-col h-[95vh] w-screen max-w-[800px] pb-5 relative pt-5"
     >
+      <div
+        className="absolute top-10 left-18 text-lg font-bold"
+        id="beeswarm-title"
+      >
+        Disaster occurrences over time
+      </div>
       {disasters &&
         disastersImpactsByMonth &&
         disastersRadiusScale &&

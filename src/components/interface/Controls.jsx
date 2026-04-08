@@ -42,6 +42,7 @@ const Controls = () => {
           <AnimatePresence>
             {showHoverCountryPrompt && (
               <motion.div
+                id="hover-country-prompt"
                 className="absolute right-5 top-40 font-cursive w-60 text-shadow-lg/20 text-shadow-stone-900 text-sm"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -83,6 +84,7 @@ const Controls = () => {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
+                  id="toggle-country-prompt"
                 >
                   Toggle between countries sending or receiving money
                   <MousePointerClick className="animate-bounce absolute top-0 left-0 -translate-y-[80%] translate-x-[-100%]" />
@@ -132,6 +134,7 @@ const Controls = () => {
             <AnimatePresence>
               {showToggleValuesPrompt && (
                 <motion.div
+                  id="toggle-values-prompt"
                   className="absolute right-0 top-12 font-cursive w-35 text-shadow-lg/20 text-shadow-stone-900 text-sm"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}

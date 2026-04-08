@@ -307,7 +307,7 @@ const Steps = () => {
       </Step>
 
       <Step id="step-14" className="">
-        <H>Remittances respond differently to type of disaster</H>
+        <H>Remittances respond differently to disaster types</H>
         <P>
           We estimate that the disaster-induced flow of international
           remittances between 2010 and 2019 amounted to around 332 billion USD,
