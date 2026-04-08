@@ -4,41 +4,71 @@ import CountryToggle from "./CountryToggle";
 import { Toggle } from "@/components/ui/toggle";
 import CurvedArrow from "./CurvedArrow";
 import colors from "tailwindcss/colors";
+import { AnimatePresence, motion } from "motion/react";
+import { MousePointerClick } from "lucide-react";
 
 const Controls = () => {
   const pointsValue = useRoomStore((state) => state.pointsValue);
   const setPointsValue = useRoomStore((state) => state.setPointsValue);
-  const colorPointsBy = useRoomStore((state) => state.colorPointsBy);
-  const setColorPointsBy = useRoomStore((state) => state.setColorPointsBy);
 
   const incomeColorScale = useRoomStore((state) => state.incomeColorScale);
-  const remFromColorScale = useRoomStore((state) => state.remFromColorScale);
-  const remToColorScale = useRoomStore((state) => state.remToColorScale);
+
+  const showToggleCountryPrompt = useRoomStore(
+    (state) => state.showToggleCountryPrompt,
+  );
+  const showHoverCountryPrompt = useRoomStore(
+    (state) => state.showHoverCountryPrompt,
+  );
 
   return (
     <div className="fixed inset-0 pointer-events-none pt-6">
       <div className="w-full max-w-4xl mx-auto px-10 py-4 pointer-events-auto flex flex-col gap-5">
         {/* Map title */}
         <div
-          className="flex gap-2 w-full text-lg pt-5 items-center"
+          className="flex gap-2 w-full text-lg pt-5 items-center relative"
           id="show-controls"
           style={{
             opacity: 0,
             visibility: "hidden",
           }}
         >
+          <AnimatePresence>
+            {true && (
+              <motion.div
+                className="absolute right-5 top-40 font-cursive w-60 text-shadow-lg/20 text-shadow-stone-900 text-sm"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                Hover over each country to see their remittance flows
+                <MousePointerClick className="absolute top-0 left-0 -translate-y-[70%] -translate-x-[90%]" />
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           <div className="font-bold">Money</div>
           <div className="relative">
             <CountryToggle />
-            <CurvedArrow
-              className="absolute top-5 left-0-"
-              end={{ x: -100, y: 0 }}
-              start={{ x: 0, y: 120 }}
-              curve={-80}
-              color={colors.stone[900]}
-              startLabel="Toggle between countries sending or receiving money"
-              startLabelClassName="font-cursive translate-x-6 text-shadow-lg/20 text-shadow-stone-900"
-            />
+
+            <AnimatePresence>
+              {showToggleCountryPrompt && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  <CurvedArrow
+                    className="absolute top-5 left-0"
+                    end={{ x: -100, y: 0 }}
+                    start={{ x: 0, y: 120 }}
+                    curve={-80}
+                    color={colors.stone[900]}
+                    startLabel="Toggle between countries sending or receiving money"
+                    startLabelClassName="font-cursive translate-x-6 text-shadow-lg/20 text-shadow-stone-900"
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
           <div>
             by{" "}

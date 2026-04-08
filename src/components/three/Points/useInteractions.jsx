@@ -20,6 +20,10 @@ export default function useInteractions({
   const pointsValue = useRoomStore((state) => state.pointsValue);
   const colorPointsBy = useRoomStore((state) => state.colorPointsBy);
 
+  const setShowHoverCountryPrompt = useRoomStore(
+    (state) => state.setShowHoverCountryPrompt,
+  );
+
   const flowsMap = useRoomStore((state) => state.flowsMap);
   const remRadiusScale = useRoomStore((state) => state.remRadiusScale);
   const propGdpRadiusScale = useRoomStore((state) => state.propGdpRadiusScale);
@@ -259,6 +263,8 @@ export default function useInteractions({
 
     // If hovered, change target values
     if (hoveredCountry) {
+      setShowHoverCountryPrompt(false);
+
       // FIXME: Don't handle propGdp first
       // if (pointsValue[0] === "propGdp") return;
 

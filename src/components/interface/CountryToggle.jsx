@@ -8,6 +8,9 @@ const CountryToggle = () => {
     (state) => state.setShowCountryPoints,
   );
   const enableControls = useRoomStore((state) => state.enableControls);
+  const setShowToggleCountryPrompt = useRoomStore(
+    (state) => state.setShowToggleCountryPrompt,
+  );
 
   return (
     <div
@@ -22,7 +25,11 @@ const CountryToggle = () => {
       <ToggleGroup
         value={showCountryPoints}
         onValueChange={(val) => {
-          if (val.length > 0) setShowCountryPoints(val);
+          if (val.length > 0) {
+            setShowCountryPoints(val);
+
+            setShowToggleCountryPrompt(false);
+          }
         }}
         style={{
           pointerEvents: enableControls ? "auto" : "none",

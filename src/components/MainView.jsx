@@ -55,11 +55,6 @@ const MainView = () => {
         <Three />
       </div>
 
-      <div className="fixed left-[60%] top-[15%] font-cursive w-60 text-shadow-lg/20 text-shadow-stone-900 text-sm">
-        Hover over each country to see their remittance flows
-        <MousePointerClick className="absolute top-0 left-0 -translate-y-[70%] -translate-x-[90%]" />
-      </div>
-
       {/* {!dashboardView && ( */}
       <>
         {/* Sankey income */}

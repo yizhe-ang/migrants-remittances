@@ -171,6 +171,22 @@ export const { roomStore, useRoomStore } = createRoomStore(
     dashboardView: false,
     setDashboardView: (dashboardView) => set({ dashboardView }),
 
+    showToggleCountryPrompt: true,
+    setShowToggleCountryPrompt: (showToggleCountryPrompt) =>
+      set((state) =>
+        state.showToggleCountryPrompt === showToggleCountryPrompt
+          ? state
+          : { showToggleCountryPrompt },
+      ),
+
+    showHoverCountryPrompt: true,
+    setShowHoverCountryPrompt: (showHoverCountryPrompt) =>
+      set((state) =>
+        state.showHoverCountryPrompt === showHoverCountryPrompt
+          ? state
+          : { showHoverCountryPrompt },
+      ),
+
     // Scene objects ###########################################################
     cameraControls: null,
     setCameraControls: (cameraControls) => set({ cameraControls }),
