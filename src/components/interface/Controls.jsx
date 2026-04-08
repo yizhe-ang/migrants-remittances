@@ -87,7 +87,7 @@ const Controls = () => {
             around the world in 2019
           </div>
           <div
-            className="flex gap-1"
+            className="flex gap-1 relative"
             id="size-controls"
             style={{
               opacity: 0,
@@ -108,6 +108,19 @@ const Controls = () => {
             >
               as % of GDP
             </Toggle>
+            <AnimatePresence>
+              {true && (
+                <motion.div
+                  className="absolute right-0 top-12 font-cursive w-35 text-shadow-lg/20 text-shadow-stone-900 text-sm"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  Toggle between absolute or % values
+                  <MousePointerClick className="absolute top-0 right-0 -translate-y-[80%] translate-x-[-30%]" />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
       </div>
