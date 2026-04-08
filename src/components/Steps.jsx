@@ -313,55 +313,11 @@ const Steps = () => {
       </Step>
 
       <Step id="step-13" className="pt-[100vh]">
-        <P>
-          Between 2010 and 2019, there were around 3,000 disaster events
-          connected to the occurrence of{" "}
-          <C
-            style={{
-              background: colorWithAlpha(disasterTypeColorScale, "flood", "60"),
-            }}
-          >
-            floods
-          </C>
-          ,{" "}
-          <C
-            style={{
-              background: colorWithAlpha(disasterTypeColorScale, "storm", "60"),
-            }}
-          >
-            storms
-          </C>
-          ,{" "}
-          <C
-            style={{
-              background: colorWithAlpha(
-                disasterTypeColorScale,
-                "earthquake",
-                "60",
-              ),
-            }}
-          >
-            earthquakes
-          </C>
-          , and{" "}
-          <C
-            style={{
-              background: colorWithAlpha(
-                disasterTypeColorScale,
-                "drought",
-                "60",
-              ),
-            }}
-          >
-            droughts
-          </C>
-          . These events affected a total of 1.74 billion people, the vast
-          majority of whom lived in lower-middle-income and upper-middle-income
-          countries.
-        </P>
+        <P></P>
       </Step>
 
       <Step id="step-14" className="">
+        <H>Remittances respond differently to type of disaster</H>
         <P>
           We estimate that the disaster-induced flow of international
           remittances between 2010 and 2019 amounted to around 332 billion USD,

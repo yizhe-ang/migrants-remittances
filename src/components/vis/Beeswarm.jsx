@@ -41,6 +41,8 @@ const Beeswarm = ({
     return ids;
   }, [c, dataDodged, gradientPrefix]);
 
+  // TODO: Annotate some data points, to also serve as a radius scale
+
   return (
     <>
       <ParentSize className="w-full h-full">

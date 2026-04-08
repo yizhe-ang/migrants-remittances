@@ -16,6 +16,7 @@ import RectDisastersNew from "./vis/RectDisastersNew";
 import { useEffect } from "react";
 import { useRoomStore } from "@/store";
 import Header from "./Header";
+import ScrollIndicator from "./ScrollIndicator";
 
 const MainView = () => {
   // const dashboardView = useRoomStore((state) => state.dashboardView);
@@ -43,6 +44,8 @@ const MainView = () => {
   return (
     <>
       <Header />
+
+      <ScrollIndicator />
 
       <div className="fixed inset-0 bg-stone-100 -z-10">
         <Three />

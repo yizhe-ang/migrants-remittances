@@ -117,12 +117,20 @@ const ScrollyTelling = () => {
       .timeline({
         scrollTrigger: {
           trigger: "#step-1",
-          start: "top center",
+          start: "top bottom",
           end: "bottom bottom",
           scrub: true,
         },
         duration: 1,
       })
+      .to(
+        "#scroll-indicator",
+        {
+          autoAlpha: 0,
+          duration: 0.1,
+        },
+        0,
+      )
       .to(
         cameraLookAt,
         {
