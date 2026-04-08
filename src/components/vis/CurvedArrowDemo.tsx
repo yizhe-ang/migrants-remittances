@@ -66,6 +66,22 @@ const examples = [
     ),
   },
   {
+    title: "Start label",
+    hint: "text anchored at the tail",
+    arrow: (
+      <CurvedArrow
+        start={{ x: 30, y: 92 }}
+        end={{ x: 244, y: 42 }}
+        curve={48}
+        color="#1d4ed8"
+        startLabel="Origin"
+        startLabelOffset={18}
+        startLabelAlign="start"
+        label="Route"
+      />
+    ),
+  },
+  {
     title: "Double headed",
     hint: "comparison or feedback loops",
     arrow: (

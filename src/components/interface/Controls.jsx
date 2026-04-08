@@ -3,6 +3,7 @@ import { LegendOrdinal } from "@visx/legend";
 import CountryToggle from "./CountryToggle";
 import { Toggle } from "@/components/ui/toggle";
 import CurvedArrow from "./CurvedArrow";
+import colors from "tailwindcss/colors";
 
 const Controls = () => {
   const pointsValue = useRoomStore((state) => state.pointsValue);
@@ -34,7 +35,9 @@ const Controls = () => {
               end={{ x: -100, y: 0 }}
               start={{ x: 0, y: 120 }}
               curve={-80}
-              color="#1f2937"
+              color={colors.stone[400]}
+              startLabel="Toggle between countries sending or receiving money"
+              startLabelClassName="font-cursive translate-x-6"
             />
           </div>
           <div>
