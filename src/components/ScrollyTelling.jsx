@@ -914,14 +914,14 @@ const ScrollyTelling = () => {
           onEnter: () => {
             setShowCountryPoints(["receiving"]);
             setPointsValue(["propGdp"]);
-            setEnableMapInteractions(true);
-            setEnableControls(true);
+            // setEnableMapInteractions(true);
+            // setEnableControls(true);
           },
           onLeaveBack: () => {
             setShowCountryPoints(["sending"]);
             setPointsValue(["absolute"]);
-            setEnableMapInteractions(false);
-            setEnableControls(false);
+            // setEnableMapInteractions(false);
+            // setEnableControls(false);
           },
         },
         duration: 1,
@@ -1014,6 +1014,24 @@ const ScrollyTelling = () => {
         },
         0.8,
       );
+
+    gsap.timeline({
+      scrollTrigger: {
+        trigger: "#step-12-1",
+        start: "top bottom",
+        end: "bottom bottom",
+        scrub: true,
+        onEnter: () => {
+          setEnableMapInteractions(true);
+          setEnableControls(true);
+        },
+        onLeaveBack: () => {
+          setEnableMapInteractions(false);
+          setEnableControls(false);
+        },
+      },
+      duration: 1,
+    });
 
     const beeswarms = gsap.utils.toArray(".beeswarm");
 

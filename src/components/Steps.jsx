@@ -300,6 +300,8 @@ const Steps = () => {
         </P>
       </Step>
 
+      <Step id="step-12-1" className="" empty></Step>
+
       <Step id="step-13" className="pt-[100vh]">
         <P></P>
       </Step>
