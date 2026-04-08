@@ -108,14 +108,13 @@ const Beeswarm = ({
                   )}
 
                   {/* TODO: This should be data-driven */}
+                  {/* To account for different screen-sizes etc. */}
                   <Annotation x={365.1} y={111} dx={100} dy={-50}>
                     <Connector />
                     <CircleSubject radius={65} />
-                    <HtmlLabel showBackground={false}
-                    >
+                    <HtmlLabel showBackground={false}>
                       <div className="px-2 text-xs w-50">
-                        <div>Drought, India</div>
-                        <div>Jan 2015</div>
+                        <div>Drought, India, Jan 2015</div>
                         <div>{numberFormat(330000000)} affected</div>
                       </div>
                     </HtmlLabel>
