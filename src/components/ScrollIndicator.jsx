@@ -6,10 +6,11 @@ const ScrollIndicator = () => {
     <div
       id="scroll-indicator"
       className={
-        "fixed bottom-20 left-1/2 -translate-x-1/2 flex flex-col items-center"
+        "group fixed bottom-20 left-1/2 -translate-x-1/2 flex flex-col items-center"
       }
+      data-animate={true}
     >
-      <Mouse className="data-animate:animate-bounce" data-animate={true} />
+      <Mouse className="group-data-animate:animate-bounce" />
       <div>scroll</div>
     </div>
   );

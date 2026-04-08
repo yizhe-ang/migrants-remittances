@@ -550,13 +550,21 @@ const ScrollyTelling = () => {
         duration: 1,
       })
       .to(
-        "#color-controls",
+        "#scroll-indicator",
         {
-          autoAlpha: 1,
+          autoAlpha: 0,
           duration: 0.3,
         },
         0,
-      );
+      )
+      // .to(
+      //   "#color-controls",
+      //   {
+      //     autoAlpha: 1,
+      //     duration: 0.3,
+      //   },
+      //   0,
+      // );
 
     // Populate sankey position buffer
     // Map each point to its corresponding Sankey node based on income group
