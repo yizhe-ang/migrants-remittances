@@ -48,7 +48,7 @@ const Controls = () => {
                 exit={{ opacity: 0 }}
               >
                 Hover over each country to see their remittance flows
-                <MousePointerClick className="absolute top-0 left-0 -translate-y-[70%] -translate-x-[90%]" />
+                <MousePointerClick className="animate-bounce absolute top-0 left-0 -translate-y-[70%] -translate-x-[90%]" />
               </motion.div>
             )}
           </AnimatePresence>
@@ -57,7 +57,7 @@ const Controls = () => {
           <div className="relative">
             <CountryToggle />
 
-            <AnimatePresence>
+            {/* <AnimatePresence>
               {showToggleCountryPrompt && (
                 <motion.div
                   initial={{ opacity: 0 }}
@@ -73,6 +73,19 @@ const Controls = () => {
                     startLabel="Toggle between countries sending or receiving money"
                     startLabelClassName="font-cursive translate-x-6 text-shadow-lg/20 text-shadow-stone-900"
                   />
+                </motion.div>
+              )}
+            </AnimatePresence> */}
+            <AnimatePresence>
+              {showToggleCountryPrompt && (
+                <motion.div
+                  className="absolute left-5 top-12 font-cursive w-35 text-shadow-lg/20 text-shadow-stone-900 text-sm"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  Toggle between countries sending or receiving money
+                  <MousePointerClick className="animate-bounce absolute top-0 left-0 -translate-y-[80%] translate-x-[-100%]" />
                 </motion.div>
               )}
             </AnimatePresence>
@@ -125,7 +138,7 @@ const Controls = () => {
                   exit={{ opacity: 0 }}
                 >
                   Toggle between absolute or % values
-                  <MousePointerClick className="absolute top-0 right-0 -translate-y-[80%] translate-x-[-30%]" />
+                  <MousePointerClick className="animate-bounce absolute top-0 right-0 -translate-y-[80%] translate-x-[-30%]" />
                 </motion.div>
               )}
             </AnimatePresence>
