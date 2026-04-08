@@ -20,6 +20,13 @@ const Controls = () => {
     (state) => state.showHoverCountryPrompt,
   );
 
+  const showToggleValuesPrompt = useRoomStore(
+    (state) => state.showToggleValuesPrompt,
+  );
+  const setShowToggleValuesPrompt = useRoomStore(
+    (state) => state.setShowToggleValuesPrompt,
+  );
+
   return (
     <div className="fixed inset-0 pointer-events-none pt-6">
       <div className="w-full max-w-4xl mx-auto px-10 py-4 pointer-events-auto flex flex-col gap-5">
@@ -103,13 +110,14 @@ const Controls = () => {
               "
               pressed={pointsValue[0] === "propGdp"}
               onPressedChange={(val) => {
+                setShowToggleValuesPrompt(false);
                 setPointsValue(val ? ["propGdp"] : ["absolute"]);
               }}
             >
               as % of GDP
             </Toggle>
             <AnimatePresence>
-              {true && (
+              {showToggleValuesPrompt && (
                 <motion.div
                   className="absolute right-0 top-12 font-cursive w-35 text-shadow-lg/20 text-shadow-stone-900 text-sm"
                   initial={{ opacity: 0 }}

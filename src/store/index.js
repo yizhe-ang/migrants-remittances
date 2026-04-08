@@ -187,6 +187,14 @@ export const { roomStore, useRoomStore } = createRoomStore(
           : { showHoverCountryPrompt },
       ),
 
+    showToggleValuesPrompt: true,
+    setShowToggleValuesPrompt: (showToggleValuesPrompt) =>
+      set((state) =>
+        state.showToggleValuesPrompt === showToggleValuesPrompt
+          ? state
+          : { showToggleValuesPrompt },
+      ),
+
     // Scene objects ###########################################################
     cameraControls: null,
     setCameraControls: (cameraControls) => set({ cameraControls }),

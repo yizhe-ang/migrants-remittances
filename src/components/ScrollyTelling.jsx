@@ -1015,23 +1015,32 @@ const ScrollyTelling = () => {
         0.8,
       );
 
-    gsap.timeline({
-      scrollTrigger: {
-        trigger: "#step-12-1",
-        start: "top bottom",
-        end: "bottom bottom",
-        scrub: true,
-        onEnter: () => {
-          setEnableMapInteractions(true);
-          setEnableControls(true);
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: "#step-12-1",
+          start: "top bottom",
+          end: "bottom bottom",
+          scrub: true,
+          onEnter: () => {
+            setEnableMapInteractions(true);
+            setEnableControls(true);
+          },
+          onLeaveBack: () => {
+            setEnableMapInteractions(false);
+            setEnableControls(false);
+          },
         },
-        onLeaveBack: () => {
-          setEnableMapInteractions(false);
-          setEnableControls(false);
+        duration: 1,
+      })
+      .to(
+        "#scroll-indicator",
+        {
+          autoAlpha: 1,
+          duration: 0.3,
         },
-      },
-      duration: 1,
-    });
+        0,
+      );
 
     const beeswarms = gsap.utils.toArray(".beeswarm");
 
@@ -1051,6 +1060,14 @@ const ScrollyTelling = () => {
         },
         duration: 1,
       })
+      .to(
+        "#scroll-indicator",
+        {
+          autoAlpha: 0,
+          duration: 0.3,
+        },
+        0,
+      )
       .to(
         "canvas",
         {
