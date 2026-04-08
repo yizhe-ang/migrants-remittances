@@ -114,6 +114,9 @@ export const { roomStore, useRoomStore } = createRoomStore(
     flowRadiusScale: null,
     setFlowRadiusScale: (scale) => set({ flowRadiusScale: scale }),
 
+    flowPropRadiusScale: null,
+    setFlowPropRadiusScale: (scale) => set({ flowPropRadiusScale: scale }),
+
     incomeColorScale: null,
     setIncomeColorScale: (scale) => set({ incomeColorScale: scale }),
 

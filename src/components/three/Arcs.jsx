@@ -34,6 +34,8 @@ const TUBE_RADIAL_SEGMENTS = 4;
 const HEIGHT_FACTOR = 0.5;
 const TILT_FACTOR = 0.2;
 
+// TODO: Figure out the scales, width etc.
+
 const Arcs = (props) => {
   const hoveredCountry = useRoomStore((state) => state.hoveredCountry);
   const progressAnimRef = useRef(null);
@@ -47,7 +49,9 @@ const Arcs = (props) => {
     (state) => state.enableMapInteractions,
   );
   const pointsValue = useRoomStore((state) => state.pointsValue);
-  const countriesAggStatsMap = useRoomStore((state) => state.countriesAggStatsMap);
+  const countriesAggStatsMap = useRoomStore(
+    (state) => state.countriesAggStatsMap,
+  );
 
   const setArcs = useRoomStore((state) => state.setArcs);
 
@@ -163,13 +167,13 @@ const Arcs = (props) => {
       // const edgeWidth = float(0.12);
       // const edgeWidth = float(0.5);
       // const taper = smoothstep(float(0), edgeWidth, arcT)
-        // .mul(smoothstep(float(1), float(1).sub(edgeWidth), arcT));
+      // .mul(smoothstep(float(1), float(1).sub(edgeWidth), arcT));
       // const taperFactor = mix(taper, float(1), u.windStreaksT);
       const scaled = vec3(
         positionLocal.x.mul(dist),
         positionLocal.y.mul(dist),
         // positionLocal.z.mul(effectiveRadius).mul(taperFactor),
-        positionLocal.z.mul(effectiveRadius)
+        positionLocal.z.mul(effectiveRadius),
       );
 
       // Rotate around Z axis so X aligns with source→target direction
@@ -248,8 +252,12 @@ const Arcs = (props) => {
       });
 
       // Base color: solid windColor or per-instance income colors gradient, controlled by windGradientT
-      const srcColorInst = incomeColors.element(srcTypeBuffer.element(instanceIndex).toInt().clamp(0, 3));
-      const tgtColorInst = incomeColors.element(tgtTypeBuffer.element(instanceIndex).toInt().clamp(0, 3));
+      const srcColorInst = incomeColors.element(
+        srcTypeBuffer.element(instanceIndex).toInt().clamp(0, 3),
+      );
+      const tgtColorInst = incomeColors.element(
+        tgtTypeBuffer.element(instanceIndex).toInt().clamp(0, 3),
+      );
       const baseColor = mix(
         u.windColor,
         mix(tgtColorInst, srcColorInst, t),
@@ -295,7 +303,14 @@ const Arcs = (props) => {
 
   // Imperatively update buffers when selectedFlows changes (year change)
   useLayoutEffect(() => {
-    if (!flows || !mesh || !buffers || !countriesGeoMap || !flowRadiusScale || !countriesAggStatsMap)
+    if (
+      !flows ||
+      !mesh ||
+      !buffers ||
+      !countriesGeoMap ||
+      !flowRadiusScale ||
+      !countriesAggStatsMap
+    )
       return;
 
     const srcArr = buffers.src.array;
@@ -305,7 +320,12 @@ const Arcs = (props) => {
     const srcTypeArr = buffers.srcType.array;
     const tgtTypeArr = buffers.tgtType.array;
 
-    const incomeGroups = ["High income", "Upper middle income", "Lower middle income", "Low income"];
+    const incomeGroups = [
+      "High income",
+      "Upper middle income",
+      "Lower middle income",
+      "Low income",
+    ];
 
     let count = 0;
     for (const flow of flows) {
@@ -341,7 +361,14 @@ const Arcs = (props) => {
     buffers.progress.needsUpdate = true;
     buffers.srcType.needsUpdate = true;
     buffers.tgtType.needsUpdate = true;
-  }, [flows, mesh, buffers, countriesGeoMap, flowRadiusScale, countriesAggStatsMap]);
+  }, [
+    flows,
+    mesh,
+    buffers,
+    countriesGeoMap,
+    flowRadiusScale,
+    countriesAggStatsMap,
+  ]);
 
   useEffect(() => {
     if (!u || !buffers || !flowsMap) return;

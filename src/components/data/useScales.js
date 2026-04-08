@@ -35,6 +35,9 @@ export default function useScales() {
     (state) => state.setRemFromColorScale,
   );
   const setFlowRadiusScale = useRoomStore((state) => state.setFlowRadiusScale);
+  const setFlowPropRadiusScale = useRoomStore(
+    (state) => state.setFlowPropRadiusScale,
+  );
   const setIncomeColorScale = useRoomStore(
     (state) => state.setIncomeColorScale,
   );
@@ -122,11 +125,25 @@ export default function useScales() {
   useEffect(() => {
     if (!flowsPerYear) return;
 
+    // FIXME: Is scaleSqrt good?
     const flowRadiusScale = scaleSqrt()
       .domain([0, max(flowsPerYear, (d) => d.sim_remittances_with)])
       .range([0, 1000]);
 
+    const flowPropRadiusScale = scaleSqrt()
+      .domain([
+        0,
+        max(
+          flowsPerYear.flatMap((d) => [
+            d.origin_prop_of_gdp,
+            d.destination_prop_of_gdp,
+          ]),
+        ),
+      ])
+      .range([0, 1000]);
+
     setFlowRadiusScale(flowRadiusScale);
+    setFlowPropRadiusScale(flowPropRadiusScale);
   }, [flowsPerYear]);
 
   // Income color scale
@@ -138,8 +155,8 @@ export default function useScales() {
         "Lower middle income",
         "Low income",
       ])
-      .range(["#7fc97f", "#beaed4", "#fdc086", schemeSet3[11]])
-      // .range(["#7fc97f", "#beaed4", "#fdc086", schemeTableau10[8]])
+      .range(["#7fc97f", "#beaed4", "#fdc086", schemeSet3[11]]);
+    // .range(["#7fc97f", "#beaed4", "#fdc086", schemeTableau10[8]])
 
     setIncomeColorScale(incomeColorScale);
   }, []);
