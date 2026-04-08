@@ -17,6 +17,7 @@ import { useEffect } from "react";
 import { useRoomStore } from "@/store";
 import Header from "./Header";
 import ScrollIndicator from "./ScrollIndicator";
+import CurvedArrowDemo from "@/components/vis/CurvedArrowDemo";
 
 const MainView = () => {
   // const dashboardView = useRoomStore((state) => state.dashboardView);
@@ -46,6 +47,8 @@ const MainView = () => {
       <Header />
 
       <ScrollIndicator />
+
+      {/* <CurvedArrowDemo /> */}
 
       <div className="fixed inset-0 bg-stone-100 -z-10">
         <Three />

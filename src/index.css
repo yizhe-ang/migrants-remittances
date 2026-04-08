@@ -85,6 +85,7 @@
   /* --font-sans: "Inter Variable", sans-serif; */
   --font-sans: "neue-haas-grotesk-text", sans-serif;
   --font-display: "neue-haas-grotesk-display", sans-serif;
+  --font-cursive: "Playwrite NZ Basic", cursive;
 
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);

@@ -1,12 +1,8 @@
 import { useRoomStore } from "@/store";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { LegendOrdinal } from "@visx/legend";
-import { AnimatePresence, motion } from "motion/react";
-import DateSlider from "@/components/interface/DateSlider";
 import CountryToggle from "./CountryToggle";
 import { Toggle } from "@/components/ui/toggle";
-import A from "./A";
-import About from "./About";
+import CurvedArrow from "./CurvedArrow";
 
 const Controls = () => {
   const pointsValue = useRoomStore((state) => state.pointsValue);
@@ -31,7 +27,16 @@ const Controls = () => {
           }}
         >
           <div className="font-bold">Money</div>
-          <CountryToggle />
+          <div className="relative">
+            <CountryToggle />
+            <CurvedArrow
+              className="absolute top-5 left-0"
+              end={{ x: -100, y: 0 }}
+              start={{ x: 0, y: 120 }}
+              curve={-80}
+              color="#1f2937"
+            />
+          </div>
           <div>
             by{" "}
             <div className="relative inline-block">
