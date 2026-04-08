@@ -18,6 +18,7 @@ import { useRoomStore } from "@/store";
 import Header from "./Header";
 import ScrollIndicator from "./ScrollIndicator";
 import CurvedArrowDemo from "@/components/vis/CurvedArrowDemo";
+import { MousePointerClick } from "lucide-react";
 
 const MainView = () => {
   // const dashboardView = useRoomStore((state) => state.dashboardView);
@@ -52,6 +53,11 @@ const MainView = () => {
 
       <div className="fixed inset-0 bg-stone-100 -z-10">
         <Three />
+      </div>
+
+      <div className="fixed left-[60%] top-[15%] font-cursive w-60 text-shadow-lg/20 text-shadow-stone-900 text-sm">
+        Hover over each country to see their remittance flows
+        <MousePointerClick className="absolute top-0 left-0 -translate-y-[70%] -translate-x-[90%]" />
       </div>
 
       {/* {!dashboardView && ( */}

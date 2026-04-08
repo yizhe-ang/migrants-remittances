@@ -502,7 +502,7 @@ const ScrollyTelling = () => {
           onEnter: () => {
             setEnableMapInteractions(true);
             scrollIndicator.removeAttribute("data-animate");
-            console.log(scrollIndicator)
+            console.log(scrollIndicator);
           },
           onLeaveBack: () => {
             setEnableMapInteractions(false);
@@ -556,15 +556,15 @@ const ScrollyTelling = () => {
           duration: 0.3,
         },
         0,
-      )
-      // .to(
-      //   "#color-controls",
-      //   {
-      //     autoAlpha: 1,
-      //     duration: 0.3,
-      //   },
-      //   0,
-      // );
+      );
+    // .to(
+    //   "#color-controls",
+    //   {
+    //     autoAlpha: 1,
+    //     duration: 0.3,
+    //   },
+    //   0,
+    // );
 
     // Populate sankey position buffer
     // Map each point to its corresponding Sankey node based on income group
@@ -667,14 +667,14 @@ const ScrollyTelling = () => {
         },
         0,
       )
-      .to(
-        "#color-controls",
-        {
-          autoAlpha: 0,
-          duration: 0.1,
-        },
-        0,
-      )
+      // .to(
+      //   "#color-controls",
+      //   {
+      //     autoAlpha: 0,
+      //     duration: 0.1,
+      //   },
+      //   0,
+      // )
       .to(
         "#sankey-income-all",
         {
@@ -998,14 +998,14 @@ const ScrollyTelling = () => {
         },
         0.8,
       )
-      .to(
-        "#color-controls",
-        {
-          autoAlpha: 1,
-          duration: 0.2,
-        },
-        0.8,
-      )
+      // .to(
+      //   "#color-controls",
+      //   {
+      //     autoAlpha: 1,
+      //     duration: 0.2,
+      //   },
+      //   0.8,
+      // )
       .to(
         "#size-controls",
         {
@@ -1049,14 +1049,14 @@ const ScrollyTelling = () => {
         },
         0,
       )
-      .to(
-        "#color-controls",
-        {
-          autoAlpha: 0,
-          duration: 0.2,
-        },
-        0,
-      )
+      // .to(
+      //   "#color-controls",
+      //   {
+      //     autoAlpha: 0,
+      //     duration: 0.2,
+      //   },
+      //   0,
+      // )
       .to(
         "#size-controls",
         {
@@ -1479,14 +1479,14 @@ const ScrollyTelling = () => {
         },
         0,
       )
-      .to(
-        "#color-controls",
-        {
-          autoAlpha: 1,
-          duration: 0.3,
-        },
-        0,
-      )
+      // .to(
+      //   "#color-controls",
+      //   {
+      //     autoAlpha: 1,
+      //     duration: 0.3,
+      //   },
+      //   0,
+      // )
       .to(
         "#size-controls",
         {
