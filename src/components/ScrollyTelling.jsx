@@ -490,6 +490,8 @@ const ScrollyTelling = () => {
         0.7,
       );
 
+    const scrollIndicator = document.querySelector("#scroll-indicator");
+
     gsap
       .timeline({
         scrollTrigger: {
@@ -499,15 +501,26 @@ const ScrollyTelling = () => {
           scrub: true,
           onEnter: () => {
             setEnableMapInteractions(true);
+            scrollIndicator.removeAttribute("data-animate");
+            console.log(scrollIndicator)
           },
           onLeaveBack: () => {
             setEnableMapInteractions(false);
+            scrollIndicator.setAttribute("data-animate", true);
           },
         },
         duration: 1,
       })
       .to(
         "#show-controls",
+        {
+          autoAlpha: 1,
+          duration: 0.3,
+        },
+        0,
+      )
+      .to(
+        "#scroll-indicator",
         {
           autoAlpha: 1,
           duration: 0.3,
