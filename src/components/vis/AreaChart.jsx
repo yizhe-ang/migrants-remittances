@@ -32,7 +32,11 @@ const AreaChart = ({
   const gradientId = `area-gradient-${data[0].disaster_type}`;
 
   return (
-    <svg width={width} height={height} className="area-chart">
+    <svg
+      width={width}
+      height={height}
+      className="area-chart pointer-events-none"
+    >
       <defs>
         <linearGradient
           id={gradientId}

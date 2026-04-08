@@ -14,6 +14,8 @@ export const moneyFormat = new Intl.NumberFormat("en-US", {
 
 export const percentFormat = format(".3p");
 
+export const numberFormat = (n) => n.toLocaleString("en-US");
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }

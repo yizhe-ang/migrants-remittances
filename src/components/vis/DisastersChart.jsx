@@ -44,7 +44,7 @@ const DisastersChart = () => {
       className="flex flex-col h-[95vh] w-screen max-w-[800px] pb-5 relative pt-5 pointer-events-auto"
     >
       <div
-        className="absolute top-10 left-18 text-lg font-bold"
+        className="absolute top-10 left-15 text-lg font-bold"
         id="beeswarm-title"
       >
         Disaster occurrences over time
@@ -68,7 +68,7 @@ const DisastersChart = () => {
                 marginLeft={marginLeft}
                 showXAxis={i === 3}
               />
-              <ParentSize className="absolute top-0 left-0 w-full h-full">
+              <ParentSize className="absolute top-0 left-0 w-full h-full pointer-events-none">
                 {({ width, height }) => (
                   <AreaChart
                     key={`area-${key}`}
@@ -91,7 +91,7 @@ const DisastersChart = () => {
             </div>
           );
         })}
-      <ParentSize className="absolute w-full h-full max-h-[500px] top-1/2 left-0 -translate-y-1/2">
+      <ParentSize className="absolute w-full h-full max-h-[500px] top-1/2 left-0 -translate-y-1/2 pointer-events-none">
         {({ width, height }) => (
           <RectDisastersNew
             width={width}

@@ -1,6 +1,14 @@
 import { useId, useMemo } from "react";
 import { AxisBottom } from "@visx/axis";
 import { ParentSize } from "@visx/responsive";
+import {
+  Label,
+  HtmlLabel,
+  Connector,
+  CircleSubject,
+  Annotation,
+} from "@visx/annotation";
+import { numberFormat } from "@/lib/utils";
 
 const Beeswarm = ({
   data,
@@ -74,7 +82,7 @@ const Beeswarm = ({
                           r={d.r}
                           fill={`url(#${gradientIds.get(color)})`}
                           onClick={() => {
-                            console.log(d)
+                            console.log(d);
                           }}
                         />
                       );
@@ -98,6 +106,20 @@ const Beeswarm = ({
                       })}
                     />
                   )}
+
+                  {/* TODO: This should be data-driven */}
+                  <Annotation x={365.1} y={111} dx={100} dy={-50}>
+                    <Connector />
+                    <CircleSubject radius={65} />
+                    <HtmlLabel showBackground={false}
+                    >
+                      <div className="px-2 text-xs w-50">
+                        <div>Drought, India</div>
+                        <div>Jan 2015</div>
+                        <div>{numberFormat(330000000)} affected</div>
+                      </div>
+                    </HtmlLabel>
+                  </Annotation>
                 </g>
               </svg>
             )}
