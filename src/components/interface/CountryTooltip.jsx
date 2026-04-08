@@ -3,6 +3,10 @@ import { useRoomStore } from "@/store";
 import { AnimatePresence, motion } from "motion/react";
 import { moneyFormat, percentFormat } from "@/lib/utils";
 
+function propGdpAccessor(d, type) {
+  return type === "origin" ? d.destination_prop_of_gdp : d.origin_prop_of_gdp;
+}
+
 const CountryTooltip = () => {
   const ref = useRef(null);
   const hoveredCountry = useRoomStore((state) => state.hoveredCountry);
@@ -48,7 +52,7 @@ const CountryTooltip = () => {
         if (pointsValue[0] === "absolute") {
           return d2.sim_remittances_with - d1.sim_remittances_with;
         } else {
-          return d2.sim_remittances_with - d1.sim_remittances_with;
+          return propGdpAccessor(d2, type) - propGdpAccessor(d1, type);
         }
       });
 
@@ -102,55 +106,61 @@ const CountryTooltip = () => {
               {hoveredCountry.type === "origin" ? "from" : "to"}
             </div>
 
-            {pointsValue[0] !== "propGdp" && (
-              <div className="mt-2 grid w-fit grid-cols-[auto_auto] gap-x-4">
-                {flows?.map((d, i) => {
-                  const income =
-                    hoveredCountry.type === "origin"
-                      ? points.dataIndex.get("destination").get(d.destination)
-                          .income
-                      : points.dataIndex.get("origin").get(d.origin).income;
+            {/* {pointsValue[0] !== "propGdp" && ( */}
+            <div className="mt-2 grid w-fit grid-cols-[auto_auto] gap-x-4">
+              {flows?.map((d, i) => {
+                console.log(flows);
 
-                  return (
-                    <div key={i} className="contents">
-                      <div
-                        className="flex gap-1"
-                        style={
-                          {
-                            // background: incomeColorScale
-                            //   ? `${incomeColorScale(d.income)}80`
-                            //   : "transparent",
-                            // background: "gray",
-                          }
+                const income =
+                  hoveredCountry.type === "origin"
+                    ? points.dataIndex.get("destination").get(d.destination)
+                        .income
+                    : points.dataIndex.get("origin").get(d.origin).income;
+
+                return (
+                  <div key={i} className="contents">
+                    <div
+                      className="flex gap-1"
+                      style={
+                        {
+                          // background: incomeColorScale
+                          //   ? `${incomeColorScale(d.income)}80`
+                          //   : "transparent",
+                          // background: "gray",
                         }
+                      }
+                    >
+                      <span className="text-stone-400 tabular-nums">
+                        {i + 1}.
+                      </span>{" "}
+                      <span
+                        // className="px-1 py-0 w-full inline-block"
+                        className="px-1 py-0 inline-block font-medium rounded"
+                        style={{
+                          // background: "gray",
+                          background: `${incomeColorScale(income)}80`,
+                          // background: incomeColorScale
+                          //     ? `${incomeColorScale(income)}80`
+                          //     : "transparent",
+                        }}
                       >
-                        <span className="text-stone-400 tabular-nums">
-                          {i + 1}.
-                        </span>{" "}
-                        <span
-                          // className="px-1 py-0 w-full inline-block"
-                          className="px-1 py-0 inline-block font-medium rounded"
-                          style={{
-                            // background: "gray",
-                            background: `${incomeColorScale(income)}80`,
-                            // background: incomeColorScale
-                            //     ? `${incomeColorScale(income)}80`
-                            //     : "transparent",
-                          }}
-                        >
-                          {hoveredCountry.type === "origin"
-                            ? d.destination
-                            : d.origin}{" "}
-                        </span>
-                      </div>
-                      <div className="font-medium text-stone-950 tabular-nums text-right">
-                        {moneyFormat.format(accessor(d))}
-                      </div>
+                        {hoveredCountry.type === "origin"
+                          ? d.destination
+                          : d.origin}{" "}
+                      </span>
                     </div>
-                  );
-                })}
-              </div>
-            )}
+                    <div className="font-medium text-stone-950 tabular-nums text-right">
+                      {pointsValue[0] === "absolute"
+                        ? moneyFormat.format(accessor(d))
+                        : percentFormat(
+                            propGdpAccessor(d, hoveredCountry.type),
+                          )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            {/* )} */}
           </motion.div>
         )}
       </AnimatePresence>
