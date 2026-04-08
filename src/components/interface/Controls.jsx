@@ -31,13 +31,13 @@ const Controls = () => {
           <div className="relative">
             <CountryToggle />
             <CurvedArrow
-              className="absolute top-5 left-0"
+              className="absolute top-5 left-0-"
               end={{ x: -100, y: 0 }}
               start={{ x: 0, y: 120 }}
               curve={-80}
-              color={colors.stone[400]}
+              color={colors.stone[900]}
               startLabel="Toggle between countries sending or receiving money"
-              startLabelClassName="font-cursive translate-x-6"
+              startLabelClassName="font-cursive translate-x-6 text-shadow-lg/20 text-shadow-stone-900"
             />
           </div>
           <div>
