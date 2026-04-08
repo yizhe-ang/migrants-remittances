@@ -19,7 +19,7 @@ const Controls = () => {
   const remToColorScale = useRoomStore((state) => state.remToColorScale);
 
   return (
-    <div className="fixed inset-0 pointer-events-none">
+    <div className="fixed inset-0 pointer-events-none pt-6">
       <div className="w-full max-w-4xl mx-auto px-10 py-4 pointer-events-auto flex flex-col gap-5">
         {/* Map title */}
         <div

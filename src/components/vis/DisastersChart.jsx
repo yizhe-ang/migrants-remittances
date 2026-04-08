@@ -41,7 +41,7 @@ const DisastersChart = () => {
   return (
     <div
       ref={parentRef}
-      className="flex flex-col h-[95vh] w-screen max-w-[800px] pb-5 relative"
+      className="flex flex-col h-[95vh] w-screen max-w-[800px] pb-5 relative pt-5"
     >
       {disasters &&
         disastersImpactsByMonth &&
