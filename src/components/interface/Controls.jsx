@@ -5,6 +5,8 @@ import { AnimatePresence, motion } from "motion/react";
 import DateSlider from "@/components/interface/DateSlider";
 import CountryToggle from "./CountryToggle";
 import { Toggle } from "@/components/ui/toggle";
+import A from "./A";
+import About from "./About";
 
 const Controls = () => {
   const pointsValue = useRoomStore((state) => state.pointsValue);

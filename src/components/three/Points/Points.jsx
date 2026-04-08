@@ -210,8 +210,7 @@ const Points = ({ ...props }) => {
     // Indirection: look up original data index from sorted draw order
     const originalIndex = sortBuffer.element(instanceIndex);
 
-    // TODO: Should have a different style when showing prop-of-gdp?
-    // Give it the polka-dot pattern
+    // TODO: Should have a texture; screen-based?
     material.colorNode = Fn(() => {
       const pointType = typeBuffer.element(originalIndex);
 
