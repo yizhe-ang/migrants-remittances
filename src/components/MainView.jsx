@@ -98,6 +98,11 @@ const MainView = () => {
           </div> */}
         </div>
 
+        <div
+          className="fixed inset-0 pointer-events-none bg-stone-50/30 backdrop-blur-sm invisible"
+          id="overlay"
+        ></div>
+
         <Steps />
 
         <ScrollyTelling />

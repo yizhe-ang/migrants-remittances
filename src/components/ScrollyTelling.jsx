@@ -357,35 +357,14 @@ const ScrollyTelling = () => {
           scrub: true,
         },
       })
-      // Hide all points
-      // .to(
-      //   fromUsaPoints,
-      //   {
-      //     sizeT: 0,
-      //     duration: 0.2,
-      //     onUpdate: () => {
-      //       fromUsaPointsIndices.forEach((idx, i) => {
-      //         points.buffers.size.buffer.array[idx] =
-      //           fromUsaPoints[i].sizeT * points.buffers.size.og[idx];
-      //       });
-      //       points.buffers.size.buffer.needsUpdate = true;
-      //     },
-      //   },
-      //   0.2,
-      // )
-      // .to(
-      //   usaPoint,
-      //   {
-      //     size: 0,
-      //     duration: 0.2,
-      //     onUpdate: () => {
-      //       points.buffers.size.buffer.array[destinationUsaPointIdx] =
-      //         usaPoint.size;
-      //       points.buffers.size.buffer.needsUpdate = true;
-      //     },
-      //   },
-      //   0.2,
-      // )
+      .from(
+        "#overlay",
+        {
+          autoAlpha: 0,
+          duration: 0.3,
+        },
+        0,
+      )
       .to(
         arcs.u.opacity,
         {
@@ -393,6 +372,30 @@ const ScrollyTelling = () => {
           duration: 0.1,
         },
         0.1,
+      )
+      .from(
+        "#step-4",
+        {
+          opacity: 0,
+          duration: 0.3,
+        },
+        0.2,
+      )
+      .to(
+        "#step-4",
+        {
+          opacity: 0,
+          duration: 0.3,
+        },
+        0.7,
+      )
+      .to(
+        "#overlay",
+        {
+          autoAlpha: 0,
+          duration: 0.2,
+        },
+        0.8,
       );
 
     gsap
@@ -761,6 +764,13 @@ const ScrollyTelling = () => {
           duration: 0.2,
         },
         0.8,
+      )
+      .to(
+        {},
+        {
+          duration: 0.5,
+        },
+        1,
       );
 
     // Show upper-middle income sankey
@@ -848,7 +858,14 @@ const ScrollyTelling = () => {
           duration: 0.2,
         },
         0.35,
-      );
+      )
+      // .to(
+      //   {},
+      //   {
+      //     duration: 0.5,
+      //   },
+      //   1,
+      // );
 
     gsap
       .timeline({

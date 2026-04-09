@@ -179,7 +179,7 @@ const Steps = () => {
         </P>
       </Step>
 
-      <Step id="step-4">
+      <Step id="step-4" childrenClassName="border-none bg-transparent">
         <P>
           These remittances - estimated in 2023 to total about $857 billion –
           now dwarf official development aid and represent a lifeline for many
@@ -469,7 +469,13 @@ const Steps = () => {
   );
 };
 
-const Step = ({ className, empty = false, children, ...props }) => {
+const Step = ({
+  className,
+  empty = false,
+  childrenClassName,
+  children,
+  ...props
+}) => {
   return (
     <div
       className={cn(
@@ -479,7 +485,12 @@ const Step = ({ className, empty = false, children, ...props }) => {
       {...props}
     >
       {!empty && (
-        <div className="px-4 py-4 bg-white rounded-sm border-2 border-stone-300 flex flex-col gap-4 pointer-events-auto">
+        <div
+          className={cn(
+            "px-4 py-4 bg-white rounded-sm border-2 border-stone-300 flex flex-col gap-4 pointer-events-auto",
+            childrenClassName,
+          )}
+        >
           {children}
         </div>
       )}
