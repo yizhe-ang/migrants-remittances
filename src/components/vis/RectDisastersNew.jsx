@@ -3,6 +3,7 @@ import { index, max, mean, rollup, sum } from "d3-array";
 import { useRoomStore } from "@/store";
 import { scaleLinear } from "d3-scale";
 import { AxisBottom, AxisLeft } from "@visx/axis";
+import { HtmlLabel, Connector, Annotation } from "@visx/annotation";
 
 const marginBottom = 30;
 const marginTop = 20;
@@ -177,6 +178,30 @@ const RectDisastersNew = ({ width, height, marginLeft, marginRight }) => {
                 // fontWeight: 600,
               })}
             />
+
+            <g id="rect-annotation">
+              <Annotation
+                x={xScale(1_400_000_000)}
+                y={yScale(10)}
+                dx={-width * 0.12}
+                dy={-height * 0.15}
+              >
+                <Connector />
+                {/* <CircleSubject radius={d.r} /> */}
+                <HtmlLabel
+                  showBackground={false}
+                  showAnchorLine={false}
+                  className="pointer-events-auto"
+                  containerStyle={{ pointerEvents: "auto" }}
+                >
+                  <div className="px-2 text-xs w-40 py-2">
+                    Droughts affected a total of{" "}
+                    <span className="font-bold">676 million</span> people from
+                    2010 to 2019
+                  </div>
+                </HtmlLabel>
+              </Annotation>
+            </g>
           </g>
         </svg>
       )}

@@ -1,13 +1,7 @@
 import { useId, useMemo } from "react";
 import { AxisBottom } from "@visx/axis";
 import { ParentSize } from "@visx/responsive";
-import {
-  Label,
-  HtmlLabel,
-  Connector,
-  CircleSubject,
-  Annotation,
-} from "@visx/annotation";
+import { HtmlLabel, Connector, Annotation } from "@visx/annotation";
 import { numberFormat } from "@/lib/utils";
 
 const Beeswarm = ({

@@ -49,6 +49,12 @@ const DisastersChart = () => {
       >
         Disaster occurrences over time
       </div>
+      <div
+        className="absolute top-10 left-15 z-10 pointer-events-auto text-lg font-bold"
+        id="area-title"
+      >
+        Remittances-induced by each disaster type over time
+      </div>
 
       {disasters &&
         disastersImpactsByMonth &&

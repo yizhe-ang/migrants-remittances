@@ -1,6 +1,7 @@
 import { cn } from "@sqlrooms/ui";
 import { useRoomStore } from "../store";
 import { MousePointer } from "lucide-react";
+import { numberFormat } from "@/lib/utils";
 
 const Steps = () => {
   const incomeColorScale = useRoomStore((state) => state.incomeColorScale);
@@ -363,35 +364,90 @@ const Steps = () => {
           equivalent to 5.46% of total remittance flows.
         </P>
         <P>
-          Floods moved the largest amount of remittances, with a total of 138
-          billion USD. This can be attributed to the combination of size and
-          frequency of flooding events with their occurrence in countries with
-          large international diasporas, such as China, Pakistan and Bangladesh.
+          <C
+            className="text-white font-normal"
+            style={{
+              background: colorWithAlpha(disasterTypeColorScale, "flood", "FF"),
+            }}
+          >
+            Floods
+          </C>{" "}
+          moved the largest amount of remittances, with a total of 138 billion
+          USD. This can be attributed to the combination of size and frequency
+          of flooding events with their occurrence in countries with large
+          international diasporas, such as China, Pakistan and Bangladesh.
         </P>
       </Step>
 
-      <Step id="step-15-1" className="pt-[100vh]">
-        <P></P>
-      </Step>
+      <Step id="step-15-1" className="pt-[50vh]" empty></Step>
 
-      <Step id="step-15" className="">
+      <Step id="step-15" className="pt-[0vh]">
+        <P>Not all disasters generate the same remittances mobilisation.</P>
         <P>
-          Not all disasters generate the same remittances mobilisation.
-          Earthquakes accounted for the largest relative amount, with 542 USD
-          per affected person. Earthquakes are sudden and cause large impacts,
-          and have occurred in countries with diasporas that could be activated.
-        </P>
-        <P>
-          On the contrary, droughts caused the smallest relative impact, with
-          142 USD per affected person. Droughts are a creeping phenomenon: their
-          effects accumulate slowly, and they last for prolonged periods of
-          time. For this reason, migrant diasporas cannot sustain sending higher
-          amounts of remittances for events that last long periods.
+          Aggregating all disasters within each type, we can see that the scale
+          of impact of each disaster type varies significantly. For example,{" "}
+          <C
+            className="text-white font-normal"
+            style={{
+              background: colorWithAlpha(
+                disasterTypeColorScale,
+                "drought",
+                "FF",
+              ),
+            }}
+          >
+            droughts
+          </C>{" "}
+          impact an enormous number of people in absolute amounts, for a total
+          of 676 million people affected from 2010 to 2019.
         </P>
       </Step>
 
       <Step id="step-15-2" className="">
-        <P></P>
+        <P>
+          However, in terms of the amount of remittances mobilized for each
+          single person,{" "}
+          <C
+            className="text-white font-normal"
+            style={{
+              background: colorWithAlpha(
+                disasterTypeColorScale,
+                "earthquake",
+                "FF",
+              ),
+            }}
+          >
+            earthquakes
+          </C>{" "}
+          accounted for the largest amount, with $542 per affected person.
+          Earthquakes are sudden and cause large impacts, and have occurred in
+          countries with diasporas that could be activated.
+        </P>
+        <P>
+          On the contrary,{" "}
+          <C
+            className="text-white font-normal"
+            style={{
+              background: colorWithAlpha(
+                disasterTypeColorScale,
+                "drought",
+                "FF",
+              ),
+            }}
+          >
+            droughts
+          </C>{" "}
+          caused the smallest relative impact, with $142 per affected person.
+          Droughts are a creeping phenomenon: their effects accumulate slowly,
+          and they last for prolonged periods of time. For this reason, migrant
+          diasporas cannot sustain sending higher amounts of remittances for
+          events that last long periods.
+        </P>
+      </Step>
+
+      <Step id="step-16-1" className="">
+        <P className="">
+        </P>
       </Step>
 
       <Step id="step-16" className="">

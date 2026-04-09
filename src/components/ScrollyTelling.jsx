@@ -1217,6 +1217,24 @@ const ScrollyTelling = () => {
         duration: 1,
       })
       .to(
+        "#beeswarm-title",
+        {
+          autoAlpha: 0,
+          x: "+=20",
+          duration: 0.3,
+        },
+        0,
+      )
+      .from(
+        "#area-title",
+        {
+          autoAlpha: 0,
+          x: "-=20",
+          duration: 0.3,
+        },
+        0,
+      )
+      .to(
         ".beeswarm-annotations",
         {
           autoAlpha: 0,
@@ -1294,6 +1312,14 @@ const ScrollyTelling = () => {
         },
         duration: 1,
       })
+      .to(
+        "#area-title",
+        {
+          autoAlpha: 0,
+          duration: 0.2,
+        },
+        0,
+      )
       .to(
         ".area-chart",
         {
@@ -1486,14 +1512,31 @@ const ScrollyTelling = () => {
       );
     });
 
-    tl15.from(
-      ".rect-disasters-axis-bottom",
-      {
-        autoAlpha: 0,
-        duration: 0.3,
-      },
-      0.2,
-    );
+    tl15
+      .from(
+        ".rect-disasters-axis-bottom",
+        {
+          autoAlpha: 0,
+          duration: 0.2,
+        },
+        0.3,
+      )
+      .from(
+        "#rect-annotation",
+        {
+          autoAlpha: 0,
+          duration: 0.2,
+        },
+        0.3,
+      )
+      .to(
+        ".rect-disasters-axis-bottom",
+        {
+          autoAlpha: 1,
+          duration: 0.5,
+        },
+        0.5,
+      );
 
     const tl152 = gsap.timeline({
       scrollTrigger: {
@@ -1519,15 +1562,32 @@ const ScrollyTelling = () => {
       );
     });
 
-    tl152.from(
-      ".rect-disasters-axis-left",
-      {
-        autoAlpha: 0,
-        y: 50,
-        duration: 0.3,
-      },
-      0,
-    );
+    tl152
+      .from(
+        ".rect-disasters-axis-left",
+        {
+          autoAlpha: 0,
+          y: 50,
+          duration: 0.3,
+        },
+        0,
+      )
+      .to(
+        "#rect-annotation",
+        {
+          autoAlpha: 0,
+          duration: 0.2,
+        },
+        0,
+      )
+      .to(
+        "#rect-annotation",
+        {
+          autoAlpha: 0,
+          duration: 0.8,
+        },
+        0.2,
+      );
 
     gsap
       .timeline({
