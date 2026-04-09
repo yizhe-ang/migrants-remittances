@@ -16,6 +16,7 @@ const Beeswarm = ({
   xScale,
   r,
   c,
+  type,
   marginTop = 20,
   marginRight = 20,
   marginBottom = 30,
@@ -83,6 +84,7 @@ const Beeswarm = ({
                           fill={`url(#${gradientIds.get(color)})`}
                           onClick={() => {
                             console.log(d);
+                            console.log(i);
                           }}
                         />
                       );
@@ -109,16 +111,39 @@ const Beeswarm = ({
 
                   {/* TODO: This should be data-driven */}
                   {/* To account for different screen-sizes etc. */}
-                  <Annotation x={365.1} y={111} dx={100} dy={-50}>
-                    <Connector />
-                    <CircleSubject radius={65} />
-                    <HtmlLabel showBackground={false}>
-                      <div className="px-2 text-xs w-50">
-                        <div>Drought, India, Jan 2015</div>
-                        <div>{numberFormat(330000000)} affected</div>
-                      </div>
-                    </HtmlLabel>
-                  </Annotation>
+                  {type === "drought" && (
+                    <AnnotationCustom
+                      d={dataDodged[82]}
+                      dx={width * 0.13}
+                      dy={-height * 0.25}
+                      height={height}
+                      marginBottom={marginBottom}
+                      padding={padding}
+                      marginTop={marginTop}
+                    ></AnnotationCustom>
+                  )}
+                  {type === "earthquake" && (
+                    <AnnotationCustom
+                      d={dataDodged[3]}
+                      dx={width * 0.13}
+                      dy={-height * 0.25}
+                      height={height}
+                      marginBottom={marginBottom}
+                      padding={padding}
+                      marginTop={marginTop}
+                    ></AnnotationCustom>
+                  )}
+                  {type === "flood" && (
+                    <AnnotationCustom
+                      d={dataDodged[1004]}
+                      dx={-width * 0.1}
+                      dy={-height * 0.4}
+                      height={height}
+                      marginBottom={marginBottom}
+                      padding={padding}
+                      marginTop={marginTop}
+                    ></AnnotationCustom>
+                  )}
                 </g>
               </svg>
             )}
@@ -126,6 +151,50 @@ const Beeswarm = ({
         )}
       </ParentSize>
     </>
+  );
+};
+
+function formatMonthYearUTC(date) {
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(date);
+}
+
+const AnnotationCustom = ({
+  d,
+  height,
+  marginBottom,
+  padding,
+  marginTop,
+  children,
+  dx,
+  dy,
+}) => {
+  return (
+    <g className="disaster-annotation">
+      <Annotation
+        x={d.x}
+        y={height - marginBottom - padding - d.y - marginTop}
+        dx={dx}
+        dy={dy}
+      >
+        <Connector />
+        {/* <CircleSubject radius={d.r} /> */}
+        <HtmlLabel showBackground={false} showAnchorLine={false}>
+          <div className="px-2 text-xs w-max py-2">
+            <div className="capitalize">
+              {d.data.disaster_type}, {d.data.country},{" "}
+              {formatMonthYearUTC(d.data.start_date)}
+            </div>
+            <div className="font-bold">
+              {numberFormat(d.data.affected)} affected
+            </div>
+          </div>
+        </HtmlLabel>
+      </Annotation>
+    </g>
   );
 };
 

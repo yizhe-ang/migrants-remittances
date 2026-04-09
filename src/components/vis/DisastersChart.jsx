@@ -57,6 +57,7 @@ const DisastersChart = () => {
           return (
             <div className="relative w-full h-full" key={key}>
               <Beeswarm
+                type={key}
                 data={disasters.filter((d) => d.disaster_type === key)}
                 xAccessor={(d) => d["start_date"]}
                 xScale={xScale}
