@@ -4,6 +4,7 @@ import { useRoomStore } from "@/store";
 import { scaleLinear } from "d3-scale";
 import { AxisBottom, AxisLeft } from "@visx/axis";
 import { HtmlLabel, Connector, Annotation } from "@visx/annotation";
+import { Text } from "@visx/text";
 
 const marginBottom = 30;
 const marginTop = 20;
@@ -145,39 +146,56 @@ const RectDisastersNew = ({ width, height, marginLeft, marginRight }) => {
               })}
             </g>
 
-            <AxisLeft
-              axisClassName="rect-disasters-axis-left"
-              hideAxisLine
-              hideTicks
-              scale={yScale}
-              tickFormat={(t) => "$" + t}
-              tickLabelProps={() => ({
-                dx: "-0.25em",
-                dy: "0.25em",
-                fill: "#222",
-                fontSize: 10,
-                textAnchor: "end",
-                // your additions
-                // stroke: "white",
-                // strokeWidth: 3,
-                // paintOrder: "stroke",
-              })}
-            />
-            <AxisBottom
-              axisClassName="rect-disasters-axis-bottom"
-              // hideTicks
-              hideAxisLine
-              top={height - marginBottom - marginTop}
-              scale={xScale}
-              tickFormat={(t) => fmt.format(t)}
-              tickLabelProps={() => ({
-                dy: "0.25em",
-                fill: "#222",
-                fontSize: 10,
-                textAnchor: "middle",
-                // fontWeight: 600,
-              })}
-            />
+            <g className="rect-disasters-axis-left">
+              <Text className="text-xs" width={100} x={-35} y={-20}>
+                Remittance-induced per person ↑
+              </Text>
+              <AxisLeft
+                // axisClassName="rect-disasters-axis-left"
+                hideAxisLine
+                // hideTicks
+                scale={yScale}
+                tickFormat={(t) => "$" + t}
+                tickLabelProps={() => ({
+                  dx: "-0.25em",
+                  dy: "0.25em",
+                  fill: "#222",
+                  fontSize: 10,
+                  textAnchor: "end",
+                  // your additions
+                  // stroke: "white",
+                  // strokeWidth: 3,
+                  // paintOrder: "stroke",
+                })}
+              />
+            </g>
+            <g className="rect-disasters-axis-bottom">
+              <Text
+                className="text-xs"
+                x={width - marginLeft - marginRight}
+                y={height - marginTop - marginBottom}
+                textAnchor="end"
+                verticalAnchor="start"
+                dy={30}
+              >
+                Total affected →
+              </Text>
+              <AxisBottom
+                // axisClassName="rect-disasters-axis-bottom"
+                // hideTicks
+                hideAxisLine
+                top={height - marginBottom - marginTop}
+                scale={xScale}
+                tickFormat={(t) => fmt.format(t)}
+                tickLabelProps={() => ({
+                  dy: "0.25em",
+                  fill: "#222",
+                  fontSize: 10,
+                  textAnchor: "middle",
+                  // fontWeight: 600,
+                })}
+              />
+            </g>
 
             <g id="rect-annotation">
               <Annotation

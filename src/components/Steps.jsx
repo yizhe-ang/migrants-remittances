@@ -446,8 +446,7 @@ const Steps = () => {
       </Step>
 
       <Step id="step-16-1" className="">
-        <P className="">
-        </P>
+        <P className=""></P>
       </Step>
 
       <Step id="step-16" className="">
