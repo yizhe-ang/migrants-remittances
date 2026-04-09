@@ -10,15 +10,16 @@ import {
 const About = () => {
   return (
     <Dialog>
-      <DialogTrigger className="font-bold text-xl cursor-pointer">About</DialogTrigger>
-      <DialogContent>
+      <DialogTrigger className="font-bold text-xl cursor-pointer">
+        About
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
-          <DialogTitle>Are you absolutely sure?</DialogTitle>
-          <DialogDescription>
-            This action cannot be undone. This will permanently delete your
-            account and remove your data from our servers.
-          </DialogDescription>
+          <DialogTitle className="text-lg">
+            Global Remittances and Disasters Atlas
+          </DialogTitle>
         </DialogHeader>
+        <div>This project...</div>
       </DialogContent>
     </Dialog>
   );

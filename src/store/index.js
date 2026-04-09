@@ -195,6 +195,9 @@ export const { roomStore, useRoomStore } = createRoomStore(
           : { showToggleValuesPrompt },
       ),
 
+    openAbout: false,
+    setOpenAbout: (openAbout) => set({ openAbout }),
+
     // Scene objects ###########################################################
     cameraControls: null,
     setCameraControls: (cameraControls) => set({ cameraControls }),
