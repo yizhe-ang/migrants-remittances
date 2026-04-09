@@ -945,6 +945,12 @@ const ScrollyTelling = () => {
         0.4,
       );
 
+    const textProps = {
+      fontWeight: 700,
+      fontSize: 15,
+      fill: "black",
+    };
+
     gsap
       .timeline({
         scrollTrigger: {
@@ -959,6 +965,7 @@ const ScrollyTelling = () => {
         {
           text: "0.2% of GDP",
           duration: 0.2,
+          ...textProps,
         },
         0,
       )
@@ -967,6 +974,7 @@ const ScrollyTelling = () => {
         {
           text: "1.1% of GDP",
           duration: 0.2,
+          ...textProps,
         },
         0.1,
       )
@@ -975,6 +983,7 @@ const ScrollyTelling = () => {
         {
           text: "5.1% of GDP",
           duration: 0.2,
+          ...textProps,
         },
         0.3,
       )
@@ -983,6 +992,7 @@ const ScrollyTelling = () => {
         {
           text: "9.8% of GDP",
           duration: 0.2,
+          ...textProps,
         },
         0.4,
       )

@@ -295,9 +295,13 @@ const Steps = () => {
       <Step id="step-12" className="pt-[100vh]">
         <P>
           Many countries receive remittances in amounts that are large relative
-          to their gross domestic product (GDP). In over thirty countries,
-          remittances account for more than 10% of the value of their entire
-          economies.
+          to their{" "}
+          {/* <C className="bg-[repeating-linear-gradient(-45deg,#f5f5f4_0px,#f5f5f4_2px,#d6d3d1_4px,#d6d3d1_8px)]"> */}
+          <C className="bg-[repeating-linear-gradient(-45deg,#f5f5f4_0px,#f5f5f4_2px,#dea19399_4px,#dea19399_8px)]">
+            gross domestic product (GDP)
+          </C>
+          . In over thirty countries, remittances account for more than 10% of
+          the value of their entire economies.
         </P>
       </Step>
 
