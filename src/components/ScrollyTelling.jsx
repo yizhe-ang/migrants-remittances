@@ -272,6 +272,13 @@ const ScrollyTelling = () => {
           },
         },
         0.6,
+      )
+      .to(
+        {},
+        {
+          duration: 1,
+        },
+        1,
       );
     // Fade out arcs opacity before step-4
     // .to(arcs.u.opacity, { value: 0, duration: 0.01 }, 0.99);
@@ -322,7 +329,7 @@ const ScrollyTelling = () => {
           value: 0.7,
           duration: 0.1,
         },
-        0.2,
+        0.1,
       )
       .to(
         disasterPoints.u.dateT,
@@ -330,7 +337,7 @@ const ScrollyTelling = () => {
           value: 1,
           duration: 0.8,
         },
-        0.2,
+        0.1,
       )
       .to(
         disasterPoints.u.opacity,
@@ -338,7 +345,7 @@ const ScrollyTelling = () => {
           value: 0,
           duration: 0.1,
         },
-        0.9,
+        0.8,
       );
 
     gsap

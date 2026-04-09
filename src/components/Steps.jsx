@@ -44,7 +44,7 @@ const Steps = () => {
         </P>
       </Step>
 
-      <Step id="step-3">
+      <Step id="step-3" className="pt-[50vh]">
         <P>
           Billions of dollars flow back across borders, as these migrants also
           regularly{" "}
@@ -58,7 +58,7 @@ const Steps = () => {
         </P>
         <P>
           The US, for example, has consistently been the top remittance-sending
-          country, with a total outflow of $232.1 billion in 2019. As a{" "}
+          country, with a total outflow of $86 billion in 2023. As a{" "}
           <C
             style={{
               background: colorWithAlpha(incomeColorScale, "High income", "80"),
@@ -372,9 +372,9 @@ const Steps = () => {
           >
             Floods
           </C>{" "}
-          moved the largest amount of remittances, with a total of 138 billion
-          USD. This can be attributed to the combination of size and frequency
-          of flooding events with their occurrence in countries with large
+          moved the largest amount of remittances, with a total of $138 billion.
+          This can be attributed to the combination of size and frequency of
+          flooding events with their occurrence in countries with large
           international diasporas, such as China, Pakistan and Bangladesh.
         </P>
       </Step>

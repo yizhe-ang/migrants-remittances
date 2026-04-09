@@ -40,11 +40,43 @@ const About = () => {
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-5">
-          <div>This research project...</div>
+          <div className="space-y-3">
+            <p>This research project...</p>
+
+            {/* <p>Link to dataset?</p> */}
+            {/* The research includes informal outflows? */}
+          </div>
 
           <Separator className="" />
 
-          <div>Data sources etc.</div>
+          <div className="space-y-3">
+            <p>
+              Latest figures for international migration are taken from the
+              United Nations’{" "}
+              <A href="https://www.un.org/development/desa/pd/content/international-migrant-stock">
+                International Migrant Stock
+              </A>
+              .
+            </p>
+            <p>
+              Latest figures for international remittance flows are taken from
+              the World Bank's{" "}
+              <A href="https://www.worldbank.org/en/topic/migration/brief/remittances-knomad">
+                Global Knowledge Partnership on Migration and Development
+                (KNOMAD)
+              </A>
+              .
+            </p>
+            <p>
+              We obtain information about disasters’ occurrence and impact from
+              the{" "}
+              <A href="https://doc.emdat.be/">
+                Emergency Events Database (EMDAT)
+              </A>
+              . For the scope of our analysis we concentrate on floods, storms,
+              earthquakes, and droughts.
+            </p>
+          </div>
 
           <Separator className="" />
 
