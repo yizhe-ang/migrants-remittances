@@ -29,7 +29,7 @@ const Controls = () => {
 
   return (
     <div className="fixed inset-0 pointer-events-none pt-6">
-      <div className="w-full max-w-4xl mx-auto px-10 py-4 pointer-events-auto flex flex-col gap-5">
+      <div className="w-full max-w-4xl mx-auto px-10 py-4 pointer-events-none flex flex-col gap-5">
         {/* Map title */}
         <div
           className="flex gap-2 w-full text-lg pt-5 items-center relative"
@@ -43,7 +43,7 @@ const Controls = () => {
             {showHoverCountryPrompt && (
               <motion.div
                 id="hover-country-prompt"
-                className="absolute right-5 top-40 font-cursive w-60 text-shadow-lg/20 text-shadow-stone-900 text-sm"
+                className="absolute right-5 top-40 w-60 pointer-events-none font-cursive text-sm text-shadow-lg/20 text-shadow-stone-900"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -55,7 +55,7 @@ const Controls = () => {
           </AnimatePresence>
 
           <div className="font-bold">Money</div>
-          <div className="relative">
+          <div className="relative pointer-events-auto">
             <CountryToggle />
 
             {/* <AnimatePresence>
@@ -80,7 +80,7 @@ const Controls = () => {
             <AnimatePresence>
               {showToggleCountryPrompt && (
                 <motion.div
-                  className="absolute left-5 top-12 font-cursive w-35 text-shadow-lg/20 text-shadow-stone-900 text-sm"
+                  className="absolute left-5 top-12 w-35 pointer-events-none font-cursive text-sm text-shadow-lg/20 text-shadow-stone-900"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
@@ -109,7 +109,7 @@ const Controls = () => {
             around the world in 2019
           </div>
           <div
-            className="flex gap-1 relative"
+            className="relative flex gap-1 pointer-events-auto"
             id="size-controls"
             style={{
               opacity: 0,
@@ -135,7 +135,7 @@ const Controls = () => {
               {showToggleValuesPrompt && (
                 <motion.div
                   id="toggle-values-prompt"
-                  className="absolute right-0 top-12 font-cursive w-35 text-shadow-lg/20 text-shadow-stone-900 text-sm"
+                  className="absolute top-12 right-0 w-35 pointer-events-none font-cursive text-sm text-shadow-lg/20 text-shadow-stone-900"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}

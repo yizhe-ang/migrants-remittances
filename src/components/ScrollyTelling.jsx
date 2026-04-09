@@ -114,6 +114,9 @@ const ScrollyTelling = () => {
         autoAlpha: 0,
       },
     );
+    gsap.set("#sankey-income, #beeswarm-disasters", {
+      pointerEvents: "none",
+    });
 
     gsap
       .timeline({
@@ -711,6 +714,14 @@ const ScrollyTelling = () => {
         0,
       )
       .to(
+        "#sankey-income",
+        {
+          pointerEvents: "auto",
+          duration: 0,
+        },
+        0,
+      )
+      .to(
         points.u.sankeyT,
         {
           value: 1,
@@ -1077,6 +1088,14 @@ const ScrollyTelling = () => {
         0.4,
       )
       .to(
+        "#sankey-income",
+        {
+          pointerEvents: "none",
+          duration: 0,
+        },
+        0.4,
+      )
+      .to(
         "canvas",
         {
           opacity: 1,
@@ -1223,6 +1242,14 @@ const ScrollyTelling = () => {
         {
           autoAlpha: 1,
           duration: 0.1,
+        },
+        0,
+      )
+      .to(
+        "#beeswarm-disasters",
+        {
+          pointerEvents: "auto",
+          duration: 0,
         },
         0,
       )

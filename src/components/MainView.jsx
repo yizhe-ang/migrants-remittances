@@ -59,7 +59,7 @@ const MainView = () => {
       <>
         {/* Sankey income */}
         <div className="fixed inset-0 grid place-items-center pointer-events-none">
-          <div className="h-[80vh] w-screen max-w-[800px]">
+          <div className="h-[80vh] w-screen max-w-[800px] pointer-events-none">
             <ParentSize>
               {({ height, width }) => (
                 <SankeyIncome width={width} height={height} />
@@ -70,7 +70,7 @@ const MainView = () => {
 
         <div className="fixed inset-0 grid place-items-center pointer-events-none">
           <div
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-auto"
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
             style={{ opacity: 0, visibility: "hidden" }}
             id="beeswarm-disasters"
           >

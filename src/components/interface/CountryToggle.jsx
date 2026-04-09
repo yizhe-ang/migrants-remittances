@@ -15,7 +15,6 @@ const CountryToggle = () => {
   return (
     <div
       className="flex flex-col gap-1"
-      id="show-controls"
       // style={{
       //   opacity: 0,
       //   visibility: "hidden",
