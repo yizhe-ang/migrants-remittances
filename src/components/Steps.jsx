@@ -303,7 +303,56 @@ const Steps = () => {
       <Step id="step-12-1" className="" empty></Step>
 
       <Step id="step-13" className="pt-[100vh]">
-        <P></P>
+        <P>
+          Between 2010 and 2019, there were around 3,000 disaster events
+          connected to the occurrence of{" "}
+          <C
+            className="text-white font-normal"
+            style={{
+              background: colorWithAlpha(disasterTypeColorScale, "flood", "FF"),
+            }}
+          >
+            floods
+          </C>
+          ,{" "}
+          <C
+            className="text-white font-normal"
+            style={{
+              background: colorWithAlpha(disasterTypeColorScale, "storm", "FF"),
+            }}
+          >
+            storms
+          </C>
+          ,{" "}
+          <C
+            className="text-white font-normal"
+            style={{
+              background: colorWithAlpha(
+                disasterTypeColorScale,
+                "earthquake",
+                "FF",
+              ),
+            }}
+          >
+            earthquakes
+          </C>
+          , and{" "}
+          <C
+            className="text-white font-normal"
+            style={{
+              background: colorWithAlpha(
+                disasterTypeColorScale,
+                "drought",
+                "FF",
+              ),
+            }}
+          >
+            droughts
+          </C>
+          . These events affected a total of 1.74 billion people, the vast
+          majority of whom lived in lower-middle-income and upper-middle-income
+          countries.
+        </P>
       </Step>
 
       <Step id="step-14" className="">

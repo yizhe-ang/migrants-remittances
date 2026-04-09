@@ -44,7 +44,7 @@ const DisastersChart = () => {
       className="flex flex-col h-[95vh] w-screen max-w-[800px] pb-5 relative pt-5 pointer-events-auto"
     >
       <div
-        className="absolute top-10 left-15 text-lg font-bold"
+        className="absolute top-10 left-15 z-10 pointer-events-auto text-lg font-bold"
         id="beeswarm-title"
       >
         Disaster occurrences over time

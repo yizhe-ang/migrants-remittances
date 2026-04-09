@@ -1157,6 +1157,14 @@ const ScrollyTelling = () => {
           },
         },
         0.1,
+      )
+      .from(
+        ".beeswarm-annotations",
+        {
+          autoAlpha: 0,
+          duration: 0.3,
+        },
+        0.5,
       );
 
     beeswarms.forEach((b, i) => {
@@ -1209,6 +1217,14 @@ const ScrollyTelling = () => {
         duration: 1,
       })
       .to(
+        ".beeswarm-annotations",
+        {
+          autoAlpha: 0,
+          duration: 0.3,
+        },
+        0,
+      )
+      .to(
         ".beeswarm-circles",
         {
           opacity: 0.4,
@@ -1219,7 +1235,7 @@ const ScrollyTelling = () => {
       .from(
         ".disaster-area-axis",
         {
-          opacity: 0,
+          autoAlpha: 0,
           duration: 0.3,
         },
         0,
@@ -1236,7 +1252,7 @@ const ScrollyTelling = () => {
       .from(
         ".disaster-area",
         {
-          opacity: 0,
+          autoAlpha: 0,
           duration: 0.3,
         },
         0.4,
@@ -1281,7 +1297,7 @@ const ScrollyTelling = () => {
       .to(
         ".area-chart",
         {
-          opacity: 0,
+          autoAlpha: 0,
           duration: 0.2,
         },
         0,
@@ -1289,7 +1305,7 @@ const ScrollyTelling = () => {
       .to(
         ".beeswarm-axis",
         {
-          opacity: 0,
+          autoAlpha: 0,
           duration: 0.2,
         },
         0,

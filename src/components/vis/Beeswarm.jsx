@@ -168,12 +168,11 @@ const AnnotationCustom = ({
   marginBottom,
   padding,
   marginTop,
-  children,
   dx,
   dy,
 }) => {
   return (
-    <g className="disaster-annotation">
+    <g className="beeswarm-annotations">
       <Annotation
         x={d.x}
         y={height - marginBottom - padding - d.y - marginTop}
@@ -182,7 +181,12 @@ const AnnotationCustom = ({
       >
         <Connector />
         {/* <CircleSubject radius={d.r} /> */}
-        <HtmlLabel showBackground={false} showAnchorLine={false}>
+        <HtmlLabel
+          showBackground={false}
+          showAnchorLine={false}
+          className="pointer-events-auto"
+          containerStyle={{ pointerEvents: "auto" }}
+        >
           <div className="px-2 text-xs w-max py-2">
             <div className="capitalize">
               {d.data.disaster_type}, {d.data.country},{" "}
