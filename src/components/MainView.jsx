@@ -59,7 +59,7 @@ const MainView = () => {
       <>
         {/* Sankey income */}
         <div className="fixed inset-0 grid place-items-center pointer-events-none">
-          <div className="h-[80vh] w-screen max-w-[700px]">
+          <div className="h-[80vh] w-screen max-w-[800px]">
             <ParentSize>
               {({ height, width }) => (
                 <SankeyIncome width={width} height={height} />

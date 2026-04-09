@@ -8,10 +8,12 @@ import DrawSVGPlugin from "gsap/DrawSVGPlugin";
 import { screenToWorld } from "@/lib/utils";
 import { rollup, sum } from "d3-array";
 import { scaleLinear } from "d3-scale";
+import TextPlugin from "gsap/TextPlugin";
 
 gsap.registerPlugin(useGSAP);
 gsap.registerPlugin(ScrollTrigger);
 gsap.registerPlugin(DrawSVGPlugin);
+gsap.registerPlugin(TextPlugin);
 
 const linkHorizontal = sankeyLinkHorizontal();
 
@@ -858,14 +860,14 @@ const ScrollyTelling = () => {
           duration: 0.2,
         },
         0.35,
-      )
-      // .to(
-      //   {},
-      //   {
-      //     duration: 0.5,
-      //   },
-      //   1,
-      // );
+      );
+    // .to(
+    //   {},
+    //   {
+    //     duration: 0.5,
+    //   },
+    //   1,
+    // );
 
     gsap
       .timeline({
@@ -942,6 +944,49 @@ const ScrollyTelling = () => {
         },
         0.4,
       );
+
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: "#step-11",
+          start: "top bottom",
+          end: "bottom bottom",
+          scrub: true,
+        },
+      })
+      .to(
+        "#sankey-income-all-alt .node-text-High-income > text:nth-of-type(2)",
+        {
+          text: "0.2% of GDP",
+          duration: 0.2,
+        },
+        0,
+      )
+      .to(
+        "#sankey-income-all-alt .node-text-Upper-middle-income > text:nth-of-type(2)",
+        {
+          text: "1.1% of GDP",
+          duration: 0.2,
+        },
+        0.1,
+      )
+      .to(
+        "#sankey-income-all-alt .node-text-Lower-middle-income > text:nth-of-type(2)",
+        {
+          text: "5.1% of GDP",
+          duration: 0.2,
+        },
+        0.3,
+      )
+      .to(
+        "#sankey-income-all-alt .node-text-Low-income > text:nth-of-type(2)",
+        {
+          text: "9.8% of GDP",
+          duration: 0.2,
+        },
+        0.4,
+      )
+      .to({}, { duration: 0.1 }, 0.9);
 
     gsap
       .timeline({
