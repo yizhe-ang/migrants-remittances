@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 const A = ({ className, children, ...props }) => {
   return (
     <a
-      className={cn("cursor-pointer", className)}
+      className={cn("cursor-pointer underline decoration-2", className)}
       target="_blank"
       rel="noopener noreferrer"
       {...props}
