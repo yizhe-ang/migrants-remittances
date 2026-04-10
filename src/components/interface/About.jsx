@@ -33,7 +33,7 @@ const About = () => {
       <DialogTrigger className="font-bold text-xl cursor-pointer">
         About
       </DialogTrigger>
-      <DialogContent className="sm:max-w-2xl">
+      <DialogContent className="sm:max-w-2xl" initialFocus={false}>
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">
             Global Remittances and Disasters Atlas
