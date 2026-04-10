@@ -158,6 +158,8 @@ export default function useScales() {
       .range(["#7fc97f", "#beaed4", "#fdc086", schemeSet3[11]]);
     // .range(["#7fc97f", "#beaed4", "#fdc086", schemeTableau10[8]])
 
+    console.log(schemeSet3[11])
+
     setIncomeColorScale(incomeColorScale);
   }, []);
 

@@ -19,6 +19,7 @@ const percentBadgeWidth = 110;
 const percentBadgeHeight = 24;
 const percentBadgeOffsetX = 6;
 const percentBadgeOffsetY = 12;
+const stripeBaseColor = "#f5f5f4";
 
 const Sankey = ({
   graph,
@@ -42,7 +43,6 @@ const Sankey = ({
 
   const xMax = width - margin.left - margin.right;
   const yMax = height - margin.top - margin.bottom;
-  const percentPatternId = `gdp-stripes-${props.id}`;
 
   const nodesIndex = useMemo(() => {
     return index(graph.nodes, (d) => d.id);
@@ -61,16 +61,24 @@ const Sankey = ({
         <g transform={`translate(${margin.left}, ${margin.top})`}>
           {/* Gradient definitions for links */}
           <defs>
-            <pattern
-              id={percentPatternId}
-              patternUnits="userSpaceOnUse"
-              width="8"
-              height="8"
-              patternTransform="rotate(45)"
-            >
-              <rect width="8" height="8" fill="#f5f5f4" />
-              <rect width="4" height="8" fill="#dea193cc" />
-            </pattern>
+            {Object.keys(percents).map((income) => {
+              const patternId = `gdp-stripes-${props.id}-${income.replace(/ /g, "-")}`;
+              const stripeColor = `${colorScale(income)}CC`;
+
+              return (
+                <pattern
+                  key={patternId}
+                  id={patternId}
+                  patternUnits="userSpaceOnUse"
+                  width="8"
+                  height="8"
+                  patternTransform="rotate(45)"
+                >
+                  <rect width="8" height="8" fill={stripeBaseColor} />
+                  <rect width="4" height="8" fill={stripeColor} />
+                </pattern>
+              );
+            })}
             {graph.links.map((link, i) => {
               const sourceColor = colorScale(link.source.id.slice(0, -1));
               const targetColor = colorScale(link.target.id);
@@ -209,6 +217,7 @@ const Sankey = ({
             <g className="sankey-percent-texts font-bold">
               {Object.entries(percents).map(([income, percent], i) => {
                 const d = nodesIndex.get(income);
+                const patternId = `gdp-stripes-${props.id}-${income.replace(/ /g, "-")}`;
                 const x = d.x0 < width / 2 ? d.x1 - 35 : d.x0 + 34;
                 const y = (d.y1 + d.y0) / 2;
 
@@ -220,7 +229,7 @@ const Sankey = ({
                       width={percentBadgeWidth}
                       height={percentBadgeHeight}
                       rx={4}
-                      fill={`url(#${percentPatternId})`}
+                      fill={`url(#${patternId})`}
                     />
                     <text dy="0.35em">
                       <tspan className="font-bold">{percent}%</tspan> of GDP

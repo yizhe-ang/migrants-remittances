@@ -200,11 +200,11 @@ const Steps = () => {
 
       <Step id="step-6" className="h-[200vh]">
         <P>
-          To answer these questions and more, researchers from the Complexity Science Hub built a novel
-          model to better understand the dynamics and structure of remittance
-          flows, simulating and providing new estimates of remittance flows
-          between countries from 2010 to 2019 at a monthly level, including
-          remittances in response to disasters.
+          To answer these questions and more, researchers from the Complexity
+          Science Hub built a novel model to better understand the dynamics and
+          structure of remittance flows, simulating and providing new estimates
+          of remittance flows between countries from 2010 to 2019 at a monthly
+          level, including remittances in response to disasters.
         </P>
       </Step>
 
@@ -288,7 +288,11 @@ const Steps = () => {
           >
             low-income countries
           </C>
-          , they contribute about 9.8% of their combined GDP.
+          , they contribute about{" "}
+          <C className="bg-[repeating-linear-gradient(-45deg,#ffffff_0px,#ffffff_4px,#ffed6f_4px,#ffed6f_8px)]">
+            9.8% of their combined GDP
+          </C>
+          .
         </P>
       </Step>
 
@@ -297,7 +301,7 @@ const Steps = () => {
           Many countries receive remittances in amounts that are large relative
           to their{" "}
           {/* <C className="bg-[repeating-linear-gradient(-45deg,#f5f5f4_0px,#f5f5f4_2px,#d6d3d1_4px,#d6d3d1_8px)]"> */}
-          <C className="bg-[repeating-linear-gradient(-45deg,#f5f5f4_0px,#f5f5f4_2px,#dea19399_4px,#dea19399_8px)]">
+          <C className="bg-[repeating-linear-gradient(-45deg,#ffffff_0px,#ffffff_4px,#dea19399_4px,#dea19399_8px)]">
             gross domestic product (GDP)
           </C>
           . In over thirty countries, remittances account for more than 10% of
@@ -449,7 +453,11 @@ const Steps = () => {
         </P>
       </Step>
 
-      <Step id="step-16-1" className="" childrenClassName="border-none bg-transparent">
+      <Step
+        id="step-16-1"
+        className=""
+        childrenClassName="border-none bg-transparent"
+      >
         <P className="">
           The role of remittances as a financial response mechanism to
           sudden-onset disasters cannot be understated. Migrant diasporas
