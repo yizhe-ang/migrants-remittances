@@ -33,7 +33,6 @@ export function App() {
   }, []);
 
   useEffect(() => {
-    const lenis = lenisRef.current?.lenis;
     const html = document.documentElement;
     const body = document.body;
 
@@ -42,32 +41,74 @@ export function App() {
         scrollLockRef.current = {
           htmlOverflow: html.style.overflow,
           bodyOverflow: body.style.overflow,
+          bodyTouchAction: body.style.touchAction,
+          bodyOverscrollBehavior: body.style.overscrollBehavior,
         };
       }
 
-      lenis?.stop();
       html.style.overflow = "hidden";
       body.style.overflow = "hidden";
-    } else {
-      if (scrollLockRef.current) {
-        html.style.overflow = scrollLockRef.current.htmlOverflow;
-        body.style.overflow = scrollLockRef.current.bodyOverflow;
-        scrollLockRef.current = null;
-      }
-
-      window.requestAnimationFrame(() => {
-        lenis?.start();
-        lenis?.resize?.();
-      });
+      body.style.touchAction = "none";
+      body.style.overscrollBehavior = "none";
+    } else if (scrollLockRef.current) {
+      html.style.overflow = scrollLockRef.current.htmlOverflow;
+      body.style.overflow = scrollLockRef.current.bodyOverflow;
+      body.style.touchAction = scrollLockRef.current.bodyTouchAction;
+      body.style.overscrollBehavior =
+        scrollLockRef.current.bodyOverscrollBehavior;
+      scrollLockRef.current = null;
     }
 
     return () => {
-      if (scrollLockRef.current) {
-        html.style.overflow = scrollLockRef.current.htmlOverflow;
-        body.style.overflow = scrollLockRef.current.bodyOverflow;
+      if (!scrollLockRef.current) return;
+
+      html.style.overflow = scrollLockRef.current.htmlOverflow;
+      body.style.overflow = scrollLockRef.current.bodyOverflow;
+      body.style.touchAction = scrollLockRef.current.bodyTouchAction;
+      body.style.overscrollBehavior =
+        scrollLockRef.current.bodyOverscrollBehavior;
+      scrollLockRef.current = null;
+    };
+  }, [showLoadingScreen]);
+
+  useEffect(() => {
+    let frameId = 0;
+
+    const syncLenis = () => {
+      const lenis = lenisRef.current?.lenis;
+
+      if (!lenis) {
+        frameId = window.requestAnimationFrame(syncLenis);
+        return;
+      }
+
+      if (showLoadingScreen) {
+        lenis.stop();
+        return;
+      }
+
+      lenis.start();
+      lenis.resize?.();
+    };
+
+    syncLenis();
+
+    return () => {
+      if (frameId) {
+        window.cancelAnimationFrame(frameId);
       }
     };
   }, [showLoadingScreen]);
+
+  useEffect(() => {
+    const lenis = lenisRef.current?.lenis;
+
+    if (!lenis || !showLoadingScreen) {
+      return;
+    }
+
+    lenis.stop();
+  });
 
   useEffect(() => {
     if (!dataSourcesReady) {

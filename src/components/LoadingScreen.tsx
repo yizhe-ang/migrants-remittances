@@ -25,7 +25,7 @@ export default function LoadingScreen({ stage, visible }: LoadingScreenProps) {
     <div
       aria-hidden={!visible}
       className={cn(
-        "fixed inset-x-0 bottom-0 top-14 z-[30] transition-opacity duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] motion-reduce:transition-none",
+        "fixed inset-0 z-[70] transition-opacity duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] motion-reduce:transition-none",
         visible
           ? "pointer-events-auto opacity-100"
           : "pointer-events-none opacity-0",
@@ -50,7 +50,7 @@ export default function LoadingScreen({ stage, visible }: LoadingScreenProps) {
         }}
       />
 
-      <div className="absolute inset-0 flex items-center justify-center px-4">
+      <div className="absolute inset-0 flex items-center justify-center px-4 pt-14">
         <div className="w-full max-w-sm rounded-[28px] border border-black/10 bg-stone-50/90 px-5 py-4 shadow-[0_20px_60px_rgba(28,25,23,0.12)] backdrop-blur-xl">
           <div className="mb-3 flex items-center justify-between gap-4 text-[0.68rem] font-semibold uppercase tracking-[0.28em] text-stone-500">
             <span>Booting...</span>
