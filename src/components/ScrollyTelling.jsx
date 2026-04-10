@@ -1012,10 +1012,10 @@ const ScrollyTelling = () => {
         0,
       )
       .from(
-        ".sankey-percent-texts text",
+        ".sankey-percent-texts g",
         {
           autoAlpha: 0,
-          x: -20,
+          x: "-=20",
           stagger: 0.1,
           duration: 0.2,
         },

@@ -15,6 +15,10 @@ import { useMemo } from "react";
 const linkHorizontal = sankeyLinkHorizontal();
 
 const linkOpacity = 0.3;
+const percentBadgeWidth = 110;
+const percentBadgeHeight = 24;
+const percentBadgeOffsetX = 6;
+const percentBadgeOffsetY = 12;
 
 const Sankey = ({
   graph,
@@ -38,6 +42,7 @@ const Sankey = ({
 
   const xMax = width - margin.left - margin.right;
   const yMax = height - margin.top - margin.bottom;
+  const percentPatternId = `gdp-stripes-${props.id}`;
 
   const nodesIndex = useMemo(() => {
     return index(graph.nodes, (d) => d.id);
@@ -56,6 +61,16 @@ const Sankey = ({
         <g transform={`translate(${margin.left}, ${margin.top})`}>
           {/* Gradient definitions for links */}
           <defs>
+            <pattern
+              id={percentPatternId}
+              patternUnits="userSpaceOnUse"
+              width="8"
+              height="8"
+              patternTransform="rotate(45)"
+            >
+              <rect width="8" height="8" fill="#f5f5f4" />
+              <rect width="4" height="8" fill="#dea193cc" />
+            </pattern>
             {graph.links.map((link, i) => {
               const sourceColor = colorScale(link.source.id.slice(0, -1));
               const targetColor = colorScale(link.target.id);
@@ -194,16 +209,23 @@ const Sankey = ({
             <g className="sankey-percent-texts font-bold">
               {Object.entries(percents).map(([income, percent], i) => {
                 const d = nodesIndex.get(income);
+                const x = d.x0 < width / 2 ? d.x1 - 35 : d.x0 + 34;
+                const y = (d.y1 + d.y0) / 2;
 
                 return (
-                  <text
-                    key={i}
-                    x={d.x0 < width / 2 ? d.x1 - 35 : d.x0 + 34}
-                    y={(d.y1 + d.y0) / 2}
-                    dy="0.35em"
-                  >
-                    <tspan className="font-bold">{percent}%</tspan> of GDP
-                  </text>
+                  <g key={i} transform={`translate(${x}, ${y})`} className="">
+                    <rect
+                      x={-percentBadgeOffsetX}
+                      y={-percentBadgeOffsetY}
+                      width={percentBadgeWidth}
+                      height={percentBadgeHeight}
+                      rx={4}
+                      fill={`url(#${percentPatternId})`}
+                    />
+                    <text dy="0.35em">
+                      <tspan className="font-bold">{percent}%</tspan> of GDP
+                    </text>
+                  </g>
                 );
               })}
             </g>
