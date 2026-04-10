@@ -102,6 +102,7 @@ const Controls = () => {
                   <LegendOrdinal
                     scale={incomeColorScale}
                     className="text-sm"
+                    shape="circle"
                   ></LegendOrdinal>
                 </div>
               )}

@@ -72,7 +72,7 @@ const CountryTooltip = () => {
             exit={{ opacity: 0, y: 200 }}
             transition={{ type: "spring", damping: 30, stiffness: 300 }}
           >
-            <div className="">
+            <div className="-translate-x-4">
               <span
                 className="font-bold text-2xl px-2 rounded"
                 style={{
@@ -85,8 +85,8 @@ const CountryTooltip = () => {
               </span>{" "}
             </div>
 
-            <div className="text-stone-500">
-              <span className="text-stone-500">
+            <div className="text-stone-700">
+              <span className="">
                 in {selectedYear}{" "}
                 {hoveredCountry.type === "origin" ? "received" : "sent"}
               </span>{" "}
