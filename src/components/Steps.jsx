@@ -15,7 +15,7 @@ const Steps = () => {
   };
 
   return (
-    <div className="w-full z-10 pointer-events-none">
+    <div className="relative z-10 w-full pointer-events-none">
       <div className="relative z-[70] h-screen pointer-events-none mt-20 flex justify-center perspective-near">
         {/* <h1 className="font-bold text-7xl">
           Migrants,

@@ -41,12 +41,12 @@ const MainView = () => {
   useScales();
 
   return (
-    <>
+    <div className="relative">
       <Header />
 
       <ScrollIndicator />
 
-      <div className="fixed inset-0 bg-stone-100 -z-10">
+      <div className="fixed inset-0 z-0 bg-stone-100">
         <Three />
       </div>
 
@@ -55,7 +55,7 @@ const MainView = () => {
       {/* {!dashboardView && ( */}
       <>
         {/* Sankey income */}
-        <div className="fixed inset-0 grid place-items-center pointer-events-none">
+        <div className="fixed inset-0 z-10 grid place-items-center pointer-events-none">
           <div className="h-[80vh] w-screen max-w-[800px] pointer-events-none">
             <ParentSize>
               {({ height, width }) => (
@@ -65,7 +65,7 @@ const MainView = () => {
           </div>
         </div>
 
-        <div className="fixed inset-0 grid place-items-center pointer-events-none">
+        <div className="fixed inset-0 z-10 grid place-items-center pointer-events-none">
           <div
             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
             style={{ opacity: 0, visibility: "hidden" }}
@@ -76,7 +76,7 @@ const MainView = () => {
         </div>
 
         <div
-          className="fixed inset-0 pointer-events-none bg-stone-50/30 backdrop-blur-sm invisible"
+          className="fixed inset-0 z-10 pointer-events-none bg-stone-50/30 backdrop-blur-sm invisible"
           id="overlay"
         ></div>
 
@@ -89,7 +89,7 @@ const MainView = () => {
       <Controls />
 
       <CountryTooltip />
-    </>
+    </div>
   );
 };
 
