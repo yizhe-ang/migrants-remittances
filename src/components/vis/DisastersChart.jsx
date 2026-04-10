@@ -40,6 +40,7 @@ const DisastersChart = () => {
 
   return (
     <div
+      id="disasters-chart"
       ref={parentRef}
       className="flex flex-col h-[95vh] w-screen max-w-[800px] pb-5 relative pt-5 pointer-events-auto"
     >
@@ -53,7 +54,7 @@ const DisastersChart = () => {
         className="absolute top-10 left-15 z-10 pointer-events-auto text-lg font-bold"
         id="area-title"
       >
-        Remittances-induced by each disaster type over time
+        Remittances-induced by each disaster type, over time
       </div>
 
       {disasters &&

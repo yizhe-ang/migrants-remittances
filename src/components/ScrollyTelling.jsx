@@ -1200,7 +1200,8 @@ const ScrollyTelling = () => {
       .to(
         "canvas",
         {
-          opacity: 0.2,
+          y: "-300px",
+          opacity: 0,
           duration: 0.2,
         },
         0,
@@ -1213,14 +1214,6 @@ const ScrollyTelling = () => {
         },
         0,
       )
-      // .to(
-      //   "#color-controls",
-      //   {
-      //     autoAlpha: 0,
-      //     duration: 0.2,
-      //   },
-      //   0,
-      // )
       .to(
         "#size-controls",
         {
@@ -1237,13 +1230,21 @@ const ScrollyTelling = () => {
         },
         0,
       )
+      .from(
+        "#disasters-chart",
+        {
+          y: "300px",
+          duration: 0.2,
+        },
+        0.1,
+      )
       .to(
         "#beeswarm-disasters",
         {
           autoAlpha: 1,
           duration: 0.1,
         },
-        0,
+        0.1,
       )
       .to(
         "#beeswarm-disasters",
@@ -1308,7 +1309,7 @@ const ScrollyTelling = () => {
             }
           },
         },
-        0.1 + i * 0.02,
+        0.2 + i * 0.02,
       );
     });
 
@@ -1380,7 +1381,10 @@ const ScrollyTelling = () => {
           duration: 0.3,
         },
         0.4,
-      );
+      )
+      .to({}, {
+        duration: 0.5
+      })
 
     // Compute stacked x-ranges matching RectDisastersNew layout
     const disasterOrder = ["earthquake", "storm", "flood", "drought"];
@@ -1591,7 +1595,7 @@ const ScrollyTelling = () => {
       .to(".beeswarm-circles circle", { attr: { r: 0 }, duration: 0.2 }, 0.8)
       .from(
         "#disaster-rects rect",
-        { scale: 0, transformOrigin: "50% 50%", duration: 0.3 },
+        { scale: 0, transformOrigin: "50% 50%", duration: 0.2 },
         0.7,
       );
 
@@ -1715,6 +1719,7 @@ const ScrollyTelling = () => {
         "canvas",
         {
           opacity: 1,
+          y: 0,
           duration: 0.3,
         },
         0,
