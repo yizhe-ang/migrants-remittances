@@ -8,17 +8,9 @@ import { ParentSize } from "@visx/responsive";
 import SankeyIncome from "@/components/vis/SankeyIncome";
 import Steps from "@/components/Steps";
 import Controls from "@/components/interface/Controls";
-import BeeswarmDisasters from "@/components/vis/BeeswarmDisasters";
 import DisastersChart from "@/components/vis/DisastersChart";
-import AreaDisasters from "@/components/vis/AreaDisasters";
-import RectDisasters from "@/components/vis/RectDisasters";
-import RectDisastersNew from "./vis/RectDisastersNew";
-import { useEffect } from "react";
-import { useRoomStore } from "@/store";
 import Header from "./Header";
 import ScrollIndicator from "./ScrollIndicator";
-import CurvedArrowDemo from "@/components/vis/CurvedArrowDemo";
-import { MousePointerClick } from "lucide-react";
 
 const MainView = () => {
   // const dashboardView = useRoomStore((state) => state.dashboardView);
@@ -48,8 +40,6 @@ const MainView = () => {
       <Header />
 
       <ScrollIndicator />
-
-      {/* <CurvedArrowDemo /> */}
 
       <div className="fixed inset-0 bg-stone-100 -z-10">
         <Three />
