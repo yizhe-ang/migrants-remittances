@@ -449,7 +449,7 @@ const Steps = () => {
         </P>
       </Step>
 
-      <Step id="step-16-1" className="">
+      <Step id="step-16-1" className="" childrenClassName="border-none bg-transparent">
         <P className="">
           The role of remittances as a financial response mechanism to
           sudden-onset disasters cannot be understated. Migrant diasporas
@@ -473,8 +473,8 @@ const Steps = () => {
         </P>
       </Step>
 
-      <Step id="step-16" className="">
-        <P className="flex gap-2">
+      <Step id="step-16" className="pb-[10vh]" empty>
+        {/* <P className="flex gap-2">
           <MousePointer />
           Interact to explore the data!
         </P>
@@ -487,7 +487,7 @@ const Steps = () => {
               proportion of its GDP
             </li>
           </ul>
-        </P>
+        </P> */}
       </Step>
     </div>
   );

@@ -32,8 +32,8 @@ const ScrollyTelling = () => {
     (s) => s.setEnableMapInteractions,
   );
   const setEnableControls = useRoomStore((s) => s.setEnableControls);
-  const setColorPointsBy = useRoomStore((s) => s.setColorPointsBy);
   const setPointsValue = useRoomStore((s) => s.setPointsValue);
+  const setOpenAbout = useRoomStore((s) => s.setOpenAbout);
 
   useGSAP(() => {
     if (
@@ -1382,9 +1382,12 @@ const ScrollyTelling = () => {
         },
         0.4,
       )
-      .to({}, {
-        duration: 0.5
-      })
+      .to(
+        {},
+        {
+          duration: 0.5,
+        },
+      );
 
     // Compute stacked x-ranges matching RectDisastersNew layout
     const disasterOrder = ["earthquake", "storm", "flood", "drought"];
@@ -1702,18 +1705,11 @@ const ScrollyTelling = () => {
     gsap
       .timeline({
         scrollTrigger: {
-          trigger: "#step-16",
+          trigger: "#step-16-1",
           start: "top bottom",
           end: "bottom bottom",
           scrub: true,
-          onEnter: () => {
-            setEnableMapInteractions(true);
-          },
-          onLeaveBack: () => {
-            setEnableMapInteractions(false);
-          },
         },
-        duration: 1,
       })
       .to(
         "canvas",
@@ -1725,26 +1721,76 @@ const ScrollyTelling = () => {
         0,
       )
       .to(
-        "#show-controls",
+        "#disasters-chart",
+        {
+          y: "300px",
+          duration: 0.3,
+          autoAlpha: 0,
+        },
+        0,
+      )
+      .to(
+        "#overlay",
         {
           autoAlpha: 1,
           duration: 0.3,
         },
         0,
       )
-      // .to(
-      //   "#color-controls",
-      //   {
-      //     autoAlpha: 1,
-      //     duration: 0.3,
-      //   },
-      //   0,
-      // )
+      .from(
+        "#step-16-1",
+        {
+          opacity: 0,
+          duration: 0.3,
+        },
+        0.2,
+      )
+      .to(
+        "#step-16-1",
+        {
+          opacity: 0,
+          duration: 0.3,
+        },
+        0.7,
+      )
+      .to(
+        "#overlay",
+        {
+          autoAlpha: 0,
+          duration: 0.2,
+        },
+        0.8,
+      );
+
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: "#step-16",
+          start: "top bottom",
+          // end: "bottom bottom",
+          toggleActions: "play none none reverse",
+          onEnter: () => {
+            setEnableMapInteractions(true);
+            setOpenAbout(true);
+          },
+          onLeaveBack: () => {
+            setEnableMapInteractions(false);
+          },
+        },
+      })
+      .to(
+        "#show-controls",
+        {
+          autoAlpha: 1,
+          duration: 0.2,
+        },
+        0,
+      )
       .to(
         "#size-controls",
         {
           autoAlpha: 1,
-          duration: 0.3,
+          duration: 0.2,
         },
         0,
       )
@@ -1752,7 +1798,15 @@ const ScrollyTelling = () => {
         points.u.opacity,
         {
           value: 1,
-          duration: 0.3,
+          duration: 0.2,
+        },
+        0,
+      )
+      .to(
+        "#scroll-indicator",
+        {
+          autoAlpha: 1,
+          duration: 0.2,
         },
         0,
       );
