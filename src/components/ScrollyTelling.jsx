@@ -1142,39 +1142,38 @@ const ScrollyTelling = () => {
           duration: 0.2,
         },
         0.8,
-      )
-      // .to(
-      //   "#color-controls",
-      //   {
-      //     autoAlpha: 1,
-      //     duration: 0.2,
-      //   },
-      //   0.8,
-      // )
-      .to(
-        "#size-controls",
-        {
-          autoAlpha: 1,
-          duration: 0.2,
-        },
-        0.8,
-      )
-      .to(
-        "#toggle-country-prompt",
-        {
-          autoAlpha: 1,
-          duration: 0.2,
-        },
-        0.8,
-      )
-      .to(
-        "#hover-country-prompt",
-        {
-          autoAlpha: 1,
-          duration: 0.2,
-        },
-        0.8,
       );
+    // .from(
+    //   "#size-controls",
+    //   {
+    //     x: 50,
+    //     autoAlpha: 0,
+    //     duration: 0.2,
+    //   },
+    //   0.8,
+    // )
+    // .to(
+    //   "#toggle-country-prompt",
+    //   {
+    //     autoAlpha: 1,
+    //     duration: 0.2,
+    //   },
+    //   0.8,
+    // )
+    // .to(
+    //   "#hover-country-prompt",
+    //   {
+    //     autoAlpha: 1,
+    //     duration: 0.2,
+    //   },
+    //   0.8,
+    // );
+    // .to(
+    //   {},
+    //   {
+    //     duration: 0.3,
+    //   },
+    // );
 
     gsap
       .timeline({
@@ -1201,7 +1200,35 @@ const ScrollyTelling = () => {
           duration: 0.3,
         },
         0,
-      );
+      )
+      .from(
+        "#size-controls",
+        {
+          x: 50,
+          autoAlpha: 0,
+          duration: 0.2,
+        },
+        0,
+      )
+      .to(
+        "#toggle-country-prompt",
+        {
+          autoAlpha: 1,
+          duration: 0.2,
+        },
+        0,
+      )
+      .to(
+        "#hover-country-prompt",
+        {
+          autoAlpha: 1,
+          duration: 0.2,
+        },
+        0,
+      )
+      .to({}, {
+        duration: 0.1
+      }, 0.9)
 
     const beeswarms = gsap.utils.toArray(".beeswarm");
 

@@ -4,6 +4,9 @@ import { localPoint } from "@visx/event";
 import { motion } from "motion/react";
 import { moneyFormat } from "@/lib/utils";
 import colors from "tailwindcss/colors";
+import { Group } from "@visx/group";
+import { index } from "d3-array";
+import { useMemo } from "react";
 
 // TODO: Use patterns
 // TODO: Apply textures !!!!!!!!!!!!!!!!
@@ -13,7 +16,15 @@ const linkHorizontal = sankeyLinkHorizontal();
 
 const linkOpacity = 0.3;
 
-const Sankey = ({ graph, width, height, colorScale, margin, ...props }) => {
+const Sankey = ({
+  graph,
+  width,
+  height,
+  colorScale,
+  margin,
+  showPercent = false,
+  ...props
+}) => {
   const {
     tooltipData,
     tooltipLeft,
@@ -27,6 +38,10 @@ const Sankey = ({ graph, width, height, colorScale, margin, ...props }) => {
 
   const xMax = width - margin.left - margin.right;
   const yMax = height - margin.top - margin.bottom;
+
+  const nodesIndex = useMemo(() => {
+    return index(graph.nodes, (d) => d.id);
+  }, [graph]);
 
   return (
     <div
@@ -174,9 +189,27 @@ const Sankey = ({ graph, width, height, colorScale, margin, ...props }) => {
               {"Receiving"}
             </text>
           </g>
+
+          {showPercent && (
+            <g className="sankey-percent-text">
+              {Object.entries(percents).map(([income, percent], i) => {
+                const d = nodesIndex.get(income);
+
+                return (
+                  <text
+                    x={d.x0 < width / 2 ? d.x1 - 35 : d.x0 + 34}
+                    y={(d.y1 + d.y0) / 2}
+                    dy="0.35em"
+                  >
+                    <tspan className="font-bold">{percent}</tspan> of GDP
+                  </text>
+                );
+              })}
+            </g>
+          )}
         </g>
       </svg>
-      {tooltipOpen && (
+      {/* {tooltipOpen && (
         <TooltipWithBounds
           key={Math.random()}
           top={tooltipTop}
@@ -184,9 +217,16 @@ const Sankey = ({ graph, width, height, colorScale, margin, ...props }) => {
         >
           {tooltipData}
         </TooltipWithBounds>
-      )}
+      )} */}
     </div>
   );
+};
+
+const percents = {
+  "High income": 0.2,
+  "Upper middle income": 1.1,
+  "Lower middle income": 5.1,
+  "Low income": 9.8,
 };
 
 export default Sankey;

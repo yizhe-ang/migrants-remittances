@@ -200,7 +200,7 @@ const Steps = () => {
 
       <Step id="step-6" className="h-[200vh]">
         <P>
-          To answer these questions and more, researchers from CSH built a novel
+          To answer these questions and more, researchers from the Complexity Science Hub built a novel
           model to better understand the dynamics and structure of remittance
           flows, simulating and providing new estimates of remittance flows
           between countries from 2010 to 2019 at a monthly level, including

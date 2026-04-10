@@ -238,6 +238,7 @@ const SankeyIncome = ({ width, height, margin = defaultMargin }) => {
                 colorScale={incomeColorScale}
                 margin={margin}
                 id="sankey-income-all-alt"
+                showPercent
               />
             </div>
           </div>

@@ -112,10 +112,10 @@ const Controls = () => {
           <div
             className="relative flex gap-1 pointer-events-auto"
             id="size-controls"
-            style={{
-              opacity: 0,
-              visibility: "hidden",
-            }}
+            // style={{
+            //   opacity: 0,
+            //   visibility: "hidden",
+            // }}
           >
             {/* <div className="text-sm pl-1 text-stone-500">size represents</div> */}
             <Toggle
