@@ -117,6 +117,8 @@ const RectDisastersNew = ({ width, height, marginLeft, marginRight }) => {
     return stacked;
   }, [aggData, xScale]);
 
+  console.log(aggData)
+
   return (
     <>
       {yScale && xScale && (

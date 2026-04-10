@@ -423,7 +423,7 @@ const Steps = () => {
           >
             earthquakes
           </C>{" "}
-          accounted for the largest amount, with $542 per affected person.
+          accounted for the largest amount, with $462 per affected person.
           Earthquakes are sudden and cause large impacts, and have occurred in
           countries with diasporas that could be activated.
         </P>
@@ -441,7 +441,7 @@ const Steps = () => {
           >
             droughts
           </C>{" "}
-          caused the smallest relative impact, with $142 per affected person.
+          caused the smallest relative impact, with $155 per affected person.
           Droughts are a creeping phenomenon: their effects accumulate slowly,
           and they last for prolonged periods of time. For this reason, migrant
           diasporas cannot sustain sending higher amounts of remittances for
@@ -450,7 +450,27 @@ const Steps = () => {
       </Step>
 
       <Step id="step-16-1" className="">
-        <P className=""></P>
+        <P className="">
+          The role of remittances as a financial response mechanism to
+          sudden-onset disasters cannot be understated. Migrant diasporas
+          collectively constitute a significant, though uneven, source of
+          disaster finance.
+        </P>
+        <P>
+          Households most vulnerable to disasters are often located in
+          low-income countries. Understanding diaspora conditions is key to
+          understanding the potential for remittances to generate disaster
+          finance, without assuming that all international migrants will be able
+          to mobilise in the same way. Remittances are also not a uniform coping
+          mechanism but vary depending on hazard characteristics, exposure, and
+          diaspora location and condition.
+        </P>
+        <P>
+          Yet, because these flows are concentrated in middle-income settings
+          and taper off within months, they should be understood as
+          complementary to, rather than substitutes for, collective mechanisms
+          of disaster and climate finance.
+        </P>
       </Step>
 
       <Step id="step-16" className="">
