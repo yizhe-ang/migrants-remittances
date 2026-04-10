@@ -28,7 +28,7 @@ const Scene = () => {
 
       <DisasterPoints position={[0, 0, 0]} />
 
-      <Arcs position={[0, 0, 0]} />
+      <Arcs position={[0, 0, 15]} />
 
       {/* <Html className="font-bold w-[500px]">
         Migrants,

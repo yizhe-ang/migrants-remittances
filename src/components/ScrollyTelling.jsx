@@ -137,6 +137,38 @@ const ScrollyTelling = () => {
         0,
       )
       .to(
+        arcs.u.staggeredT,
+        {
+          value: 0,
+          duration: 0.3,
+        },
+        0,
+      )
+      .to(
+        arcs.u.windStreaksT,
+        {
+          value: 0,
+          duration: 0.1,
+        },
+        0.3,
+      )
+      .to(
+        arcs.u.windGradientT,
+        {
+          value: 0,
+          duration: 0.1,
+        },
+        0.3,
+      )
+      .to(
+        arcs.mesh.position,
+        {
+          z: 0,
+          duration: 0.1,
+        },
+        0.3,
+      )
+      .to(
         cameraLookAt,
         {
           endArray: cameraPositions.usaStart,

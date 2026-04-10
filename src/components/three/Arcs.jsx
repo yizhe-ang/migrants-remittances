@@ -81,13 +81,13 @@ const Arcs = (props) => {
       srcColor: uniform(new THREE.Color(chroma(colors.stone["400"]).hex())),
       tgtColor: uniform(new THREE.Color(chroma(colors.stone["400"]).hex())),
       opacity: uniform(1),
-      staggeredT: uniform(0),
+      staggeredT: uniform(0.5),
       // Wind streaks style (0 = default, 1 = wind streaks)
-      windStreaksT: uniform(0),
+      windStreaksT: uniform(1),
       // windColor: uniform(new THREE.Color("#b0c4de")),
       windColor: uniform(new THREE.Color(chroma(colors.stone[500]).hex())),
       // Wind color mode (0 = solid windColor, 1 = srcColor/tgtColor gradient)
-      windGradientT: uniform(0),
+      windGradientT: uniform(1),
       // Arc drawing direction (0 = default, 1 = reversed)
       directionT: uniform(0),
     };
@@ -371,9 +371,10 @@ const Arcs = (props) => {
   ]);
 
   useEffect(() => {
-    if (!u || !buffers || !flowsMap) return;
+    if (!u || !buffers || !flowsMap || !mesh) return;
 
     setArcs({
+      mesh,
       u,
       buffers,
       getProgressTargetsFromTypeCountry: ({ country, type }) => {
@@ -388,7 +389,7 @@ const Arcs = (props) => {
         return targets;
       },
     });
-  }, [u, buffers, flowsMap]);
+  }, [u, buffers, flowsMap, mesh]);
 
   useEffect(() => {
     if (!enableMapInteractions) return;
