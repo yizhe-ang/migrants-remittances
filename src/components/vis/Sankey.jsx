@@ -181,7 +181,7 @@ const Sankey = ({
               );
             })}
           </g>
-          <g fontWeight={600}>
+          <g fontWeight={600} className="sankey-texts">
             <text textAnchor="middle" x={10} y={-20}>
               {"Sending"}
             </text>
@@ -191,17 +191,18 @@ const Sankey = ({
           </g>
 
           {showPercent && (
-            <g className="sankey-percent-text">
+            <g className="sankey-percent-texts font-bold">
               {Object.entries(percents).map(([income, percent], i) => {
                 const d = nodesIndex.get(income);
 
                 return (
                   <text
+                    key={i}
                     x={d.x0 < width / 2 ? d.x1 - 35 : d.x0 + 34}
                     y={(d.y1 + d.y0) / 2}
                     dy="0.35em"
                   >
-                    <tspan className="font-bold">{percent}</tspan> of GDP
+                    <tspan className="font-bold">{percent}%</tspan> of GDP
                   </text>
                 );
               })}

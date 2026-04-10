@@ -1004,41 +1004,59 @@ const ScrollyTelling = () => {
         },
       })
       .to(
-        "#sankey-income-all-alt .node-text-High-income > text:nth-of-type(2)",
+        "#sankey-income-all-alt .node-text-High-income > text:nth-of-type(2), #sankey-income-all-alt .node-text-Upper-middle-income > text:nth-of-type(2), #sankey-income-all-alt .node-text-Lower-middle-income > text:nth-of-type(2), #sankey-income-all-alt .node-text-Low-income > text:nth-of-type(2)",
         {
-          text: "0.2% of GDP",
+          autoAlpha: 0,
           duration: 0.2,
-          ...textProps,
         },
         0,
       )
-      .to(
-        "#sankey-income-all-alt .node-text-Upper-middle-income > text:nth-of-type(2)",
+      .from(
+        ".sankey-percent-texts text",
         {
-          text: "1.1% of GDP",
+          autoAlpha: 0,
+          x: -20,
+          stagger: 0.1,
           duration: 0.2,
-          ...textProps,
         },
-        0.1,
+        0,
       )
-      .to(
-        "#sankey-income-all-alt .node-text-Lower-middle-income > text:nth-of-type(2)",
-        {
-          text: "5.1% of GDP",
-          duration: 0.2,
-          ...textProps,
-        },
-        0.3,
-      )
-      .to(
-        "#sankey-income-all-alt .node-text-Low-income > text:nth-of-type(2)",
-        {
-          text: "9.8% of GDP",
-          duration: 0.2,
-          ...textProps,
-        },
-        0.4,
-      )
+      // .to(
+      //   "#sankey-income-all-alt .node-text-High-income > text:nth-of-type(2)",
+      //   {
+      //     text: "0.2% of GDP",
+      //     duration: 0.2,
+      //     ...textProps,
+      //   },
+      //   0,
+      // )
+      // .to(
+      //   "#sankey-income-all-alt .node-text-Upper-middle-income > text:nth-of-type(2)",
+      //   {
+      //     text: "1.1% of GDP",
+      //     duration: 0.2,
+      //     ...textProps,
+      //   },
+      //   0.1,
+      // )
+      // .to(
+      //   "#sankey-income-all-alt .node-text-Lower-middle-income > text:nth-of-type(2)",
+      //   {
+      //     text: "5.1% of GDP",
+      //     duration: 0.2,
+      //     ...textProps,
+      //   },
+      //   0.3,
+      // )
+      // .to(
+      //   "#sankey-income-all-alt .node-text-Low-income > text:nth-of-type(2)",
+      //   {
+      //     text: "9.8% of GDP",
+      //     duration: 0.2,
+      //     ...textProps,
+      //   },
+      //   0.4,
+      // )
       .to({}, { duration: 0.1 }, 0.9);
 
     gsap
@@ -1072,7 +1090,7 @@ const ScrollyTelling = () => {
         0,
       )
       .to(
-        "#sankey-income-all-alt",
+        "#sankey-income-all-alt .sankey-data-texts, #sankey-income-all-alt .sankey-texts",
         {
           autoAlpha: 0,
           duration: 0.2,
@@ -1112,6 +1130,14 @@ const ScrollyTelling = () => {
         0.5,
       )
       .to(
+        ".sankey-percent-texts",
+        {
+          autoAlpha: 0,
+          duration: 0.2,
+        },
+        0.5,
+      )
+      .to(
         "#sankey-income-low",
         {
           autoAlpha: 0,
@@ -1143,37 +1169,6 @@ const ScrollyTelling = () => {
         },
         0.8,
       );
-    // .from(
-    //   "#size-controls",
-    //   {
-    //     x: 50,
-    //     autoAlpha: 0,
-    //     duration: 0.2,
-    //   },
-    //   0.8,
-    // )
-    // .to(
-    //   "#toggle-country-prompt",
-    //   {
-    //     autoAlpha: 1,
-    //     duration: 0.2,
-    //   },
-    //   0.8,
-    // )
-    // .to(
-    //   "#hover-country-prompt",
-    //   {
-    //     autoAlpha: 1,
-    //     duration: 0.2,
-    //   },
-    //   0.8,
-    // );
-    // .to(
-    //   {},
-    //   {
-    //     duration: 0.3,
-    //   },
-    // );
 
     gsap
       .timeline({
@@ -1226,9 +1221,13 @@ const ScrollyTelling = () => {
         },
         0,
       )
-      .to({}, {
-        duration: 0.1
-      }, 0.9)
+      .to(
+        {},
+        {
+          duration: 0.1,
+        },
+        0.9,
+      );
 
     const beeswarms = gsap.utils.toArray(".beeswarm");
 
