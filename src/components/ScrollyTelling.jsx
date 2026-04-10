@@ -548,7 +548,12 @@ const ScrollyTelling = () => {
           scrub: true,
           onEnter: () => {
             setEnableMapInteractions(true);
+            gsap.set("#sankey-income", { pointerEvents: "none" });
             scrollIndicator.removeAttribute("data-animate");
+          },
+          onEnterBack: () => {
+            setEnableMapInteractions(true);
+            gsap.set("#sankey-income", { pointerEvents: "none" });
           },
           onLeaveBack: () => {
             setEnableMapInteractions(false);
@@ -717,6 +722,8 @@ const ScrollyTelling = () => {
           onLeaveBack: () => {
             // document.querySelector("canvas").style.pointerEvents = "auto";
             setEnableMapInteractions(true);
+            gsap.set("#sankey-income", { pointerEvents: "none" });
+            gsap.set("#sankey-income-all", { autoAlpha: 0 });
           },
         },
         duration: 1.4,
