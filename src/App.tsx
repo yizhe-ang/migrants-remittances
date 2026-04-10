@@ -115,8 +115,6 @@ export function App() {
       />
 
       <RoomShell className="h-screen" roomStore={roomStore}>
-        {/* <RoomShell.LoadingProgress /> */}
-
         <MainView />
       </RoomShell>
     </>
