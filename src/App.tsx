@@ -1,4 +1,4 @@
-import { RoomShell } from "@sqlrooms/room-shell";
+import { RoomShell, RoomStateProvider } from "@sqlrooms/room-shell";
 import { roomStore } from "@/store";
 import { Leva } from "leva";
 import MainView from "@/components/MainView";
@@ -114,9 +114,11 @@ export function App() {
         hidden
       />
 
-      <RoomShell className="h-screen" roomStore={roomStore}>
+      {/* <RoomShell className="h-screen" roomStore={roomStore} */}
+      <RoomStateProvider roomStore={roomStore}>
         <MainView />
-      </RoomShell>
+      </RoomStateProvider>
+      {/* </RoomShell> */}
     </>
   );
 }
