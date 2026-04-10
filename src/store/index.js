@@ -1,24 +1,6 @@
-import {
-  BaseRoomConfig,
-  createRoomShellSlice,
-  createRoomStore,
-  persistSliceConfigs,
-  LayoutTypes,
-  LayoutConfig,
-} from "@sqlrooms/room-shell";
-import { createMosaicSlice } from "@sqlrooms/mosaic";
+import { createRoomShellSlice, createRoomStore } from "@sqlrooms/room-shell";
 
 export const { roomStore, useRoomStore } = createRoomStore(
-  // persistSliceConfigs(
-  //   {
-  //     name: "deckgl-mosaic-example-app-state-storage",
-  //     sliceConfigSchemas: {
-  //       room: BaseRoomConfig,
-  //       layout: LayoutConfig,
-  //       sqlEditor: SqlEditorSliceConfig,
-  //       mapSettings: MapSettingsConfig,
-  //     },
-  //   },
   (set, get, store) => ({
     // Room shell slice
     ...createRoomShellSlice({
@@ -57,8 +39,6 @@ export const { roomStore, useRoomStore } = createRoomStore(
         ],
       },
     })(set, get, store),
-
-    ...createMosaicSlice()(set, get, store),
 
     // Data stores #############################################################
     countriesGeo: null,
@@ -202,22 +182,30 @@ export const { roomStore, useRoomStore } = createRoomStore(
     dataSourcesReady: false,
     setDataSourcesReady: (dataSourcesReady) =>
       set((state) =>
-        state.dataSourcesReady === dataSourcesReady ? state : { dataSourcesReady },
+        state.dataSourcesReady === dataSourcesReady
+          ? state
+          : { dataSourcesReady },
       ),
 
     derivedDataReady: false,
     setDerivedDataReady: (derivedDataReady) =>
       set((state) =>
-        state.derivedDataReady === derivedDataReady ? state : { derivedDataReady },
+        state.derivedDataReady === derivedDataReady
+          ? state
+          : { derivedDataReady },
       ),
 
     sceneReady: false,
     setSceneReady: (sceneReady) =>
-      set((state) => (state.sceneReady === sceneReady ? state : { sceneReady })),
+      set((state) =>
+        state.sceneReady === sceneReady ? state : { sceneReady },
+      ),
 
     isAppReady: false,
     setIsAppReady: (isAppReady) =>
-      set((state) => (state.isAppReady === isAppReady ? state : { isAppReady })),
+      set((state) =>
+        state.isAppReady === isAppReady ? state : { isAppReady },
+      ),
 
     showLoadingScreen: true,
     setShowLoadingScreen: (showLoadingScreen) =>

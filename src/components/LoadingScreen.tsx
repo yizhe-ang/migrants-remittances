@@ -12,11 +12,11 @@ type LoadingScreenProps = {
   visible: boolean;
 };
 
-export default function LoadingScreen({
-  stage,
-  visible,
-}: LoadingScreenProps) {
-  const stageIndex = Math.max(STAGES.indexOf(stage as (typeof STAGES)[number]), 0);
+export default function LoadingScreen({ stage, visible }: LoadingScreenProps) {
+  const stageIndex = Math.max(
+    STAGES.indexOf(stage as (typeof STAGES)[number]),
+    0,
+  );
   const progress = ((stageIndex + 1) / STAGES.length) * 100;
   const heroMask =
     "linear-gradient(to bottom, transparent 0, transparent 7rem, black 15rem, black 100%), radial-gradient(ellipse 34rem 11rem at 50% 7rem, transparent 0, transparent 58%, black 72%)";
@@ -26,7 +26,9 @@ export default function LoadingScreen({
       aria-hidden={!visible}
       className={cn(
         "fixed inset-x-0 bottom-0 top-14 z-[30] transition-opacity duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] motion-reduce:transition-none",
-        visible ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0",
+        visible
+          ? "pointer-events-auto opacity-100"
+          : "pointer-events-none opacity-0",
       )}
     >
       <div
