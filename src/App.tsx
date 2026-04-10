@@ -9,6 +9,7 @@ import { useRoomStore } from "@/store";
 
 export function App() {
   const lenisRef = useRef();
+  const scrollLockRef = useRef(null);
   const dataSourcesReady = useRoomStore((state) => state.dataSourcesReady);
   const derivedDataReady = useRoomStore((state) => state.derivedDataReady);
   const sceneReady = useRoomStore((state) => state.sceneReady);
@@ -36,22 +37,36 @@ export function App() {
     const lenis = lenisRef.current?.lenis;
     const html = document.documentElement;
     const body = document.body;
-    const prevHtmlOverflow = html.style.overflow;
-    const prevBodyOverflow = body.style.overflow;
 
     if (showLoadingScreen) {
+      if (!scrollLockRef.current) {
+        scrollLockRef.current = {
+          htmlOverflow: html.style.overflow,
+          bodyOverflow: body.style.overflow,
+        };
+      }
+
       lenis?.stop();
       html.style.overflow = "hidden";
       body.style.overflow = "hidden";
     } else {
-      lenis?.start();
-      html.style.overflow = prevHtmlOverflow;
-      body.style.overflow = prevBodyOverflow;
+      if (scrollLockRef.current) {
+        html.style.overflow = scrollLockRef.current.htmlOverflow;
+        body.style.overflow = scrollLockRef.current.bodyOverflow;
+        scrollLockRef.current = null;
+      }
+
+      window.requestAnimationFrame(() => {
+        lenis?.start();
+        lenis?.resize?.();
+      });
     }
 
     return () => {
-      html.style.overflow = prevHtmlOverflow;
-      body.style.overflow = prevBodyOverflow;
+      if (scrollLockRef.current) {
+        html.style.overflow = scrollLockRef.current.htmlOverflow;
+        body.style.overflow = scrollLockRef.current.bodyOverflow;
+      }
     };
   }, [showLoadingScreen]);
 
