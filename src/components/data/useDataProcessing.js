@@ -24,6 +24,9 @@ export default function useDataProcessing() {
   const setDisastersImpactsByMonth = useRoomStore(
     (state) => state.setDisastersImpactsByMonth,
   );
+  const setDerivedDataReady = useRoomStore(
+    (state) => state.setDerivedDataReady,
+  );
 
   const flowsPerYearStore = useRoomStore((state) => state.flowsPerYear);
 
@@ -298,6 +301,33 @@ export default function useDataProcessing() {
       }),
     );
   }, [disastersImpactsByMonth]);
+
+  useEffect(() => {
+    if (
+      !countriesGeo ||
+      !countriesAggStats ||
+      !flowsPerYear ||
+      !flowsByIncome ||
+      !flowsByOrigin ||
+      !flowsByDestination ||
+      !disasters ||
+      !disastersImpactsByMonth
+    ) {
+      return;
+    }
+
+    setDerivedDataReady(true);
+  }, [
+    countriesGeo,
+    countriesAggStats,
+    flowsPerYear,
+    flowsByIncome,
+    flowsByOrigin,
+    flowsByDestination,
+    disasters,
+    disastersImpactsByMonth,
+    setDerivedDataReady,
+  ]);
 }
 
 function flowsByCountryQuery(group) {

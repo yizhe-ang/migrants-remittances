@@ -1,7 +1,8 @@
-import { cn } from "@sqlrooms/ui";
 import { useRoomStore } from "../store";
 import { MousePointer } from "lucide-react";
 import { numberFormat } from "@/lib/utils";
+import HeroTitle from "@/components/HeroTitle";
+import { cn } from "@/lib/utils";
 
 const Steps = () => {
   const incomeColorScale = useRoomStore((state) => state.incomeColorScale);
@@ -15,7 +16,7 @@ const Steps = () => {
 
   return (
     <div className="w-full z-10 pointer-events-none">
-      <div className="h-screen pointer-events-none flex justify-center mt-20 perspective-near">
+      <div className="relative z-[70] h-screen pointer-events-none mt-20 flex justify-center perspective-near">
         {/* <h1 className="font-bold text-7xl">
           Migrants,
           <br />
@@ -24,10 +25,7 @@ const Steps = () => {
           Disasters
         </h1> */}
         {/* <h1 className="font-bold font-display text-7xl rotate-y-[5deg] pointer-events-auto"> */}
-        <h1 className="font-bold font-display text-7xl pointer-events-auto">
-          Global Remittances <br />
-          <span className="text-6xl text-stone-400"> and </span> Disasters Atlas
-        </h1>
+        <HeroTitle />
       </div>
 
       <Step id="step-1">

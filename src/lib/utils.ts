@@ -1,6 +1,5 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { color } from "d3-color";
 import { animate } from "motion";
 import { format } from "d3-format";
 import * as THREE from "three/webgpu";

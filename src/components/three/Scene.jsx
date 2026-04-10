@@ -7,8 +7,28 @@ import CameraControls from "@/components/three/CameraControls";
 import colors from "tailwindcss/colors";
 import chroma from "chroma-js";
 import DisasterPoints from "./DisasterPoints";
+import { useEffect } from "react";
+import { useRoomStore } from "@/store";
 
 const Scene = () => {
+  const setSceneReady = useRoomStore((state) => state.setSceneReady);
+
+  useEffect(() => {
+    let frameOne = 0;
+    let frameTwo = 0;
+
+    frameOne = window.requestAnimationFrame(() => {
+      frameTwo = window.requestAnimationFrame(() => {
+        setSceneReady(true);
+      });
+    });
+
+    return () => {
+      window.cancelAnimationFrame(frameOne);
+      window.cancelAnimationFrame(frameTwo);
+    };
+  }, [setSceneReady]);
+
   return (
     <>
       <CameraControls />

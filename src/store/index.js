@@ -198,6 +198,39 @@ export const { roomStore, useRoomStore } = createRoomStore(
     openAbout: false,
     setOpenAbout: (openAbout) => set({ openAbout }),
 
+    // App boot / loading #####################################################
+    dataSourcesReady: false,
+    setDataSourcesReady: (dataSourcesReady) =>
+      set((state) =>
+        state.dataSourcesReady === dataSourcesReady ? state : { dataSourcesReady },
+      ),
+
+    derivedDataReady: false,
+    setDerivedDataReady: (derivedDataReady) =>
+      set((state) =>
+        state.derivedDataReady === derivedDataReady ? state : { derivedDataReady },
+      ),
+
+    sceneReady: false,
+    setSceneReady: (sceneReady) =>
+      set((state) => (state.sceneReady === sceneReady ? state : { sceneReady })),
+
+    isAppReady: false,
+    setIsAppReady: (isAppReady) =>
+      set((state) => (state.isAppReady === isAppReady ? state : { isAppReady })),
+
+    showLoadingScreen: true,
+    setShowLoadingScreen: (showLoadingScreen) =>
+      set((state) =>
+        state.showLoadingScreen === showLoadingScreen
+          ? state
+          : { showLoadingScreen },
+      ),
+
+    bootStage: "Loading data",
+    setBootStage: (bootStage) =>
+      set((state) => (state.bootStage === bootStage ? state : { bootStage })),
+
     // Scene objects ###########################################################
     cameraControls: null,
     setCameraControls: (cameraControls) => set({ cameraControls }),

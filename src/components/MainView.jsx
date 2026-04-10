@@ -11,8 +11,13 @@ import Controls from "@/components/interface/Controls";
 import DisastersChart from "@/components/vis/DisastersChart";
 import Header from "./Header";
 import ScrollIndicator from "./ScrollIndicator";
+import LoadingScreen from "@/components/LoadingScreen";
+import { useRoomStore } from "@/store";
 
 const MainView = () => {
+  const showLoadingScreen = useRoomStore((state) => state.showLoadingScreen);
+  const bootStage = useRoomStore((state) => state.bootStage);
+
   // const dashboardView = useRoomStore((state) => state.dashboardView);
   // const setDashboardView = useRoomStore((state) => state.setDashboardView);
   // const setEnableMapInteractions = useRoomStore(
@@ -44,6 +49,8 @@ const MainView = () => {
       <div className="fixed inset-0 bg-stone-100 -z-10">
         <Three />
       </div>
+
+      <LoadingScreen stage={bootStage} visible={showLoadingScreen} />
 
       {/* {!dashboardView && ( */}
       <>

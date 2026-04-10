@@ -6,13 +6,28 @@ export default function useDataPreparation() {
   const refreshTableSchemas = useRoomStore(
     (state) => state.db.refreshTableSchemas,
   );
+  const setDataSourcesReady = useRoomStore(
+    (state) => state.setDataSourcesReady,
+  );
 
-  const migAndRemReady = useRoomStore((state) =>
-    state.db.findTableByName("mig_and_rem"),
+  const migAndRemReady = useRoomStore((state) => state.db.findTableByName("mig_and_rem"));
+  const countriesStatsReady = useRoomStore((state) => state.db.findTableByName("countries_stats"));
+  const allDataSourcesReady = useRoomStore((state) =>
+    [
+      "countries_geo",
+      "countries_stats",
+      "disasters_impacts",
+      "mig_and_rem",
+      "rem_panel",
+      "disasters",
+    ].every((tableName) => Boolean(state.db.findTableByName(tableName))),
   );
-  const countriesStatsReady = useRoomStore((state) =>
-    state.db.findTableByName("countries_stats"),
-  );
+
+  useEffect(() => {
+    if (allDataSourcesReady) {
+      setDataSourcesReady(true);
+    }
+  }, [allDataSourcesReady, setDataSourcesReady]);
 
   // Computing derived columns
   const { data: migAndRemDerivedReady } = useSql({
