@@ -1,6 +1,5 @@
-import { Environment, Html, PerspectiveCamera, Text } from "@react-three/drei";
+import { PerspectiveCamera } from "@react-three/drei";
 import WorldMap from "@/components/three/WorldMap";
-import WorldMapOld from "@/components/three/WorldMapOld";
 import Points from "@/components/three/Points/Points";
 import Arcs from "@/components/three/Arcs";
 import CameraControls from "@/components/three/CameraControls";
@@ -42,7 +41,6 @@ const Scene = () => {
       <ambientLight intensity={3} />
 
       <WorldMap position={[0, 0, -1]} />
-      {/* <WorldMapOld position={[0, 0, -1]} /> */}
 
       <Points position={[0, 0, 0]} />
 

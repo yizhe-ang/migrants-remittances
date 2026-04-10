@@ -14,7 +14,6 @@ export function App() {
   const derivedDataReady = useRoomStore((state) => state.derivedDataReady);
   const sceneReady = useRoomStore((state) => state.sceneReady);
   const showLoadingScreen = useRoomStore((state) => state.showLoadingScreen);
-  const bootStage = useRoomStore((state) => state.bootStage);
   const setBootStage = useRoomStore((state) => state.setBootStage);
   const setIsAppReady = useRoomStore((state) => state.setIsAppReady);
   const setShowLoadingScreen = useRoomStore(

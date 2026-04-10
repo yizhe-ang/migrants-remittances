@@ -2,8 +2,6 @@ import { useRoomStore } from "@/store";
 import { LegendOrdinal } from "@visx/legend";
 import CountryToggle from "./CountryToggle";
 import { Toggle } from "@/components/ui/toggle";
-import CurvedArrow from "./CurvedArrow";
-import colors from "tailwindcss/colors";
 import { AnimatePresence, motion } from "motion/react";
 import { MousePointerClick } from "lucide-react";
 
@@ -57,26 +55,6 @@ const Controls = () => {
           <div className="font-bold">Money</div>
           <div className="relative pointer-events-auto">
             <CountryToggle />
-
-            {/* <AnimatePresence>
-              {showToggleCountryPrompt && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                >
-                  <CurvedArrow
-                    className="absolute top-5 left-0"
-                    end={{ x: -100, y: 0 }}
-                    start={{ x: 0, y: 120 }}
-                    curve={-80}
-                    color={colors.stone[900]}
-                    startLabel="Toggle between countries sending or receiving money"
-                    startLabelClassName="font-cursive translate-x-6 text-shadow-lg/20 text-shadow-stone-900"
-                  />
-                </motion.div>
-              )}
-            </AnimatePresence> */}
             <AnimatePresence>
               {showToggleCountryPrompt && (
                 <motion.div
