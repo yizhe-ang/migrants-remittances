@@ -1795,6 +1795,15 @@ const ScrollyTelling = () => {
         0,
       )
       .to(
+        "#beeswarm-disasters",
+        {
+          autoAlpha: 0,
+          pointerEvents: "none",
+          duration: 0.3,
+        },
+        0,
+      )
+      .to(
         "#overlay",
         {
           autoAlpha: 1,

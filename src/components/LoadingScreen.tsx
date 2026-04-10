@@ -51,7 +51,7 @@ export default function LoadingScreen({
       <div className="absolute inset-x-0 bottom-8 flex justify-center px-4 sm:bottom-10">
         <div className="w-full max-w-sm rounded-[28px] border border-black/10 bg-stone-50/90 px-5 py-4 shadow-[0_20px_60px_rgba(28,25,23,0.12)] backdrop-blur-xl">
           <div className="mb-3 flex items-center justify-between gap-4 text-[0.68rem] font-semibold uppercase tracking-[0.28em] text-stone-500">
-            <span>Atlas Boot</span>
+            <span>Booting...</span>
             <span aria-live="polite">{stage}</span>
           </div>
 
